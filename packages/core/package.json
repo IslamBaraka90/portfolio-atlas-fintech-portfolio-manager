@@ -1,0 +1,8 @@
+{
+  "name": "@portfolio-atlas/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Financial domain, use cases, and ports",
+  "license": "MIT"
+}

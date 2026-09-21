@@ -1,0 +1,8 @@
+{
+  "name": "@portfolio-atlas/testing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic financial examples and future test helpers",
+  "license": "MIT"
+}

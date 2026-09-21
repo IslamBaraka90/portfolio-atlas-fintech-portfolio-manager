@@ -1,0 +1,11 @@
+{
+  "name": "@portfolio-atlas/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fastify HTTP boundary and dependency composition",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "5.12.5"
+  }
+}

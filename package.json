@@ -1,0 +1,52 @@
+{
+  "name": "portfolio-atlas-fintech-portfolio-manager",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Build an open-source portfolio manager with React, TypeScript, Yahoo Finance and fintech-algorithms: a chapter-by-chapter educational project.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Islam Baraka / The Fintech Builder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager.git"
+  },
+  "homepage": "https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager#readme",
+  "bugs": {
+    "url": "https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/issues"
+  },
+  "keywords": [
+    "portfolio-management",
+    "portfolio-tracker",
+    "fintech",
+    "react",
+    "typescript",
+    "yahoo-finance",
+    "fintech-algorithms",
+    "risk-management",
+    "investment-analytics",
+    "portfolio-optimization",
+    "financial-education"
+  ],
+  "engines": {
+    "node": ">=22.12.0 <23 || >=24.0.0 <25",
+    "npm": ">=10"
+  },
+  "packageManager": "npm@10.9.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docs:check": "markdownlint-cli2",
+    "check": "npm run format:check && npm run docs:check",
+    "algorithms:lookup": "node node_modules/fintech-algorithms/skills/fintech-algorithms/scripts/lookup.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "markdownlint-cli2": "0.23.3",
+    "prettier": "3.9.8",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@portfolio-atlas/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Provider-neutral API and event contracts",
+  "license": "MIT"
+}
