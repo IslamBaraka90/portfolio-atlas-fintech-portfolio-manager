@@ -1,5 +1,7 @@
 # Portfolio Atlas — Open-Source Portfolio Manager
 
+[![Documentation checks](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml/badge.svg)](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml)
+
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
 **Current release: planning foundation.** The workspace, dependencies, architecture, and chapter PRPs are initialized. Application functions, API routes, database migrations, the Yahoo adapter, and React screens are scheduled for the chapters below; none is implemented yet.

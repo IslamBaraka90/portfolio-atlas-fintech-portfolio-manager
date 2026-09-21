@@ -1,6 +1,6 @@
 # PRP 00 — Project foundation and course contract
 
-Status: planning/configuration foundation; see [progress](../docs/progress.md) for observed completion evidence.
+Status: complete for planning/configuration; see [progress](../docs/progress.md) for observed completion evidence.
 
 ## Outcome
 
@@ -23,16 +23,16 @@ Commit each task as chapter-0 task-N: action to purpose.
 
 ## Acceptance
 
-- [ ] The new folder has its own Git repository and does not track parent files.
-- [ ] npm workspaces resolve and exact dependency versions are locked.
-- [ ] Both required upstream agent skills are accessible through installed packages.
-- [ ] Installed fintech-algorithms capability is recorded; D14 is explicitly gated.
-- [ ] Every implementation PRP defines contracts, tasks, checks, React results, video steps and handoff.
-- [ ] Relative documentation links and chapter numbering are valid.
-- [ ] The foundation contains no application source, handlers, calculations, migrations or screens.
-- [ ] Formatting and Markdown checks pass.
-- [ ] GitHub is public under the requested personal account with a clear description and topics.
-- [ ] Local HEAD and published main agree; CI status is reported accurately.
+- [x] The new folder has its own Git repository and does not track parent files.
+- [x] npm workspaces resolve and exact dependency versions are locked.
+- [x] Both required upstream agent skills are accessible through installed packages.
+- [x] Installed fintech-algorithms capability is recorded; D14 is explicitly gated.
+- [x] Every implementation PRP defines contracts, tasks, checks, React results, video steps and handoff.
+- [x] Relative documentation links and chapter numbering are valid.
+- [x] The foundation contains no application source, handlers, calculations, migrations or screens.
+- [x] Formatting and Markdown checks pass.
+- [x] GitHub is public under the requested personal account with a clear description and topics.
+- [x] Local HEAD and published main agree; CI status is reported accurately.
 
 ## Video opener
 

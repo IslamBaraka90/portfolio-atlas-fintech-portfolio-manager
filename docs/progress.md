@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapter 0: local foundation complete; GitHub publication pending.
+Chapter 0: complete and published. The repository is ready for the maintainer to request Chapter 1.
 Next implementation chapter: [Chapter 1 — Mandate and investable universe](../PRPs/01-mandate-and-universe.md).
 Chapters 1–17: planned; runtime implementation has not started.
 
@@ -17,7 +17,7 @@ The user will request each chapter separately and announce D14 package availabil
 | 0.3  | Chapter 1–8 PRPs                                                                              | Complete — 0fcb32d                     |
 | 0.4  | Chapter 9–17 PRPs                                                                             | Complete — 8c9ed0f                     |
 | 0.5  | Course index, chapter 0, specialist extensions, video/evidence templates and documentation CI | Complete — see chapter-0 task-5 commit |
-| 0.6  | Public GitHub publication and remote validation                                               | Pending                                |
+| 0.6  | Public GitHub publication and remote validation                                               | Complete — see chapter-0 task-6 commit |
 
 ## Observed foundation validation
 
@@ -37,6 +37,15 @@ Date: 2026-09-22. Runtime: Node 22.22.0; npm 10.9.4.
 | git diff --check                  | Passed                                                                                                    |
 
 Application, backend/API, frontend/UI, financial calculation, and live Yahoo adapter tests have not run because their implementations do not exist yet. The current CI checks documentation/configuration and dependency installation only. Runtime scripts and meaningful behavior tests arrive with Chapter 1.
+
+## Publication evidence
+
+Public repository: [Portfolio Atlas](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager).
+Default branch: main. Repository name, description and 14 discovery topics are configured.
+
+The first public documentation workflow passed on a clean GitHub runner for commit 6c9c59a: [successful run](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/runs/35658569253). It installed the committed dependency graph and ran formatting/Markdown checks. The current workflow badge in the README tracks later commits.
+
+The initial remote main matched the local foundation commit. The final publication-evidence commit is pushed separately; its remote and workflow status are checked at handoff. Chapter 1 remains unimplemented.
 
 ## Package checkpoint
 
