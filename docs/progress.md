@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapter 0: planning foundation in preparation.
+Chapter 0: local foundation complete; GitHub publication pending.
 Next implementation chapter: [Chapter 1 — Mandate and investable universe](../PRPs/01-mandate-and-universe.md).
 Chapters 1–17: planned; runtime implementation has not started.
 
@@ -10,17 +10,44 @@ The user will request each chapter separately and announce D14 package availabil
 
 ## Foundation tasks
 
-| Task | Deliverable                                                                       | State       |
-| ---- | --------------------------------------------------------------------------------- | ----------- |
-| 0.1  | Independent Git repository, npm workspaces, pinned dependencies, folder ownership | In progress |
-| 0.2  | Architecture, data schema, provider and algorithm integration contracts           | Planned     |
-| 0.3  | Chapter 0–8 PRPs and video sequence                                               | Planned     |
-| 0.4  | Chapter 9–17 PRPs, specialist extensions, chapter handoff protocol                | Planned     |
-| 0.5  | Documentation checks, publication, verified remote handoff                        | Planned     |
+| Task | Deliverable                                                                                   | State / commit                         |
+| ---- | --------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 0.1  | Independent repository, six npm workspaces, pinned dependencies and ownership                 | Complete — 1186b8e                     |
+| 0.2  | Architecture, data model, API and adapter contracts, capability inventory                     | Complete — 6b55daa                     |
+| 0.3  | Chapter 1–8 PRPs                                                                              | Complete — 0fcb32d                     |
+| 0.4  | Chapter 9–17 PRPs                                                                             | Complete — 8c9ed0f                     |
+| 0.5  | Course index, chapter 0, specialist extensions, video/evidence templates and documentation CI | Complete — see chapter-0 task-5 commit |
+| 0.6  | Public GitHub publication and remote validation                                               | Pending                                |
 
-## Evidence rules
+## Observed foundation validation
 
-Replace states with observed results after each task. Record the commit, checks, and limitations. A directory or installed dependency does not count as a functioning feature. Future chapters must distinguish synthetic demonstrations, live observations, algorithm parity, and independent expected results.
+Date: 2026-09-22. Runtime: Node 22.22.0; npm 10.9.4.
+
+| Check                             | Observed result                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| npm dependency installation       | Successful; exact versions and lockfile committed                                                         |
+| npm ls --workspaces --depth=0     | All six workspaces resolve                                                                                |
+| npm run check                     | Prettier passed; Markdown lint passed for 61 Markdown files                                               |
+| Relative Markdown link inspection | All local file targets resolve                                                                            |
+| Chapter structure inspection      | 18 numbered PRPs; Chapters 1–17 contain required contracts, tasks, acceptance, video and handoff sections |
+| Planning-scope inspection         | No application .ts/.tsx/.js/.mjs/.sql files tracked or proposed                                           |
+| Dependency capability inspection  | Installed fintech-algorithms 0.13.1: 697 topics; D14 absent; payload hash recorded                        |
+| Package lookup                    | D01-F02-A01 resolves to validateBars; contract-tier status recorded                                       |
+| Required agent guides             | Both pinned dependencies contain their bundled SKILL.md                                                   |
+| git diff --check                  | Passed                                                                                                    |
+
+Application, backend/API, frontend/UI, financial calculation, and live Yahoo adapter tests have not run because their implementations do not exist yet. The current CI checks documentation/configuration and dependency installation only. Runtime scripts and meaningful behavior tests arrive with Chapter 1.
+
+## Package checkpoint
+
+fintech-algorithms: 0.13.1. yahoo-finance2: 4.0.2.
+D14: waiting for the maintainer's announcement; follow [ADR 0003](decisions/0003-d14-release-gate.md).
+
+The Yahoo adapter is specified and its dependency installed. Instrument discovery begins in Chapter 2; candle ingestion and validation begin in Chapter 3.
+
+## Evidence rules for future chapters
+
+Replace states with observed results after each task. Record the commit, commands, outcomes and limitations. A directory or installed dependency does not count as a functioning feature. Distinguish synthetic demonstrations, live observations, package parity and independent expected results.
 
 ## Next user prompt
 

@@ -42,9 +42,9 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Tasks and commit checkpoints
 
-1. **Adopt and verify the announced D14 release.** Perform the separately documented task-0 dependency gate before other code; record exact imports, fixtures, solver scope and compatibility.
+1. **Record the released D14 method inventory.** Complete the separately documented task-0 dependency upgrade first; then record the chapter's exact imports, fixtures, solver scope and compatibility contract.
 
-   Commit after relevant checks: `chapter-9 task-1: adopt and verify the announced D14 release to establish real portfolio-construction contracts`.
+   Commit after relevant checks: `chapter-9 task-1: record released D14 contracts to define the construction method inventory`.
 
 2. **Define objective and feasibility contracts.** Freeze units, cash/gross/net constraints, dimensions, tolerances and solver outcomes.
 
