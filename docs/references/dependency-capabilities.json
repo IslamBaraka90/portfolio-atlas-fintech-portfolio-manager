@@ -1,0 +1,34 @@
+{
+  "checkedOn": "2026-09-22",
+  "packageVersion": "0.13.1",
+  "source": "node_modules/fintech-algorithms/docs.json",
+  "sha256": "335e3e4ea9409d592ac9066c0c54fddf4bc1c13d3af6ce8fa8ece451148fde52",
+  "topicCount": 697,
+  "domainCounts": {
+    "D00": 120,
+    "D01": 31,
+    "D02": 20,
+    "D03": 40,
+    "D04": 28,
+    "D06": 52,
+    "D07": 137,
+    "D08": 64,
+    "D09": 37,
+    "D10": 22,
+    "D11": 29,
+    "D12": 21,
+    "D13": 9,
+    "D18": 52,
+    "D21": 7,
+    "D25": 10,
+    "D40": 10,
+    "D46": 8
+  },
+  "verificationTiers": {
+    "verified": 623,
+    "contract": 74
+  },
+  "d14Available": false,
+  "applicationImplementationStatus": "not-started",
+  "yahooFinance2Version": "4.0.2"
+}
