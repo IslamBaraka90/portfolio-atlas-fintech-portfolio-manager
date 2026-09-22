@@ -1,3 +1,4 @@
+import { LearningShell } from "./LearningShell";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
@@ -213,284 +214,223 @@ export function App() {
     setNotice("New portfolio draft. Saved portfolios remain available for this API session.");
   }
   return (
-    <div className="app-shell">
-      <a className="skip-link" href="#desk">
-        Skip to learning desk
-      </a>
-      <aside className="sidebar">
-        <a className="brand" href="#desk" aria-label="Portfolio Atlas home">
-          <span className="brand-icon" aria-hidden="true">
-            A<span>·</span>
-          </span>
-          <span>
-            portfolio
-            <strong>
-              atlas<span aria-hidden="true">+</span>
-            </strong>
-          </span>
-        </a>
-        <div className="sidebar-label">THE LEARNING DESK</div>
-        <nav aria-label="Course chapters">
-          <a className="nav-item active" href="#desk" aria-current="page">
-            <span>01</span>Mandate lab<i>↗</i>
-          </a>
-          <span className="nav-item muted">
-            <span>02</span>Instrument discovery
-          </span>
-          <span className="nav-item muted">
-            <span>03</span>Market data quality
-          </span>
-        </nav>
-        <div className="sidebar-note">
-          <span className="small-orbit" aria-hidden="true">
-            ◎
-          </span>
-          <h2>
-            Good portfolios start
+    <LearningShell active={1}>
+      <section className="hero">
+        <div>
+          <div className="eyebrow">
+            <span>CHAPTER 01</span> THE FOUNDATION
+          </div>
+          <h1>
+            Define the rules.
             <br />
-            with clear rules.
-          </h2>
-          <p>Build the foundation, one decision at a time.</p>
-          <div className="course-progress">
-            <span />
-          </div>
-          <small>CHAPTER 01 / 17</small>
+            <em>Understand every decision.</em>
+          </h1>
+          <p>
+            A portfolio starts with a purpose and a set of boundaries.
+            <br className="desktop-break" /> Write your mandate, test an allocation, and follow the
+            reasons.
+          </p>
         </div>
-        <div className="sidebar-footer">
-          THE FINTECH BUILDER<span>Learn. Build. Understand.</span>
-        </div>
-      </aside>
-      <div className="main-shell">
-        <header className="topbar">
+        <div className="hero-stamp" aria-hidden="true">
           <span>
-            Workspace <span className="breadcrumb">/</span> <strong>Mandate lab</strong>
+            PORTFOLIO
+            <br />
+            ATLAS
           </span>
-          <div>
-            <span className="connection-dot" />
-            Local learning environment
-          </div>
-        </header>
-        <main id="desk">
-          <section className="hero">
-            <div>
-              <div className="eyebrow">
-                <span>CHAPTER 01</span> THE FOUNDATION
-              </div>
-              <h1>
-                Define the rules.
-                <br />
-                <em>Understand every decision.</em>
-              </h1>
-              <p>
-                A portfolio starts with a purpose and a set of boundaries.
-                <br className="desktop-break" /> Write your mandate, test an allocation, and follow
-                the reasons.
-              </p>
-            </div>
-            <div className="hero-stamp" aria-hidden="true">
-              <span>
-                PORTFOLIO
-                <br />
-                ATLAS
-              </span>
-              <strong>01</strong>
-              <span>MANDATE & UNIVERSE</span>
-            </div>
-          </section>
-          <div className="session-strip">
-            <span className="badge synthetic">Synthetic data</span>
-            <span>
-              <strong>Session-only storage.</strong> Restarting the API clears portfolios, revisions
-              and evaluations.
-            </span>
-            <button
-              className="text-button"
-              type="button"
-              disabled={!!busy}
-              onClick={() => {
-                setBusy("Connecting");
-                setReload((value) => value + 1);
-              }}
-            >
-              Reload session ↻
-            </button>
-          </div>
-          <div className="journey">
-            <span>
-              <b>1</b> Define your mandate
-            </span>
-            <span className="journey-line" />
-            <span>
-              <b>2</b> Shape an allocation
-            </span>
-            <span className="journey-line" />
-            <span>
-              <b>3</b> Inspect the reasons
-            </span>
-          </div>
-          {error && (
-            <div className="error-banner" role="alert" tabIndex={-1} ref={errorRef}>
-              <strong>The request could not be completed.</strong>
-              <p>{error}</p>
+          <strong>01</strong>
+          <span>MANDATE & UNIVERSE</span>
+        </div>
+      </section>
+      <div className="session-strip">
+        <span className="badge synthetic">Synthetic data</span>
+        <span>
+          <strong>Session-only storage.</strong> Restarting the API clears portfolios, revisions and
+          evaluations.
+        </span>
+        <button
+          className="text-button"
+          type="button"
+          disabled={!!busy}
+          onClick={() => {
+            setBusy("Connecting");
+            setReload((value) => value + 1);
+          }}
+        >
+          Reload session ↻
+        </button>
+      </div>
+      <div className="journey">
+        <span>
+          <b>1</b> Define your mandate
+        </span>
+        <span className="journey-line" />
+        <span>
+          <b>2</b> Shape an allocation
+        </span>
+        <span className="journey-line" />
+        <span>
+          <b>3</b> Inspect the reasons
+        </span>
+      </div>
+      {error && (
+        <div className="error-banner" role="alert" tabIndex={-1} ref={errorRef}>
+          <strong>The request could not be completed.</strong>
+          <p>{error}</p>
+        </div>
+      )}
+      <p className="live-notice" role="status">
+        {busy ? busy + "…" : notice}
+      </p>
+      {!lesson || !draft || !allocation ? (
+        <div className="panel loading-panel">
+          {busy
+            ? "Connecting to your local API…"
+            : "The desk is waiting for the API. Start it, then select Reload session."}
+        </div>
+      ) : (
+        <>
+          {portfolios.length > 0 && (
+            <div className="saved-portfolios">
+              <label>
+                Session portfolios
+                <select
+                  aria-label="Open saved portfolio"
+                  disabled={!!busy}
+                  value={portfolio?.id ?? ""}
+                  onChange={(event) => void openPortfolio(event.target.value)}
+                >
+                  <option value="">Choose a saved portfolio</option>
+                  {portfolios.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name} · {item.id.slice(0, 8)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button className="button secondary" disabled={!!busy} onClick={newPortfolio}>
+                + New portfolio
+              </button>
             </div>
           )}
-          <p className="live-notice" role="status">
-            {busy ? busy + "…" : notice}
-          </p>
-          {!lesson || !draft || !allocation ? (
-            <div className="panel loading-panel">
-              {busy
-                ? "Connecting to your local API…"
-                : "The desk is waiting for the API. Start it, then select Reload session."}
-            </div>
-          ) : (
-            <>
-              {portfolios.length > 0 && (
-                <div className="saved-portfolios">
+          <div className="desk-grid">
+            <section className="panel mandate-panel">
+              <div className="panel-heading">
+                <div>
+                  <span className="section-number">01 / MANDATE</span>
+                  <h2>Your portfolio, your rules.</h2>
+                </div>
+                <span className="tiny-badge">{mandate ? "REV " + mandate.revision : "DRAFT"}</span>
+              </div>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void save();
+                }}
+              >
+                <fieldset disabled={!!busy}>
                   <label>
-                    Session portfolios
-                    <select
-                      aria-label="Open saved portfolio"
-                      disabled={!!busy}
-                      value={portfolio?.id ?? ""}
-                      onChange={(event) => void openPortfolio(event.target.value)}
-                    >
-                      <option value="">Choose a saved portfolio</option>
-                      {portfolios.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name} · {item.id.slice(0, 8)}
-                        </option>
-                      ))}
-                    </select>
+                    Portfolio name
+                    <input
+                      required
+                      minLength={3}
+                      maxLength={80}
+                      value={portfolioName}
+                      disabled={!!portfolio}
+                      onChange={(event) => setPortfolioName(event.target.value)}
+                    />
                   </label>
-                  <button className="button secondary" disabled={!!busy} onClick={newPortfolio}>
-                    + New portfolio
-                  </button>
+                  <MandateForm
+                    value={draft}
+                    onChange={changeDraft}
+                    saved={!!mandate}
+                    currencyLocked={!!portfolio}
+                  />
+                </fieldset>
+              </form>
+              {mandate && (
+                <div className="mandate-summary">
+                  <strong>{portfolio?.name ?? "Mandate saved; portfolio pending"}</strong>
+                  <span>
+                    {mandate.baseCurrency} base · {mandate.horizonYears}-year horizon · revision{" "}
+                    {mandate.revision}
+                  </span>
+                  <span>
+                    {dirty
+                      ? "Unsaved changes — save before evaluating."
+                      : "Saved in this API session."}
+                  </span>
                 </div>
               )}
-              <div className="desk-grid">
-                <section className="panel mandate-panel">
-                  <div className="panel-heading">
-                    <div>
-                      <span className="section-number">01 / MANDATE</span>
-                      <h2>Your portfolio, your rules.</h2>
-                    </div>
-                    <span className="tiny-badge">
-                      {mandate ? "REV " + mandate.revision : "DRAFT"}
-                    </span>
+            </section>
+            <div className="right-column">
+              <section className="panel allocation-panel">
+                <div className="panel-heading">
+                  <div>
+                    <span className="section-number">02 / CANDIDATE ALLOCATION</span>
+                    <h2>Put your mandate to the test.</h2>
                   </div>
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      void save();
-                    }}
-                  >
-                    <fieldset disabled={!!busy}>
-                      <label>
-                        Portfolio name
-                        <input
-                          required
-                          minLength={3}
-                          maxLength={80}
-                          value={portfolioName}
-                          disabled={!!portfolio}
-                          onChange={(event) => setPortfolioName(event.target.value)}
-                        />
-                      </label>
-                      <MandateForm
-                        value={draft}
-                        onChange={changeDraft}
-                        saved={!!mandate}
-                        currencyLocked={!!portfolio}
-                      />
-                    </fieldset>
-                  </form>
-                  {mandate && (
-                    <div className="mandate-summary">
-                      <strong>{portfolio?.name ?? "Mandate saved; portfolio pending"}</strong>
-                      <span>
-                        {mandate.baseCurrency} base · {mandate.horizonYears}-year horizon · revision{" "}
-                        {mandate.revision}
-                      </span>
-                      <span>
-                        {dirty
-                          ? "Unsaved changes — save before evaluating."
-                          : "Saved in this API session."}
-                      </span>
-                    </div>
-                  )}
-                </section>
-                <div className="right-column">
-                  <section className="panel allocation-panel">
-                    <div className="panel-heading">
-                      <div>
-                        <span className="section-number">02 / CANDIDATE ALLOCATION</span>
-                        <h2>Put your mandate to the test.</h2>
-                      </div>
-                      <span className="tiny-badge">LONG ONLY</span>
-                    </div>
-                    <form
-                      onSubmit={(event) => {
-                        event.preventDefault();
-                        void evaluate();
-                      }}
-                    >
-                      <fieldset disabled={!!busy}>
-                        <AllocationEditor
-                          value={allocation}
-                          scenarios={lesson.scenarios}
-                          onChange={changeAllocation}
-                        />
-                        <div className="evaluate-row">
-                          <p>
-                            {!mandate || !portfolio
-                              ? "Create your portfolio to begin."
-                              : dirty
-                                ? "Save your changes before checking."
-                                : "Rules run on the backend. Reasons arrive here."}
-                          </p>
-                          <button
-                            className="button primary"
-                            disabled={!mandate || !portfolio || dirty}
-                            type="submit"
-                          >
-                            Check allocation <span aria-hidden="true">→</span>
-                          </button>
-                        </div>
-                      </fieldset>
-                    </form>
-                  </section>
-                  <section className="panel results-panel" aria-labelledby="results-title">
-                    <div className="panel-heading">
-                      <div>
-                        <span className="section-number">03 / DECISION EXPLAINER</span>
-                        <h2 id="results-title">Follow the evidence.</h2>
-                      </div>
-                      <span className="tiny-badge">
-                        {response ? "SERVER RESULT" : "AWAITING CHECK"}
-                      </span>
-                    </div>
-                    <EvaluationResults response={response} />
-                  </section>
+                  <span className="tiny-badge">LONG ONLY</span>
                 </div>
-              </div>
-              <div className="lesson-note">
-                <span>↳</span>
-                <p>
-                  <strong>The idea to take with you</strong>A valid input can still break a
-                  portfolio rule. A missing classification means we do not yet have enough evidence.
-                  Those are different outcomes.
-                </p>
-                <span className="lesson-note-tag">CHAPTER 01 TAKEAWAY</span>
-              </div>
-            </>
-          )}
-          <footer className="page-footer">
-            <span>Portfolio Atlas · An open learning project by The Fintech Builder</span>
-            <span>Teaching policies · Simulated holdings · No live trading</span>
-          </footer>
-        </main>
-      </div>
-    </div>
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    void evaluate();
+                  }}
+                >
+                  <fieldset disabled={!!busy}>
+                    <AllocationEditor
+                      value={allocation}
+                      scenarios={lesson.scenarios}
+                      onChange={changeAllocation}
+                    />
+                    <div className="evaluate-row">
+                      <p>
+                        {!mandate || !portfolio
+                          ? "Create your portfolio to begin."
+                          : dirty
+                            ? "Save your changes before checking."
+                            : "Rules run on the backend. Reasons arrive here."}
+                      </p>
+                      <button
+                        className="button primary"
+                        disabled={!mandate || !portfolio || dirty}
+                        type="submit"
+                      >
+                        Check allocation <span aria-hidden="true">→</span>
+                      </button>
+                    </div>
+                  </fieldset>
+                </form>
+              </section>
+              <section className="panel results-panel" aria-labelledby="results-title">
+                <div className="panel-heading">
+                  <div>
+                    <span className="section-number">03 / DECISION EXPLAINER</span>
+                    <h2 id="results-title">Follow the evidence.</h2>
+                  </div>
+                  <span className="tiny-badge">
+                    {response ? "SERVER RESULT" : "AWAITING CHECK"}
+                  </span>
+                </div>
+                <EvaluationResults response={response} />
+              </section>
+            </div>
+          </div>
+          <div className="lesson-note">
+            <span>↳</span>
+            <p>
+              <strong>The idea to take with you</strong>A valid input can still break a portfolio
+              rule. A missing classification means we do not yet have enough evidence. Those are
+              different outcomes.
+            </p>
+            <span className="lesson-note-tag">CHAPTER 01 TAKEAWAY</span>
+          </div>
+        </>
+      )}
+      <footer className="page-footer">
+        <span>Portfolio Atlas · An open learning project by The Fintech Builder</span>
+        <span>Teaching policies · Simulated holdings · No live trading</span>
+      </footer>
+    </LearningShell>
   );
 }

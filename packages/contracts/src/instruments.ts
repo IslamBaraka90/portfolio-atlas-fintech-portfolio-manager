@@ -87,6 +87,7 @@ export const searchResultSchema = z.strictObject({
   failure: providerFailureSchema.nullable(),
 });
 export const resolveResultSchema = z.strictObject({
+  source: dataModeSchema,
   status: z.enum(["resolved", "unresolved", "unavailable"]),
   instrument: instrumentSchema.nullable(),
   reasons: z.array(z.string()),

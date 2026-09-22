@@ -48,6 +48,7 @@ export class Commands {
     input: unknown,
     context: CommandContext,
     action: () => Promise<T>,
+    persist: (result: T) => boolean = () => true,
   ): Promise<T> {
     const fingerprint = canonical({ operation, input });
     const saved = this.store.command(context.key);
@@ -64,7 +65,7 @@ export class Commands {
     const result = Promise.resolve()
       .then(action)
       .then((value) => {
-        this.store.saveCommand(context.key, fingerprint, value);
+        if (persist(value)) this.store.saveCommand(context.key, fingerprint, value);
         return value;
       })
       .finally(() => this.pending.delete(context.key));
