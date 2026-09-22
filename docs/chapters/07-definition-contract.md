@@ -38,7 +38,7 @@ Independent fixture: prior revenue 1,000, cost 600, gross profit 400, net income
 
 ## Trend and participation
 
-Preserve original row IDs and timestamps. Quarantined prices are null inputs; calculateSma propagates nulls and retains window − 1 warm-up positions. Known calendar gaps cannot be silently compressed. The panel explains unavailable windows rather than imputing prices.
+Preserve original row IDs and timestamps. Quarantined prices remain null in the adapter; each contiguous valid segment receives its own numeric calculateSma call with window − 1 warm-up positions. Known calendar gaps cannot be silently compressed. The panel explains unavailable windows rather than imputing prices.
 
 Use accepted no-action synthetic closes or a ready split-adjusted research run for the exact dataset revision. A split must not masquerade as a trend break. Total-return-adjusted prices are not substituted for price-trend inputs.
 

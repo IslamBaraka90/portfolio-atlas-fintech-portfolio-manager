@@ -37,7 +37,7 @@ function trend(request: ResearchRequest, { dataset, run }: ResearchSource): Tren
   const accepted = new Set(dataset.quality.acceptedIndexes);
   const basis = run ? "split_adjusted" : "unadjusted_no_actions";
   const knownAt = [dataset.observedAt, ...(run ? [run.createdAt, run.actionKnowledgeAt] : [])]
-    .sort()
+    .sort((a, b) => Date.parse(a) - Date.parse(b))
     .at(-1)!;
   if (Date.parse(knownAt) > Date.parse(request.asOf))
     reasons.push("Price or adjustment evidence was observed after the cutoff.");
@@ -183,6 +183,8 @@ function fundamentals(
     first.periodType !== last.periodType
   )
     return reject("Statement periods or currencies are unknown, mixed, or disputed.");
+  if (first.periodType !== (company.request.frequency === "annual" ? "12M" : "3M"))
+    return reject("Statement periods do not match the requested frequency.");
   const days = (Date.parse(last.periodEnd) - Date.parse(first.periodEnd)) / 86400000;
   if (first.periodType === "12M" ? days < 350 || days > 380 : days < 75 || days > 105)
     return reject("The selected periods are not consecutive at the same reporting frequency.");

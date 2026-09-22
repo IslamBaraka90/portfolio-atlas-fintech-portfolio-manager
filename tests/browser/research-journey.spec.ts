@@ -53,6 +53,10 @@ test("research desk shows timestamps, statement revisions and historical evidenc
   );
   await expect(result).toContainText("Research observations create no orders.");
   await mkdir("artifacts", { recursive: true });
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo(0, 0);
+  });
   await page.screenshot({ path: "artifacts/chapter-7-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
