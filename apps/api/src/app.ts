@@ -1,3 +1,5 @@
+import { ReportService } from "@portfolio-atlas/core";
+import { registerReportRoutes } from "./http/reports.js";
 import { AttributionService } from "@portfolio-atlas/core";
 import { registerAttributionRoutes } from "./http/attribution.js";
 import { PerformanceService } from "@portfolio-atlas/core";
@@ -419,6 +421,11 @@ export function buildApp(
   registerAttributionRoutes(
     app,
     new AttributionService(snapshots, performance, clock, ids, commands),
+    createHttpContext(clock, sessionId, storage),
+  );
+  registerReportRoutes(
+    app,
+    new ReportService(snapshots, service, ledger, clock, ids, commands),
     createHttpContext(clock, sessionId, storage),
   );
   return app;

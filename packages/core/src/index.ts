@@ -55,3 +55,6 @@ export * from "./domain/performance/money-weighted.js";
 
 export * from "./use-cases/attribution-service.js";
 export * from "./domain/attribution/brinson-fachler.js";
+
+export * from "./use-cases/report-service.js";
+export * from "./domain/reporting/export-report.js";
