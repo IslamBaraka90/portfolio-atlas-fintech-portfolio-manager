@@ -10,3 +10,6 @@ export * from "./ports/market-data.js";
 export * from "./use-cases/market-data-service.js";
 export * from "./ports/corporate-actions.js";
 export * from "./use-cases/corporate-action-service.js";
+export * from "./domain/convert-fx.js";
+export * from "./domain/select-actions.js";
+export * from "./use-cases/adjustment-service.js";
