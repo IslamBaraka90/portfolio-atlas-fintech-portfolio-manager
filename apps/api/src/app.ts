@@ -1,4 +1,7 @@
 import { dirname, resolve, join } from "node:path";
+import { SqliteLedgerRepository } from "@portfolio-atlas/adapters";
+import { LedgerService } from "@portfolio-atlas/core";
+import { registerLedgerRoutes } from "./http/ledger.js";
 import { FileRawArchive } from "@portfolio-atlas/adapters";
 import {
   SqliteDatabase,
@@ -220,6 +223,18 @@ export function buildApp(
     marketData,
     createHttpContext(clock, sessionId, storage),
     basisDriftLesson(),
+  );
+  registerLedgerRoutes(
+    app,
+    new LedgerService(
+      new SqliteLedgerRepository(database),
+      service,
+      instruments,
+      clock,
+      ids,
+      commands,
+    ),
+    createHttpContext(clock, sessionId, storage),
   );
   return app;
 }
