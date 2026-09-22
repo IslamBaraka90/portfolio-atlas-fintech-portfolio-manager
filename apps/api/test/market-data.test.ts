@@ -55,6 +55,7 @@ test("archive failure publishes no dataset and the identical command can safely 
   const app = buildApp({
     clock: { now: () => fixtureTime },
     rawArchive: {
+      read: (hash) => archive.read(hash),
       save: async (raw) => {
         if (fail) throw new Error("disk unavailable");
         return archive.save(raw);

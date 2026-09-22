@@ -9,3 +9,5 @@ export * from "./market-data/synthetic-chart-provider.js";
 export * from "./persistence/raw-archive.js";
 export * from "./analytics/fintech-algorithms/market-quality.js";
 export * from "./persistence/memory-dataset-repository.js";
+export * from "./market-data/action-normalizer.js";
+export * from "./persistence/memory-action-repository.js";

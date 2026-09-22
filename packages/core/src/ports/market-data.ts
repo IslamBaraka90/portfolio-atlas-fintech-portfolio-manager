@@ -26,6 +26,7 @@ export interface ChartProvider {
   ): Promise<ProviderReply<ChartObservation>>;
 }
 export interface RawArchive {
+  read(hash: string): Promise<unknown>;
   save(raw: unknown): Promise<{ hash: string; reference: string }>;
 }
 export interface DatasetRepository {

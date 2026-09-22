@@ -12,7 +12,7 @@ export const ingestionRequestSchema = z
     instrumentRevision: z.number().int().positive(),
     from: z.iso.date(),
     to: z.iso.date(),
-    scenario: z.enum(["clean", "adversarial"]).default("clean"),
+    scenario: z.enum(["clean", "adversarial", "corporate-actions"]).default("clean"),
   })
   .refine(
     (v) =>

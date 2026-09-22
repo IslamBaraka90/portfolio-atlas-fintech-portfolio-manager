@@ -7,7 +7,7 @@ export const corporateActionSchema = z.strictObject({
   instrumentId: z.string(),
   kind: z.enum(["split", "cash_dividend", "unsupported"]),
   status: z.enum(["candidate", "confirmed", "cancelled"]),
-  effectiveDate: z.iso.date(),
+  effectiveDate: z.iso.date().nullable(),
   availableAt: z.iso.datetime(),
   observedAt: z.iso.datetime(),
   source: dataModeSchema,
