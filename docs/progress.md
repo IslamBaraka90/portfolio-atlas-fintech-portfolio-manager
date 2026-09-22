@@ -2,9 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–4 are implemented. Chapters 1–3 are published as stacked PRs with passing GitHub checks; Chapter 4 publication follows its final verified checkpoint. Chapters 5–8 continue under the current authorization. Chapters 9–17 remain planned, and D14 readiness has not been announced.
-
-The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
+Chapters 0–4 are implemented and published as stacked PRs. Chapter 5 is in progress. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -47,8 +45,8 @@ The initial remote main matched the local foundation commit. The final publicati
 
 ## Package checkpoint
 
-fintech-algorithms: 0.13.1. yahoo-finance2: 4.0.2.
-D14: waiting for the maintainer's announcement; follow [ADR 0003](decisions/0003-d14-release-gate.md).
+fintech-algorithms: 0.13.2. yahoo-finance2: 4.0.2.
+D14: 20 published contract-tier methods; follow [ADR 0003](decisions/0003-d14-release-gate.md).
 
 The Yahoo adapter is specified and its dependency installed. Instrument discovery begins in Chapter 2; candle ingestion and validation begin in Chapter 3.
 
@@ -56,13 +54,9 @@ The Yahoo adapter is specified and its dependency installed. Instrument discover
 
 Replace states with observed results after each task. Record the commit, commands, outcomes and limitations. A directory or installed dependency does not count as a functioning feature. Distinguish synthetic demonstrations, live observations, package parity and independent expected results.
 
-## Next user prompt
+## Current execution request
 
-```text
-Start Chapter 2 of Portfolio Atlas using PRPs/02-instrument-identity.md.
-Implement instrument discovery and eligibility with the pinned Yahoo Finance v4 adapter.
-Keep the teaching style and chronological task commits. Stop at the chapter handoff.
-```
+Continue the full implementation through Chapter 17. No further chapter-start prompt is required.
 
 ## Chapter 1 task evidence
 
@@ -146,3 +140,7 @@ Task 1 (0fab906) freezes decimal strings, half-even currency rounding, FIFO book
 Task 2 introduces Node 22.22 SQLite migration 1 and decimal.js 10.6.0. Commands atomically commit state and replay records; provider preparation occurs outside the transaction. All 54 unit/API checks passed, including full evidence restart and injected commit failure rollback. Browser regression follows the storage metadata update. No book posting capability is claimed until the next tasks.
 
 Task 2 browser regression: all ten connected journeys passed with SQLite-backed application composition. Persistent and ephemeral storage are labeled accurately.
+
+## 0.13.2 release checkpoint
+
+The release is pinned exactly. The installed payload has 717 topics, including 20 D14 contract-tier methods. Strict type checks and all 60 existing unit/API checks passed after upgrade, including independent symmetric and asymmetric two-asset minima and inverse-volatility weights. npm reported zero known vulnerabilities during installation. The full Chapters 1–17 authorization supersedes the former D14 stop.

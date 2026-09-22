@@ -2,7 +2,7 @@
 
 ## Current phase and authorization
 
-Current authorization: continue Chapters 2–8 autonomously after Chapter 1, with verified task commits and GitHub publication. Stop at the first required D14 calculation; do not bypass ADR 0003. This explicit user request supersedes the per-chapter handoff requirement for this run. Read `docs/progress.md` and the requested PRP before editing. Begin runtime implementation only when the user requests a chapter or task. Complete the requested chapter, commit its verified tasks, update progress, and hand off; wait for the user to select the next chapter. A PRP describes future work and does not authorize starting every chapter.
+Current authorization (2026-09-22): complete all Chapters 1–17 autonomously, with verified task commits and GitHub publication. The user announced fintech-algorithms 0.13.2 and revoked the D14 stopping point. Read docs/progress.md and each PRP before implementation; complete chapter gates, publish its checkpoint, and continue to the next chapter. This explicit instruction supersedes older per-chapter handoff and D14-wait text in historical plans.
 
 Do not modify the parent edufintech project or sibling repositories. Run Git inside this repository. Do not commit credentials, provider caches, generated reports containing private holdings, or unrelated changes.
 
@@ -28,7 +28,7 @@ The pinned Yahoo major is v4. Use its class-based API and installed declarations
 
 ## D14 checkpoint
 
-The user will announce D14 package readiness. Follow `docs/decisions/0003-d14-release-gate.md` at that time. Do not guess exports, use a sibling repository as a hidden dependency, or implement an optimizer substitute just to bypass the gate. Earlier chapters can proceed.
+The user announced D14 in 0.13.2. Follow `docs/decisions/0003-d14-release-gate.md` at that time. Do not guess exports, use a sibling repository as a hidden dependency, or implement an optimizer substitute just to bypass the gate. Earlier chapters can proceed.
 
 ## Financial contracts
 
@@ -44,6 +44,6 @@ Teaching defaults: deterministic synthetic data, daily bars, long-only cash-fund
 4. Use `chapter-N task-M: do X to achieve Y`.
 5. Keep task commits small enough for a viewer to replay.
 6. Update `docs/progress.md` with actual commands, results, limitations, and commit references.
-7. Run chapter gates and stop at its documented handoff.
+7. Run chapter gates, publish the verified checkpoint, and continue through Chapter 17.
 
 Use `codex/chapter-N-description` for future implementation branches. Do not reset the user's changes. Do not claim a backend, UI, or financial test ran when only documentation checks exist.
