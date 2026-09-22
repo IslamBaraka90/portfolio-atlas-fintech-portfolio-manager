@@ -38,3 +38,4 @@ export * from "./use-cases/validation-service.js";
 export * from "./domain/validation/validate-strategy.js";
 export * from "./ports/lot-scoring.js";
 export * from "./domain/rebalancing/plan-rebalance.js";
+export * from "./use-cases/rebalance-service.js";
