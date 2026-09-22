@@ -1,8 +1,8 @@
 # PRP 14 — Portfolio risk monitoring and actionable alerts
 
-Status: planned; implementation has not started.
+Status: implemented and verified; see docs/chapters/14-learning-guide.md and docs/progress.md.
 Chapter: 14. Editorial duration estimate: 15 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under the full-build authorization.
 
 ## Learner promise
 
@@ -60,15 +60,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A synthetic -10% price shock on an unhedged 1,000 position changes its value by -100 under the stated linear equity model.
-- [ ] NAV from 100 to 80 yields a 20% drawdown under the declared positive-loss convention.
-- [ ] Repeated identical breaches update one finding rather than duplicating alerts.
-- [ ] A stale valuation cannot clear a live breach as if it were a fresh observation.
-- [ ] A VaR result states quantile method/horizon and never claims a maximum possible loss.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A synthetic -10% price shock on an unhedged 1,000 position changes its value by -100 under the stated linear equity model.
+- [x] NAV from 100 to 80 yields a 20% drawdown under the declared positive-loss convention.
+- [x] Repeated identical breaches update one finding rather than duplicating alerts.
+- [x] A stale valuation cannot clear a live breach as if it were a fresh observation.
+- [x] A VaR result states quantile method/horizon and never claims a maximum possible loss.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -91,7 +91,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Actionable risk findings. Chapter 15 explains realized performance using the same frozen book.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue to Chapter 15 under the full-build authorization.
 
 ## Evidence to fill during implementation
 
