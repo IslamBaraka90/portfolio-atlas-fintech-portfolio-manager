@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0-15 are implemented. Chapters 1-14 are published as stacked PRs with green checks; Chapter 15 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0-16 are implemented. Chapters 1-15 are published with green checks; Chapter 16 is at its publication checkpoint. Full-build authorization continues through Chapter 17 with fintech-algorithms 0.13.2.
 
 ## Foundation tasks
 
@@ -236,3 +236,11 @@ Tasks 1-4: 896041b, 7c05a1e, 0197d39, 62161a4. Frozen valuation/flow contracts, 
 Independent cases: 10,095 plus a 500 deposit becomes 10,595 with zero investment return. A 105.95 fee against 10,595 reduces net return by 1% while the named fee-add-back comparison is zero. Linked +10% and -10% returns yield -1%. A midpoint 100 deposit into 100, ending at 220, gives Dietz 20/150. Nonconventional -100/+230/-132 flows have period roots 21% and 44%; no arbitrary headline is selected. Attribution 0.5 + 0.5 + 0.3 percentage points reconciles to 1.3 active points with zero residual; a false account linkage remains incompatible.
 
 Final gates: 123 unit/API tests, 21 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (95 files) passed. Desktop/mobile screenshots inspected. Actual HTTP latency is handled only by the documented immediate single-flow bridge with unchanged holdings/FX and exact NAV difference. D16 exports are absent in installed 0.13.2; these application calculations use primary-source conventions and independent fixtures. Foreign-flow FX, correction restatement and multi-period/factor attribution remain explicit boundaries. Chapter 14 remote checks are green. Continue to frozen management reports.
+
+## Chapter 16 evidence
+
+Tasks 1-3: f1297bf, 19600b9, 5cb7d21. Exact snapshot selection, consistent valuation/monitor/performance cutoffs, deterministic evidence-linked insights, missing-section coverage, revision approval and supersession, JSON/CSV and printable HTML.
+
+Independent example: holdings 1,000 plus economic cash 9,000 equal NAV 10,000. A later mark creates NAV 10,100 in a superseding report; approved prior JSON and CSV stay byte-for-byte unchanged. Missing-section approval requires acknowledgment. Formula-like user text remains inert in CSV.
+
+Final gates: 125 unit/API checks, 22 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (97 files) passed. Desktop, 390px mobile and print-emulation captures inspected. Chapter 15 remote checks are green. Regulatory formats and PDF generation remain outside the teaching scope. Continue to governance and recovery.
