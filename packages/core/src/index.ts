@@ -52,3 +52,6 @@ export * from "./use-cases/monitor-service.js";
 export * from "./use-cases/performance-service.js";
 export * from "./domain/performance/calculate-performance.js";
 export * from "./domain/performance/money-weighted.js";
+
+export * from "./use-cases/attribution-service.js";
+export * from "./domain/attribution/brinson-fachler.js";

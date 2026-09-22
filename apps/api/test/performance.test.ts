@@ -75,6 +75,35 @@ test("performance separates immediate external cash, net fees, missing flow boun
   assert.equal(net.feeAddedBackTwr.value, 0);
   assert.equal(net.investmentProfit, "-105.95");
   assert.equal(net.moneyWeighted.annualizedReturn, null);
+  const attributed = await post("/attribution", "perf-attribution", {
+    name: "Authored two-sector example",
+    source: "authored_sector_example",
+    sourceRef: "two-sector-independent",
+    from: "2026-09-22",
+    to: "2026-09-23",
+    currency: "USD",
+    benchmarkLabel: "Authored equal-sector benchmark",
+    performance: { id: net.id, revision: 1 },
+    sectors: [
+      {
+        sector: "TECHNOLOGY",
+        portfolioWeight: 0.6,
+        benchmarkWeight: 0.5,
+        portfolioReturn: 0.12,
+        benchmarkReturn: 0.1,
+      },
+      {
+        sector: "HEALTHCARE",
+        portfolioWeight: 0.4,
+        benchmarkWeight: 0.5,
+        portfolioReturn: 0.04,
+        benchmarkReturn: 0.05,
+      },
+    ],
+  });
+  assert.equal(attributed.reconciled, true);
+  assert.equal(attributed.linkage, "incompatible");
+  assert.match(attributed.linkageReasons.join(" "), /does not equal linked net TWR/);
   now = "2026-09-24T10:00:00.000Z";
   state = await post("/ledger/events", "perf-midflow", {
     portfolioId: p.id,
