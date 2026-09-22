@@ -20,3 +20,5 @@ export * from "./domain/accounting/reconcile-book.js";
 export * from "./domain/accounting/decimal.js";
 export * from "./ports/snapshot-repository.js";
 export * from "./use-cases/valuation-service.js";
+export * from "./ports/benchmark-engine.js";
+export * from "./use-cases/benchmark-service.js";
