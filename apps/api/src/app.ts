@@ -1,3 +1,10 @@
+import { CorporateActionService, AdjustmentService } from "@portfolio-atlas/core";
+import {
+  MemoryActionRepository,
+  ProviderActionNormalizer,
+  FintechAdjustmentEngine,
+} from "@portfolio-atlas/adapters";
+import { registerCorporateActionRoutes } from "./http/corporate-actions.js";
 import { MarketDataService, type ChartProvider, type RawArchive } from "@portfolio-atlas/core";
 import {
   SyntheticChartProvider,
@@ -153,13 +160,14 @@ export function buildApp(
     commands,
     createHttpContext(clock, sessionId),
   );
+  const rawArchive = options.rawArchive ?? new MemoryRawArchive();
   const marketData = new MarketDataService(
     options.chartProviders ?? {
       synthetic: new SyntheticChartProvider(clock),
       ...(yahooTransport ? { yahoo: new YahooChartProvider(yahooTransport, clock, budget) } : {}),
     },
     new MemoryDatasetRepository(),
-    options.rawArchive ?? new MemoryRawArchive(),
+    rawArchive,
     new FintechMarketQualityValidator(),
     instruments,
     clock,
@@ -167,5 +175,31 @@ export function buildApp(
     commands,
   );
   registerMarketDataRoutes(app, marketData, createHttpContext(clock, sessionId));
+  const actionRepository = new MemoryActionRepository();
+  const actions = new CorporateActionService(
+    actionRepository,
+    rawArchive,
+    new ProviderActionNormalizer(),
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  const adjustments = new AdjustmentService(
+    actionRepository,
+    new FintechAdjustmentEngine(),
+    actions,
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  registerCorporateActionRoutes(
+    app,
+    actions,
+    adjustments,
+    marketData,
+    createHttpContext(clock, sessionId),
+  );
   return app;
 }
