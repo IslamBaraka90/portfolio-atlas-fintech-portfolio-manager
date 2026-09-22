@@ -1,3 +1,4 @@
+import { instrumentSchema } from "./instruments.js";
 import { z } from "zod";
 import { currencySchema } from "./mandates.js";
 export const moneyTextSchema = z
@@ -61,6 +62,7 @@ export const postingInputSchema = z.discriminatedUnion("kind", [
     ...base,
     kind: z.literal("dividend"),
     instrumentId: z.string().min(1),
+    instrumentRevision: z.number().int().positive(),
     currency: currencySchema,
     amount: positiveMoney,
     evidenceRef: z.string().trim().min(3).max(200),
@@ -69,6 +71,7 @@ export const postingInputSchema = z.discriminatedUnion("kind", [
     ...base,
     kind: z.literal("split"),
     instrumentId: z.string().min(1),
+    instrumentRevision: z.number().int().positive(),
     ratio: positiveQuantity,
     evidenceRef: z.string().trim().min(3).max(200),
   }),
@@ -97,6 +100,7 @@ export const ledgerEventSchema = z.strictObject({
   portfolioId: z.string(),
   sequence: z.number().int().positive(),
   recordedAt: z.iso.datetime(),
+  instrumentSnapshot: instrumentSchema.nullable(),
   input: z.union([postingInputSchema, reversalInputSchema]),
 });
 export type LedgerEvent = z.infer<typeof ledgerEventSchema>;
