@@ -3,7 +3,12 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["ES2023"]
+    "lib": ["ES2023"],
+    "noEmit": false,
+    "composite": true,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist"
   },
   "include": ["src/**/*.ts"]
 }
