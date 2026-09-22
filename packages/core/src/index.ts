@@ -42,3 +42,5 @@ export * from "./use-cases/rebalance-service.js";
 export * from "./ports/paper-execution.js";
 export * from "./use-cases/paper-execution-service.js";
 export * from "./use-cases/settlement-service.js";
+export * from "./use-cases/reconciliation-service.js";
+export * from "./domain/reconciliation/reconcile-statement.js";

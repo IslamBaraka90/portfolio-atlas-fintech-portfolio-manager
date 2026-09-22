@@ -1,3 +1,5 @@
+import { ReconciliationService } from "@portfolio-atlas/core";
+import { registerReconciliationRoutes } from "./http/reconciliation.js";
 import { SettlementService } from "@portfolio-atlas/core";
 import { registerSettlementRoutes } from "./http/settlement.js";
 import { PaperExecutionService } from "@portfolio-atlas/core";
@@ -375,5 +377,10 @@ export function buildApp(
     settlements.assertManualWriteAllowed(id);
   });
   registerOrderRoutes(app, paper, createHttpContext(clock, sessionId, storage));
+  registerReconciliationRoutes(
+    app,
+    new ReconciliationService(snapshots, ledger, service, clock, ids, commands),
+    createHttpContext(clock, sessionId, storage),
+  );
   return app;
 }
