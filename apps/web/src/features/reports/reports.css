@@ -1,0 +1,100 @@
+.report-actions,
+.report-navigation {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.report-actions a {
+  display: inline-block;
+  text-decoration: none;
+}
+.report-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+.report-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.report-lineage {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.report-print-root {
+  overflow-wrap: anywhere;
+}
+.report-print-root td {
+  max-width: 260px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  .sidebar,
+  .topbar,
+  .skip-link,
+  .report-builder,
+  .report-actions,
+  .report-navigation {
+    display: none !important;
+  }
+  .app-shell,
+  .main-shell {
+    display: block !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+  }
+  #desk,
+  .chapter-page.reports-page {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  body {
+    background: white !important;
+    color: #111 !important;
+    font-size: 10pt !important;
+  }
+  .report-print-root .chapter-panel {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 0 0 20px;
+    box-shadow: none;
+  }
+  .report-print-root h2,
+  .report-print-root h3 {
+    break-after: avoid;
+  }
+  .report-print-root tr {
+    break-inside: avoid;
+  }
+  .report-print-root table {
+    table-layout: fixed;
+    min-width: 0 !important;
+    width: 100%;
+    font-size: 8pt;
+  }
+  .report-print-root .chapter-table-wrap {
+    overflow: visible;
+  }
+  .report-print-root td,
+  .report-print-root th {
+    padding: 5px;
+    white-space: normal;
+  }
+  .report-print-root a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .report-lineage {
+    font-size: 8pt;
+  }
+}
