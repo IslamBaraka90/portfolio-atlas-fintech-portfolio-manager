@@ -1,3 +1,6 @@
+import { MonitorService } from "@portfolio-atlas/core";
+import { FintechMonitorAnalytics } from "@portfolio-atlas/adapters";
+import { registerMonitorRoutes } from "./http/monitoring.js";
 import { ReconciliationService } from "@portfolio-atlas/core";
 import { registerReconciliationRoutes } from "./http/reconciliation.js";
 import { SettlementService } from "@portfolio-atlas/core";
@@ -380,6 +383,23 @@ export function buildApp(
   registerReconciliationRoutes(
     app,
     new ReconciliationService(snapshots, ledger, service, clock, ids, commands),
+    createHttpContext(clock, sessionId, storage),
+  );
+  registerMonitorRoutes(
+    app,
+    new MonitorService(
+      snapshots,
+      valuations,
+      risk,
+      construction,
+      service,
+      instruments,
+      ledger,
+      new FintechMonitorAnalytics(),
+      clock,
+      ids,
+      commands,
+    ),
     createHttpContext(clock, sessionId, storage),
   );
   return app;
