@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–6 are implemented. Chapters 1–5 are published as stacked PRs with green checks; Chapter 6 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–7 are implemented. Chapters 1–6 are published as stacked PRs with green checks; Chapter 7 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -162,3 +162,13 @@ Independent expected values: NAV 10,095; after external deposit 10,595; EUR 90 a
 The focused API test passed through dataset revisions, missing/stale price and FX, convention mismatch, restart and command replay. The connected Chromium journey passed, including incomplete NAV and restored coverage. Desktop and 390px captures were inspected. Chapter 5 remote checks are green. Final Chapter 6 gates follow.
 
 Final Chapter 6 gates: all 70 unit/API checks and 12 connected Chromium journeys passed. Strict typecheck, production build, browser dependency guard, formatting and Markdown lint (76 files) passed. No live fundamental data or portfolio performance results are claimed by this chapter.
+
+## Chapter 7 evidence
+
+Tasks 1–4: 6d96aec, f5a5799, 71d0200, 81dde57. Exact statement periods and current Yahoo availability, archived original financial JSON, three selected descriptive methods, immutable research references and connected React evidence panel.
+
+Independent examples passed: three-slot SMA 102; net income / revenue 15%, +5 percentage points; late correction 12.5% after release. Missing statements, zero revenue, mixed currencies/periods, late revisions, observed-now historical rejection, null warm-up and missing-universe coverage remain explicit.
+
+Live AAPL fundamentals smoke succeeded at 2026-09-22T12:47:34.602Z with three 12M USD records; source hash and exact limitations are in the learning guide. The installed optimized SMA rejects nullable inputs despite its catalog description; contiguous numeric segments preserve null slots and restart warm-up.
+
+Final Chapter 7 gates: 80 unit/API checks and all 13 connected Chromium journeys passed. Strict typecheck, production build, browser dependency guard, formatting and Markdown lint (78 files) passed. Desktop and 390px mobile screenshots were inspected after presentation fixes. Chapter 6 remote checks are green. Chapter 8 continues under the full-build authorization.

@@ -1,8 +1,8 @@
 # PRP 07 — Research signals, fundamentals and evidence
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/07-learning-guide.md and docs/progress.md.
 Chapter: 7. Editorial duration estimate: 20 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under the full-build authorization recorded in AGENTS.md.
 
 ## Learner promise
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] An indicator's warm-up slots keep their original timestamps.
-- [ ] A filing fetched today cannot be backdated to its period end as a knowledge timestamp.
-- [ ] A ratio with an unavailable or inapplicable denominator returns a reason instead of a misleading score.
-- [ ] A current Yahoo fundamental observation is not admitted to a historical strategy run without sufficient availability evidence.
-- [ ] Research results alone do not create orders.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] An indicator's warm-up slots keep their original timestamps.
+- [x] A filing fetched today cannot be backdated to its period end as a knowledge timestamp.
+- [x] A ratio with an unavailable or inapplicable denominator returns a reason instead of a misleading score.
+- [x] A current Yahoo fundamental observation is not admitted to a historical strategy run without sufficient availability evidence.
+- [x] Research results alone do not create orders.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Timestamped research observations. Chapter 8 combines valid histories into a risk model.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+The completed checkpoint is published as a stacked PR. Continue to Chapter 8 under the full-build authorization.
 
 ## Evidence to fill during implementation
 

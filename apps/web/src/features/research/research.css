@@ -1,0 +1,37 @@
+.research-page article {
+  padding: 24px 0;
+  border-bottom: 1px solid #dfe4dc;
+}
+.research-page article h3 {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+.research-page p {
+  margin: 10px 0;
+  line-height: 1.7;
+}
+.research-page code {
+  overflow-wrap: anywhere;
+}
+.research-page details {
+  margin: 16px 0;
+}
+.research-page summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.research-input {
+  border: 1px solid #dfe4dc;
+  border-radius: 12px;
+  padding: 18px;
+}
+.research-input > label {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.research-input input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}

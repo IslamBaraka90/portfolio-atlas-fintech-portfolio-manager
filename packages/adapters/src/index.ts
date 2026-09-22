@@ -18,3 +18,6 @@ export * from "./persistence/sqlite/repositories.js";
 export * from "./persistence/sqlite/ledger-repository.js";
 export * from "./persistence/sqlite/snapshot-repository.js";
 export * from "./analytics/fintech-algorithms/benchmark-engine.js";
+export * from "./market-data/synthetic-company-provider.js";
+export * from "./market-data/yahoo-finance/company-provider.js";
+export * from "./analytics/fintech-algorithms/research-engine.js";

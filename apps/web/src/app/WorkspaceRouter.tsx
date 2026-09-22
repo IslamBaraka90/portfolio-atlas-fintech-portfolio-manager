@@ -1,3 +1,4 @@
+import { ResearchDesk } from "../features/research/ResearchDesk";
 import { CorporateActionsDesk } from "../features/corporate-actions/CorporateActionsDesk";
 import { PortfolioBook } from "../features/portfolio/PortfolioBook";
 import { ValuationDesk } from "../features/valuation/ValuationDesk";
@@ -18,7 +19,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#valuation" ? (
+  return hash.split("?")[0] === "#research" ? (
+    <ResearchDesk />
+  ) : hash.split("?")[0] === "#valuation" ? (
     <ValuationDesk />
   ) : hash.split("?")[0] === "#book" ? (
     <PortfolioBook />
