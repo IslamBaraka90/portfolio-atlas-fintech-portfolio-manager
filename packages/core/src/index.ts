@@ -26,3 +26,5 @@ export * from "./ports/company-provider.js";
 export * from "./use-cases/company-service.js";
 export * from "./ports/research-engine.js";
 export * from "./use-cases/research-service.js";
+export * from "./ports/risk-engine.js";
+export * from "./use-cases/risk-service.js";
