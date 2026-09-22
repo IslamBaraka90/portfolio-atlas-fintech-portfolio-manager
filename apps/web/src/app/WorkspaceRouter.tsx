@@ -1,3 +1,4 @@
+import { ValidationDesk } from "../features/validation/ValidationDesk";
 import { ConstructionDesk } from "../features/construction/ConstructionDesk";
 import { RiskDesk } from "../features/risk/RiskDesk";
 import { ResearchDesk } from "../features/research/ResearchDesk";
@@ -21,7 +22,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#construction" ? (
+  return hash.split("?")[0] === "#validation" ? (
+    <ValidationDesk />
+  ) : hash.split("?")[0] === "#construction" ? (
     <ConstructionDesk />
   ) : hash.split("?")[0] === "#risk" ? (
     <RiskDesk />
