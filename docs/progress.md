@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–8 are implemented. Chapters 1–7 are published as stacked PRs with green checks; Chapter 8 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–9 are implemented. Chapters 1–8 are published as stacked PRs with green checks; Chapter 9 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -180,3 +180,11 @@ Tasks 1–4: 2d5ba68, 2b50d22, a90fe0b, a8978a5. Ordered aligned daily returns, 
 Independent examples passed: covariance [[0.01, -0.005], [-0.005, 0.01]], correlation -0.5, annual diagonal 2.52 at 252 sessions; EWMA weight mass 0.75 and seed mass 0.25. Identical clean AURA/HARB paths produce rank 1; shrinkage produces rank 2 for that sample. Constant paths retain undefined correlation. Missing sessions, wrong revisions, mixed currencies and future observations fail before estimation.
 
 The initial whole-course browser run exposed duplicate scenario fields for unselected histories. Scenario fields now appear only for selected inputs. The complete rerun passed all 14 Chromium journeys. Final gates also passed: 89 unit/API checks, strict types, production build, browser dependency guard, formatting and Markdown lint (80 files). Desktop and 390px captures were inspected. Chapter 7 remote checks are green. Continue to released D14 construction under the full-build authorization.
+
+## Chapter 9 evidence
+
+Tasks 1–4: 05961ee, 29e5fbb, 25d9e4b, 7b6d36b. Verified installed D14 signatures, frozen target contracts, four construction methods, independent risk/cost/mandate audits, immutable API snapshots and a connected React comparison desk. D14 methods are contract tier; independent application examples are separately tested.
+
+Examples: equal weights with 20% cash produce 40/40/20; inverse volatility 0.1/0.2 produces 2/3 and 1/3; a two-asset minimum variance example gives 8/11 in the first asset. A doubled volatility stress quadruples variance. Failed convergence, impossible capacity, unknown sectors, cost rejection and revision mismatch retain explicit outcomes. Proposal creation leaves the accounting checkpoint unchanged.
+
+Final gates: 94 unit/API checks, 15 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (83 files) passed. Desktop and 390px mobile captures were inspected. Chapter 8 remote checks are green. Continue to causal strategy validation.

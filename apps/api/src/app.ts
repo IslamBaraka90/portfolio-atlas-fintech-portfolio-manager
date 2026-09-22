@@ -1,3 +1,6 @@
+import { ConstructionService } from "@portfolio-atlas/core";
+import { FintechConstructionEngine } from "@portfolio-atlas/adapters";
+import { registerConstructionRoutes } from "./http/construction.js";
 import { RiskService } from "@portfolio-atlas/core";
 import { FintechRiskEngine } from "@portfolio-atlas/adapters";
 import { registerRiskRoutes } from "./http/risk.js";
@@ -306,5 +309,17 @@ export function buildApp(
     commands,
   );
   registerRiskRoutes(app, risk, createHttpContext(clock, sessionId, storage));
+  const construction = new ConstructionService(
+    snapshots,
+    new FintechConstructionEngine(),
+    service,
+    risk,
+    valuations,
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  registerConstructionRoutes(app, construction, createHttpContext(clock, sessionId, storage));
   return app;
 }
