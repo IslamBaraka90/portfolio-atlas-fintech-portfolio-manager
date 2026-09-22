@@ -6,3 +6,5 @@ export * from "./market-data.js";
 export * from "./corporate-actions.js";
 export * from "./basis-drift.js";
 export * from "./accounting.js";
+export * from "./valuation.js";
+export * from "./benchmarks.js";
