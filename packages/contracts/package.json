@@ -4,5 +4,21 @@
   "private": true,
   "type": "module",
   "description": "Provider-neutral API and event contracts",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "tsx --test test/*.test.ts"
+  }
 }

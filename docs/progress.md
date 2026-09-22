@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapter 0: complete and published. The repository is ready for the maintainer to request Chapter 1.
+Chapter 0: complete and published. Chapter 1 is now in implementation.
 Next implementation chapter: [Chapter 1 — Mandate and investable universe](../PRPs/01-mandate-and-universe.md).
 Chapters 1–17: planned; runtime implementation has not started.
 
@@ -65,3 +65,7 @@ Start Chapter 1 of Portfolio Atlas using PRPs/01-mandate-and-universe.md.
 Implement its backend and React outcomes, verify them, and commit each task.
 Stop at the chapter handoff.
 ```
+
+## Chapter 1 task evidence
+
+- Task 1: schemas, synthetic fixtures and the definition contract are implemented. `npx tsc -b packages/contracts packages/testing` passed; all four contract tests passed. Input precision, null sectors and draft-policy conflicts are explicit.
