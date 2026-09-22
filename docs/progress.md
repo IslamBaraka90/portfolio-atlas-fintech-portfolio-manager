@@ -6,7 +6,7 @@ Chapter 0: complete and published. Chapter 1: implemented and locally verified; 
 Next chapter, when requested: [Chapter 2 — Instrument identity](../PRPs/02-instrument-identity.md).
 Chapters 2–17 remain planned. D14 readiness has not been announced.
 
-The user will request each chapter separately and announce D14 package availability during the course.
+The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
 
 ## Foundation tasks
 
@@ -106,3 +106,7 @@ Memory storage resets with the API process and is shared by local browsers. The 
 ### Final local validation
 
 A fresh npm ci --ignore-scripts completed with zero reported vulnerabilities. All 18 contract/domain/application/API tests passed. All six connected Chromium journeys passed, including a committed response lost on the wire (retry creates no duplicate portfolio) and a concurrent policy edit followed by conflict recovery. Formatting, Markdown lint (65 files), strict type checks, production build, browser dependency guard and local Markdown link checks passed. Generated screenshots remain ignored.
+
+## Chapter 2 evidence
+
+Task 1 defines instrument/listing identity, subunits, explicit unknowns, alias clocks and synthetic fixtures. Contracts validate whole-second package inputs without time truncation.

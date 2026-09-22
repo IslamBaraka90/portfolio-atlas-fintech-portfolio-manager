@@ -20,5 +20,8 @@
   "scripts": {
     "build": "tsc -b",
     "test": "tsx --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "@portfolio-atlas/testing": "0.0.0"
   }
 }

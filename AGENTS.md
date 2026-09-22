@@ -2,7 +2,7 @@
 
 ## Current phase and authorization
 
-Chapter 1 is implemented; later chapters remain planned. Read `docs/progress.md` and the requested PRP before editing. Begin runtime implementation only when the user requests a chapter or task. Complete the requested chapter, commit its verified tasks, update progress, and hand off; wait for the user to select the next chapter. A PRP describes future work and does not authorize starting every chapter.
+Current authorization: continue Chapters 2–8 autonomously after Chapter 1, with verified task commits and GitHub publication. Stop at the first required D14 calculation; do not bypass ADR 0003. This explicit user request supersedes the per-chapter handoff requirement for this run. Read `docs/progress.md` and the requested PRP before editing. Begin runtime implementation only when the user requests a chapter or task. Complete the requested chapter, commit its verified tasks, update progress, and hand off; wait for the user to select the next chapter. A PRP describes future work and does not authorize starting every chapter.
 
 Do not modify the parent edufintech project or sibling repositories. Run Git inside this repository. Do not commit credentials, provider caches, generated reports containing private holdings, or unrelated changes.
 
