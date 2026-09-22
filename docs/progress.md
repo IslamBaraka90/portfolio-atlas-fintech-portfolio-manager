@@ -71,3 +71,5 @@ Stop at the chapter handoff.
 - Task 1: schemas, synthetic fixtures and the definition contract are implemented. `npx tsc -b packages/contracts packages/testing` passed; all four contract tests passed. Input precision, null sectors and draft-policy conflicts are explicit.
 
 - Task 2: the API and React development entry points are wired. The production build, strict type check and an injected API health request passed. A Vite build guard prevents backend and market-provider modules entering the browser bundle.
+
+- Task 3: pure basis-point rules, versioned use cases and isolated memory storage are implemented. All 14 contract/domain/service tests and strict type checks passed. Coverage includes exact boundaries, duplicate commands, stale revisions, immutable history, missing sectors and empty state after restart.
