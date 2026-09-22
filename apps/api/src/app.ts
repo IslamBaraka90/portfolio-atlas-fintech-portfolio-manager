@@ -1,3 +1,5 @@
+import { AccessControl } from "./security/access.js";
+import type { AccessConfig } from "@portfolio-atlas/contracts";
 import { ReportService } from "@portfolio-atlas/core";
 import { registerReportRoutes } from "./http/reports.js";
 import { AttributionService } from "@portfolio-atlas/core";
@@ -75,7 +77,7 @@ import { syntheticInstruments } from "@portfolio-atlas/testing";
 import { createHttpContext } from "./http/context.js";
 import { registerInstrumentRoutes } from "./http/instruments.js";
 import { randomUUID } from "node:crypto";
-import Fastify from "fastify";
+import Fastify, { LogController } from "fastify";
 import { ZodError } from "zod";
 import {
   ApplicationError,
@@ -88,6 +90,8 @@ import { registerRoutes } from "./http/routes.js";
 // Construction is separate from listening, so HTTP behavior can be tested with inject().
 export function buildApp(
   options: {
+    accessConfig?: AccessConfig;
+    secureCookie?: boolean;
     chartProviders?: Partial<Record<DataMode, ChartProvider>>;
     rawArchive?: RawArchive;
     databasePath?: string;
@@ -102,7 +106,10 @@ export function buildApp(
   } = {},
 ) {
   const app = Fastify({
-    logger: options.logger ?? false,
+    logger: options.logger
+      ? { redact: ["req.headers.authorization", "req.headers.cookie", "res.headers.set-cookie"] }
+      : false,
+    logController: new LogController({ disableRequestLogging: true }),
     bodyLimit: 128_000,
     genReqId: () => randomUUID(),
   });
@@ -117,7 +124,8 @@ export function buildApp(
       : ("memory" as const);
   const repository = new SqlitePortfolioRepository(database);
   const ids = options.ids ?? { next: () => randomUUID() };
-  const commands = new Commands(repository, database);
+  const access = new AccessControl(database, clock, options.accessConfig, options.secureCookie);
+  const commands = new Commands(repository, database, access);
   const service = new PortfolioService(repository, clock, ids, commands);
   const yahooTransport = options.yahooEnabled ? createYahooTransport() : null;
   const budget = new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000);
@@ -178,11 +186,22 @@ export function buildApp(
         requestId: request.id,
       });
     }
-    if (error instanceof ApplicationError)
-      return reply.code(error.code === "NOT_FOUND" ? 404 : 409).send({
-        error: { code: error.code, message: error.message, fields: [] },
-        requestId: request.id,
-      });
+    if (error instanceof ApplicationError) {
+      if (error.code === "ACCESS_DENIED")
+        access.record({
+          operation: request.method + " " + (request.routeOptions.url ?? "unknown"),
+          principal: request.principal,
+          requestId: request.id,
+          decision: "denied",
+          reason: error.message,
+        });
+      return reply
+        .code(error.code === "ACCESS_DENIED" ? 403 : error.code === "NOT_FOUND" ? 404 : 409)
+        .send({
+          error: { code: error.code, message: error.message, fields: [] },
+          requestId: request.id,
+        });
+    }
     const status =
       typeof error === "object" &&
       error !== null &&
@@ -209,6 +228,7 @@ export function buildApp(
       requestId: request.id,
     }),
   );
+  access.register(app, createHttpContext(clock, sessionId, storage));
   registerRoutes(app, service, clock, sessionId, storage);
   registerInstrumentRoutes(
     app,

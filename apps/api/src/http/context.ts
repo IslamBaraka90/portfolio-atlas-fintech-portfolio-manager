@@ -32,7 +32,13 @@ export function createHttpContext(
       };
     },
     command(request: FastifyRequest) {
-      return { key: keySchema.parse(request.headers["idempotency-key"]), requestId: request.id };
+      const key = keySchema.parse(request.headers["idempotency-key"]);
+      const p = request.principal;
+      return {
+        key: p ? JSON.stringify([p.actor.scopeId, p.actor.id, key]) : key,
+        requestId: request.id,
+        ...(p ? { principal: p } : {}),
+      };
     },
   };
 }

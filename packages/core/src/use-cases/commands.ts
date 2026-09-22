@@ -1,9 +1,11 @@
+import type { Actor } from "@portfolio-atlas/contracts";
 import { ApplicationError } from "./errors.js";
 import type { PortfolioRepository } from "../ports/portfolio-repository.js";
 import { directTransactions, type Transactions } from "../ports/transactions.js";
 export interface CommandContext {
   key: string;
   requestId: string;
+  principal?: { actor: Actor; policyRevision: string; local: boolean };
 }
 export function canonical(value: unknown): string {
   if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
@@ -25,6 +27,10 @@ export class Commands {
   constructor(
     private readonly store: Pick<PortfolioRepository, "command" | "saveCommand">,
     private readonly transactions: Transactions = directTransactions,
+    private readonly hooks?: {
+      before(operation: string, input: unknown, context: CommandContext): void;
+      after(operation: string, input: unknown, result: unknown, context: CommandContext): void;
+    },
   ) {}
   private replay<T>(record: { fingerprint: string; result: unknown }, fingerprint: string): T {
     if (record.fingerprint !== fingerprint)
@@ -43,9 +49,14 @@ export class Commands {
     return this.transactions.run(() => {
       const saved = this.store.command(context.key);
       if (saved) return this.replay<T>(saved, fingerprint);
+      const { operation, input } = JSON.parse(fingerprint) as { operation: string; input: unknown };
+      this.hooks?.before(operation, input, context);
       const value = action();
       if (value instanceof Promise) throw new Error("Commit callbacks must be synchronous.");
-      if (persist(value)) this.store.saveCommand(context.key, fingerprint, value);
+      if (persist(value)) {
+        this.hooks?.after(operation, input, value, context);
+        this.store.saveCommand(context.key, fingerprint, value);
+      }
       return structuredClone(value);
     });
   }
