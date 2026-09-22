@@ -91,6 +91,20 @@ export function reconcileBook(
       .filter((lot) => lot.currency === currency)
       .reduce((sum, lot) => sum.plus(lot.costRemaining), zero());
     if (!journalCost.eq(lotCost)) warnings.push("Lot costs and investment journal disagree.");
+    for (const side of ["buy", "sell"] as const) {
+      const account = accounts.get(
+        currency + ":" + (side === "buy" ? "trade_payable" : "trade_receivable"),
+      );
+      const net = account
+        ? side === "buy"
+          ? account.credits.minus(account.debits)
+          : account.debits.minus(account.credits)
+        : zero();
+      const remaining = projection.settlements
+        .filter((o) => o.currency === currency && o.side === side)
+        .reduce((sum, o) => sum.plus(o.remainingCash), zero());
+      if (!net.eq(remaining)) warnings.push("Settlement obligations and journal disagree.");
+    }
   }
   const { expectedJournal, ...state } = projection;
   void expectedJournal;
@@ -98,8 +112,10 @@ export function reconcileBook(
     portfolioId,
     checkpoint: events.at(-1)?.sequence ?? 0,
     generatedAt,
-    policyVersion: "chapter-5.v1",
-    settlementPolicy: "immediate_teaching",
+    policyVersion: projection.settlements.length ? "chapter-13.v1" : "chapter-5.v1",
+    settlementPolicy: projection.settlements.length
+      ? "deferred_or_mixed_teaching"
+      : "immediate_teaching",
     ...state,
     accounts: [...accounts.values()].map((row) => ({
       currency: row.currency,
@@ -111,7 +127,9 @@ export function reconcileBook(
     reconciled: warnings.length === 0,
     warnings: [
       ...warnings,
-      "Immediate teaching settlement; pending cash and quantities are zero.",
+      projection.settlements.length
+        ? "Economic positions include trades; custody quantities and settled cash change on settlement. Pending cash is net receivables minus payables."
+        : "Immediate teaching settlement; pending cash and quantities are zero.",
       "FIFO book lots expense fees separately; no jurisdictional tax treatment is asserted.",
     ],
   });

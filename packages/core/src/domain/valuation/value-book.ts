@@ -52,10 +52,10 @@ export function valueBook(
     };
   }
   const cash = book.book.cash.map((c) => {
-    const converted = convert(c.settled, c.currency);
+    const converted = convert(c.economic ?? c.settled, c.currency);
     return {
       currency: c.currency,
-      amount: c.settled,
+      amount: c.economic ?? c.settled,
       baseAmount: converted.value,
       fxId: converted.fxId,
       reasons: converted.reasons,
@@ -64,7 +64,11 @@ export function valueBook(
   const positions = book.book.positions.map((position) => {
     const mark = marks.find((m) => m.instrumentId === position.instrumentId);
     if (!mark) throw new Error("Valuation mark mapping omitted a book position.");
-    const local = mark.price === null ? null : money(new D(position.quantity).mul(mark.price));
+    const local = new D(position.quantity).isZero()
+      ? "0.00"
+      : mark.price === null
+        ? null
+        : money(new D(position.quantity).mul(mark.price));
     const converted =
       local === null
         ? { value: null, fxId: null, reasons: ["Holding has no accepted market price."] }
@@ -113,7 +117,7 @@ export function valueBook(
     warnings: [
       "Current reconstruction from recorded evidence; not historical point-in-time performance.",
       "External deposits change NAV without creating investment return.",
-      "Reservations are included once in settled cash. Immediate teaching settlement has no pending liabilities.",
+      "NAV uses economic cash (settled plus receivables minus payables). Reservations are not subtracted twice.",
       ...(marks.some((m) => m.override !== null)
         ? [
             "Manual teaching overrides assert current book share units; inspect their reasons and recorded times.",

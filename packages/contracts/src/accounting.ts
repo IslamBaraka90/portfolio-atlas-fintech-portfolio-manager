@@ -58,6 +58,28 @@ export const postingInputSchema = z.discriminatedUnion("kind", [
   }),
   z.strictObject({ ...trade, kind: z.literal("buy") }),
   z.strictObject({ ...trade, kind: z.literal("sell") }),
+  ...(["pending_buy", "pending_sell"] as const).map((kind) =>
+    z.strictObject({
+      ...trade,
+      kind: z.literal(kind),
+      settlementId: z.string().min(1).max(100),
+      dueDate: z.iso.date(),
+      calendarId: z.string().min(1),
+      calendarRevision: z.number().int().positive(),
+    }),
+  ),
+  z.strictObject({
+    ...base,
+    kind: z.literal("settlement"),
+    settlementId: z.string().min(1),
+    quantity: positiveQuantity,
+  }),
+  z.strictObject({
+    ...base,
+    kind: z.literal("settlement_failure"),
+    settlementId: z.string().min(1),
+    reason: z.string().trim().min(10).max(500),
+  }),
   z.strictObject({
     ...base,
     kind: z.literal("dividend"),
@@ -111,6 +133,8 @@ export const accountSchema = z.enum([
   "dividend_income",
   "realized_pnl",
   "fee_expense",
+  "trade_payable",
+  "trade_receivable",
 ]);
 export type Account = z.infer<typeof accountSchema>;
 export const journalLineSchema = z.strictObject({
@@ -145,13 +169,15 @@ export const cashBalanceSchema = z.strictObject({
   settled: moneyTextSchema,
   reserved: moneyTextSchema,
   available: moneyTextSchema,
-  pending: moneyTextSchema,
+  pending: z.string().regex(/^-?\d+\.\d{2}$/),
+  economic: moneyTextSchema.optional(),
 });
 export const positionSnapshotSchema = z.strictObject({
   instrumentId: z.string(),
   currency: currencySchema,
   quantity: quantityTextSchema,
-  pendingQuantity: quantityTextSchema,
+  pendingQuantity: z.string().regex(/^-?\d+(\.\d{1,8})?$/),
+  custodyQuantity: quantityTextSchema.optional(),
   costBasis: moneyTextSchema,
   unitCost: quantityTextSchema,
 });
@@ -161,12 +187,30 @@ export const reservationSchema = z.strictObject({
   amount: moneyTextSchema,
   createdBy: z.string(),
 });
+export const settlementObligationSchema = z.strictObject({
+  id: z.string(),
+  tradeEventId: z.string(),
+  instrumentId: z.string(),
+  currency: currencySchema,
+  side: z.enum(["buy", "sell"]),
+  quantity: quantityTextSchema,
+  remainingQuantity: quantityTextSchema,
+  amount: moneyTextSchema,
+  remainingCash: moneyTextSchema,
+  dueDate: z.iso.date(),
+  calendarId: z.string(),
+  calendarRevision: z.number().int().positive(),
+  status: z.enum(["pending", "failed", "settled"]),
+  failureReason: z.string().nullable(),
+});
+export type SettlementObligation = z.infer<typeof settlementObligationSchema>;
 export const bookSnapshotSchema = z.strictObject({
   portfolioId: z.string(),
   checkpoint: z.number().int().nonnegative(),
   generatedAt: z.iso.datetime(),
-  policyVersion: z.literal("chapter-5.v1"),
-  settlementPolicy: z.literal("immediate_teaching"),
+  policyVersion: z.enum(["chapter-5.v1", "chapter-13.v1"]),
+  settlementPolicy: z.enum(["immediate_teaching", "deferred_or_mixed_teaching"]),
+  settlements: z.array(settlementObligationSchema).default([]),
   cash: z.array(cashBalanceSchema),
   positions: z.array(positionSnapshotSchema),
   lots: z.array(taxLotSchema),

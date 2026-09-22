@@ -6,8 +6,18 @@ import type {
   LedgerEvent,
   Account,
   TaxLot,
+  SettlementObligation,
 } from "@portfolio-atlas/contracts";
-import { BookDecimal as D, zero, cents, money, quantity, unitCost, invalid } from "./decimal.js";
+import {
+  BookDecimal as D,
+  zero,
+  cents,
+  money,
+  signedMoney,
+  quantity,
+  unitCost,
+  invalid,
+} from "./decimal.js";
 type Currency = BookSnapshot["cash"][number]["currency"];
 interface Lot {
   lotId: string;
@@ -54,13 +64,19 @@ export function projectBook(events: LedgerEvent[]) {
     lots: Lot[] = [],
     reservations = new Map<string, Reservation>(),
     reservationIds = new Set<string>();
+  const settlements = new Map<string, SettlementObligation>();
+  const pendingCash = (currency: Currency, side: "buy" | "sell") =>
+    [...settlements.values()]
+      .filter((o) => o.currency === currency && o.side === side)
+      .reduce((sum, o) => sum.plus(o.remainingCash), zero());
   const entries: JournalEntry[] = [];
   const balance = (currency: Currency) => cash.get(currency) ?? zero();
   const reserved = (currency: Currency) =>
     [...reservations.values()]
       .filter((row) => row.currency === currency)
       .reduce((sum, row) => sum.plus(row.amount), zero());
-  const available = (currency: Currency) => balance(currency).minus(reserved(currency));
+  const available = (currency: Currency) =>
+    balance(currency).minus(reserved(currency)).minus(pendingCash(currency, "buy"));
   const spend = (currency: Currency, amount: Decimal) => {
     if (amount.gt(available(currency)))
       invalid("Insufficient available cash; reservations cannot be spent twice.");
@@ -113,12 +129,55 @@ export function projectBook(events: LedgerEvent[]) {
     } else if (input.kind === "release") {
       if (!reservations.delete(input.reservationId))
         invalid("Reservation does not exist or was already consumed.");
-    } else if (input.kind === "buy" || input.kind === "sell") {
+    } else if (input.kind === "settlement" || input.kind === "settlement_failure") {
+      const obligation = settlements.get(input.settlementId);
+      if (!obligation || obligation.status === "settled")
+        invalid("Settlement obligation is absent or already completed.");
+      if (input.kind === "settlement_failure") {
+        obligation.status = "failed";
+        obligation.failureReason = input.reason;
+      } else {
+        const delivered = new D(input.quantity),
+          remaining = new D(obligation.remainingQuantity);
+        if (input.occurredAt.slice(0, 10) < obligation.dueDate)
+          invalid("Settlement is earlier than the configured due date.");
+        if (delivered.gt(remaining))
+          invalid("Settlement quantity exceeds the remaining obligation.");
+        const amount = delivered.eq(remaining)
+          ? new D(obligation.remainingCash)
+          : cents(new D(obligation.remainingCash).mul(delivered).div(remaining));
+        obligation.remainingQuantity = quantity(remaining.minus(delivered));
+        obligation.remainingCash = money(new D(obligation.remainingCash).minus(amount));
+        obligation.status = delivered.eq(remaining) ? "settled" : "pending";
+        obligation.failureReason = null;
+        if (obligation.side === "buy") {
+          spend(obligation.currency, amount);
+          line("trade_payable", obligation.currency, "debit", amount);
+          line("cash", obligation.currency, "credit", amount);
+        } else {
+          cash.set(obligation.currency, cents(balance(obligation.currency).plus(amount)));
+          line("cash", obligation.currency, "debit", amount);
+          line("trade_receivable", obligation.currency, "credit", amount);
+        }
+      }
+    } else if (
+      input.kind === "buy" ||
+      input.kind === "sell" ||
+      input.kind === "pending_buy" ||
+      input.kind === "pending_sell"
+    ) {
+      const deferred = input.kind === "pending_buy" || input.kind === "pending_sell";
+      const isBuy = input.kind === "buy" || input.kind === "pending_buy";
+      if (
+        deferred &&
+        (settlements.has(input.settlementId) || input.dueDate < input.occurredAt.slice(0, 10))
+      )
+        invalid("Settlement ID was reused or due date precedes the trade.");
       const shares = new D(input.quantity),
         gross = cents(shares.mul(input.unitPrice)),
         fee = new D(input.fee);
       if (gross.lte(0)) invalid("Trade notional rounds to zero under the currency policy.");
-      if (input.kind === "buy") {
+      if (isBuy) {
         const total = gross.plus(fee);
         if (input.reservationId) {
           const reservation = reservations.get(input.reservationId);
@@ -127,7 +186,9 @@ export function projectBook(events: LedgerEvent[]) {
           if (total.gt(reservation.amount)) invalid("Whole fill exceeds its cash reservation.");
           reservations.delete(input.reservationId);
         }
-        spend(input.currency, total);
+        if (deferred) {
+          if (total.gt(available(input.currency))) invalid("Deferred purchase is not cash funded.");
+        } else spend(input.currency, total);
         if (
           lots.some(
             (lot) =>
@@ -148,8 +209,15 @@ export function projectBook(events: LedgerEvent[]) {
         });
         line("investment_cost", input.currency, "debit", gross);
         line("fee_expense", input.currency, "debit", fee);
-        line("cash", input.currency, "credit", total);
+        line(deferred ? "trade_payable" : "cash", input.currency, "credit", total);
       } else {
+        if (
+          [...settlements.values()].some(
+            (o) =>
+              o.instrumentId === input.instrumentId && o.side === "buy" && o.status !== "settled",
+          )
+        )
+          invalid("Pending incoming securities must settle before this instrument can be sold.");
         if (input.reservationId)
           invalid("Sell reservations require a later order/settlement policy.");
         if (fee.gt(gross))
@@ -174,14 +242,40 @@ export function projectBook(events: LedgerEvent[]) {
           remaining = remaining.minus(take);
           released = released.plus(cost);
         }
-        cash.set(input.currency, cents(balance(input.currency).plus(gross).minus(fee)));
-        line("cash", input.currency, "debit", gross.minus(fee));
+        if (!deferred)
+          cash.set(input.currency, cents(balance(input.currency).plus(gross).minus(fee)));
+        line(deferred ? "trade_receivable" : "cash", input.currency, "debit", gross.minus(fee));
         line("fee_expense", input.currency, "debit", fee);
         line("investment_cost", input.currency, "credit", released);
         const gain = gross.minus(released);
         line("realized_pnl", input.currency, gain.gte(0) ? "credit" : "debit", gain.abs());
       }
+      if (deferred) {
+        const amount = money(isBuy ? gross.plus(fee) : gross.minus(fee));
+        settlements.set(input.settlementId, {
+          id: input.settlementId,
+          tradeEventId: event.id,
+          instrumentId: input.instrumentId,
+          currency: input.currency,
+          side: isBuy ? "buy" : "sell",
+          quantity: quantity(shares),
+          remainingQuantity: quantity(shares),
+          amount,
+          remainingCash: amount,
+          dueDate: input.dueDate,
+          calendarId: input.calendarId,
+          calendarRevision: input.calendarRevision,
+          status: "pending",
+          failureReason: null,
+        });
+      }
     } else if (input.kind === "split") {
+      if (
+        [...settlements.values()].some(
+          (o) => o.instrumentId === input.instrumentId && o.status !== "settled",
+        )
+      )
+        invalid("Settle affected obligations before a book split.");
       const ratio = new D(input.ratio),
         affected = lots.filter(
           (lot) => lot.instrumentId === input.instrumentId && lot.shares.gt(0),
@@ -206,6 +300,7 @@ export function projectBook(events: LedgerEvent[]) {
   const currencies = new Set<Currency>([
     ...cash.keys(),
     ...[...reservations.values()].map((row) => row.currency),
+    ...[...settlements.values()].map((o) => o.currency),
   ]);
   const lotRows: TaxLot[] = lots.map((lot) => ({
     lotId: lot.lotId,
@@ -220,14 +315,21 @@ export function projectBook(events: LedgerEvent[]) {
   const positions: BookSnapshot["positions"] = [];
   for (const id of new Set(lots.map((lot) => lot.instrumentId))) {
     const held = lots.filter((lot) => lot.instrumentId === id && lot.shares.gt(0));
-    if (!held.length) continue;
+    const pending = [...settlements.values()]
+      .filter((o) => o.instrumentId === id)
+      .reduce(
+        (sum, o) => sum.plus(new D(o.remainingQuantity).mul(o.side === "buy" ? 1 : -1)),
+        zero(),
+      );
+    if (!held.length && pending.eq(0)) continue;
     const shares = held.reduce((sum, lot) => sum.plus(lot.shares), zero()),
       cost = held.reduce((sum, lot) => sum.plus(lot.cost), zero());
     positions.push({
       instrumentId: id,
-      currency: held[0]!.currency,
+      currency: lots.find((l) => l.instrumentId === id)!.currency,
       quantity: quantity(shares),
-      pendingQuantity: "0.00000000",
+      pendingQuantity: pending.toFixed(8),
+      ...(settlements.size ? { custodyQuantity: quantity(shares.minus(pending)) } : {}),
       costBasis: money(cost),
       unitCost: unitCost(cost, shares),
     });
@@ -236,12 +338,22 @@ export function projectBook(events: LedgerEvent[]) {
     expectedJournal: entries,
     lots: lotRows,
     positions,
+    settlements: [...settlements.values()],
     cash: [...currencies].sort().map((currency) => ({
       currency,
       settled: money(balance(currency)),
       reserved: money(reserved(currency)),
       available: money(available(currency)),
-      pending: "0.00",
+      pending: signedMoney(pendingCash(currency, "sell").minus(pendingCash(currency, "buy"))),
+      ...(settlements.size
+        ? {
+            economic: money(
+              balance(currency)
+                .plus(pendingCash(currency, "sell"))
+                .minus(pendingCash(currency, "buy")),
+            ),
+          }
+        : {}),
     })),
     reservations: [...reservations.values()].map((row) => ({
       id: row.id,
