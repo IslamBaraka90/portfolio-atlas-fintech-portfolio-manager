@@ -17,3 +17,4 @@ export * from "./orders.js";
 export * from "./operations.js";
 export * from "./monitoring.js";
 export * from "./performance.js";
+export * from "./reporting.js";
