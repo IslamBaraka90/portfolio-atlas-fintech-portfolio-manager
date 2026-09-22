@@ -1,8 +1,8 @@
 # PRP 05 — Cash, positions, tax lots and the book of record
 
-Status: planned; implementation has not started.
+Status: implemented; final chapter verification recorded in docs/progress.md.
 Chapter: 5. Editorial duration estimate: 30 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Continuous full-course implementation is authorized.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] 10,000 cash minus a 1,000 purchase and 5 expensed fee gives 8,995 cash and 10 shares.
-- [ ] A duplicate fill/event leaves quantity and cash unchanged.
-- [ ] A 2-for-1 split doubles quantity and halves per-share basis under the selected policy without creating cash.
-- [ ] A reversal plus replacement preserves the original audit trail and yields the independently computed balance.
-- [ ] A failed multi-line posting commits no partial journal.
-- [ ] An external deposit differs from a dividend receipt and trading profit in event classification.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] 10,000 cash minus a 1,000 purchase and 5 expensed fee gives 8,995 cash and 10 shares.
+- [x] A duplicate fill/event leaves quantity and cash unchanged.
+- [x] A 2-for-1 split doubles quantity and halves per-share basis under the selected policy without creating cash.
+- [x] A reversal plus replacement preserves the original audit trail and yields the independently computed balance.
+- [x] A failed multi-line posting commits no partial journal.
+- [x] An external deposit differs from a dividend receipt and trading profit in event classification.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Durable reconciled cash, lots and positions. Chapter 6 values the book using accepted market observations.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress and publish the verified chapter checkpoint. Continue to Chapter 6 under the full-build authorization.
 
 ## Evidence to fill during implementation
 
@@ -106,3 +106,5 @@ Update progress with completed tasks and commit references. Stop after this chap
 - Commands and observed results:
 - UI walkthrough/screenshots:
 - Remaining limitations and next prerequisite:
+
+Implementation guide and evidence: [Chapter 5](../docs/chapters/05-learning-guide.md).

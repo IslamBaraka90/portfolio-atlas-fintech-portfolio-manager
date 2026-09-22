@@ -236,15 +236,13 @@ export function projectBook(events: LedgerEvent[]) {
     expectedJournal: entries,
     lots: lotRows,
     positions,
-    cash: [...currencies]
-      .sort()
-      .map((currency) => ({
-        currency,
-        settled: money(balance(currency)),
-        reserved: money(reserved(currency)),
-        available: money(available(currency)),
-        pending: "0.00",
-      })),
+    cash: [...currencies].sort().map((currency) => ({
+      currency,
+      settled: money(balance(currency)),
+      reserved: money(reserved(currency)),
+      available: money(available(currency)),
+      pending: "0.00",
+    })),
     reservations: [...reservations.values()].map((row) => ({
       id: row.id,
       currency: row.currency,

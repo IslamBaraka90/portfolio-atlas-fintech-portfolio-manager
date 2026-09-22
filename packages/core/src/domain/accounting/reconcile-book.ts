@@ -23,6 +23,17 @@ export function reconcileBook(
   for (const entry of projection.expectedJournal)
     if (!byEvent.has(entry.eventId) || !sameLines(entry, byEvent.get(entry.eventId)!))
       warnings.push("Active event does not match its journal: " + entry.eventId);
+  // Check corrected history too: tampering with both an original and its
+  // inverse could otherwise hide behind a zero net account balance.
+  for (const [index, event] of events.entries()) {
+    if (event.input.kind === "reversal") continue;
+    const expected = projectBook(events.slice(0, index + 1)).expectedJournal.find(
+      (entry) => entry.eventId === event.id,
+    );
+    const stored = byEvent.get(event.id);
+    if (!expected || !stored || !sameLines(expected, stored))
+      warnings.push("Historical event does not match its journal: " + event.id);
+  }
   for (const event of events)
     if (event.input.kind === "reversal") {
       const original = byEvent.get(event.input.originalEventId),

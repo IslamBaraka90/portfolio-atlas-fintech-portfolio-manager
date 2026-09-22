@@ -127,7 +127,9 @@ export class LedgerService {
           kind: "reversal",
           portfolioId: input.portfolioId,
           sourceRef: "reversal:" + id,
-          occurredAt: original.input.occurredAt,
+          // A correction is appended after every prior event, even when the
+          // latest active event predates already-reversed events.
+          occurredAt: state.events.at(-1)!.input.occurredAt,
           note: "Correction reversal",
           originalEventId: original.id,
           reason: input.reason,

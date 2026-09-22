@@ -139,6 +139,13 @@ test("reversal plus replacement leaves the original journal and independently re
   const corrupt = structuredClone(b.journal);
   corrupt[3]!.lines[0]!.amount = "801.00";
   assert.equal(reconcileBook("p", b.events, corrupt, fixtureTime).reconciled, false);
+  const hidden = structuredClone(b.journal);
+  // Both entries still balance and offset, but no longer represent the source buy.
+  for (const index of [1, 2]) {
+    hidden[index]!.lines[0]!.amount = "1001.00";
+    hidden[index]!.lines[2]!.amount = "1006.00";
+  }
+  assert.equal(reconcileBook("p", b.events, hidden, fixtureTime).reconciled, false);
 });
 test("fractional share loss and fee/price edge cases fail explicitly", () => {
   const b = book();

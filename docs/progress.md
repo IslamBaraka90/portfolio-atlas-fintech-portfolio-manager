@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–4 are implemented and published as stacked PRs. Chapter 5 is in progress. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–5 are implemented; Chapters 1–4 are published as stacked PRs and Chapter 5 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -144,3 +144,11 @@ Task 2 browser regression: all ten connected journeys passed with SQLite-backed 
 ## 0.13.2 release checkpoint
 
 The release is pinned exactly. The installed payload has 717 topics, including 20 D14 contract-tier methods. Strict type checks and all 60 existing unit/API checks passed after upgrade, including independent symmetric and asymmetric two-asset minima and inverse-volatility weights. npm reported zero known vulnerabilities during installation. The full Chapters 1–17 authorization supersedes the former D14 stop.
+
+## Chapter 5 completion checks
+
+Task 3 (54ba297) adds event replay, FIFO costs, reservations, journal balancing and corrections. Task 4 (0ac06bc) connects the API and React book. The connected Chromium walkthrough passed with duplicate-command replay, an 8-share correction, immutable original journal and rejected unaffordable purchase. Desktop and mobile captures were inspected; mobile has no page overflow.
+
+Task 5 checks partial-journal rollback and durable restart, repeated latest-active corrections, and tampering with both an original and its reversal. Final gate results follow. Chapter 6 continues under full-build authorization.
+
+Final Chapter 5 gates: strict typecheck passed; all 62 unit/API checks passed; production build and browser dependency guard passed; Prettier and Markdown lint (74 files) passed; all 11 connected Chromium journeys passed. Chapter 4 GitHub checks are green. SQLite failure/retry/restart evidence and reversed-history tamper checks passed.
