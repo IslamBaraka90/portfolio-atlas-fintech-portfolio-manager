@@ -112,3 +112,5 @@ A fresh npm ci --ignore-scripts completed with zero reported vulnerabilities. Al
 Task 1 defines instrument/listing identity, subunits, explicit unknowns, alias clocks and synthetic fixtures. Contracts validate whole-second package inputs without time truncation.
 
 Task 2 implements the Yahoo v4 class adapter and deterministic synthetic provider. Seven adapter/service tests pass. Subunit conversion, null tick/MIC evidence, schema failures, throttling, cache lineage and timeout/concurrency retention are covered. The core port contains no Yahoo types.
+
+Task 3 resolves effective-dated aliases through the verified D02 export and evaluates mandate/instrument revisions. All 28 unit/API tests and type checks pass. Independent cases cover ticker continuity, half-open intervals, future evidence, overlapping aliases, disallowed types, similar-name securities and Yahoo symbol mismatch.
