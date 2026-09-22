@@ -1,3 +1,4 @@
+import { FileRawArchive } from "@portfolio-atlas/adapters";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { buildApp } from "./app.js";
@@ -16,6 +17,9 @@ if (process.env.DATA_MODE && process.env.DATA_MODE !== "synthetic") {
 
 const app = buildApp({
   logger: true,
+  rawArchive: new FileRawArchive(
+    fileURLToPath(new URL("../../../.data/market-data/", import.meta.url)),
+  ),
   yahooEnabled: process.env.YAHOO_ENABLED === "true",
   yahooTimeoutMs: Number(process.env.YAHOO_REQUEST_TIMEOUT_MS ?? 10000),
   yahooConcurrency: Number(process.env.YAHOO_MAX_CONCURRENCY ?? 2),

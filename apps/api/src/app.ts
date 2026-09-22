@@ -1,3 +1,12 @@
+import { MarketDataService, type ChartProvider, type RawArchive } from "@portfolio-atlas/core";
+import {
+  SyntheticChartProvider,
+  YahooChartProvider,
+  FintechMarketQualityValidator,
+  MemoryDatasetRepository,
+  MemoryRawArchive,
+} from "@portfolio-atlas/adapters";
+import { registerMarketDataRoutes } from "./http/market-data.js";
 import {
   MemoryInstrumentRepository,
   SyntheticInstrumentProvider,
@@ -27,6 +36,8 @@ import { registerRoutes } from "./http/routes.js";
 // Construction is separate from listening, so HTTP behavior can be tested with inject().
 export function buildApp(
   options: {
+    chartProviders?: Partial<Record<DataMode, ChartProvider>>;
+    rawArchive?: RawArchive;
     logger?: boolean;
     clock?: Clock;
     ids?: IdFactory;
@@ -49,15 +60,13 @@ export function buildApp(
   const ids = options.ids ?? { next: () => randomUUID() };
   const commands = new Commands(repository);
   const service = new PortfolioService(repository, clock, ids, commands);
+  const yahooTransport = options.yahooEnabled ? createYahooTransport() : null;
+  const budget = new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000);
   const providers: Partial<Record<DataMode, InstrumentProvider>> = options.instrumentProviders ?? {
     synthetic: new SyntheticInstrumentProvider(syntheticInstruments, clock),
     ...(options.yahooEnabled
       ? {
-          yahoo: new YahooInstrumentProvider(
-            createYahooTransport(),
-            clock,
-            new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000),
-          ),
+          yahoo: new YahooInstrumentProvider(yahooTransport!, clock, budget),
         }
       : {}),
   };
@@ -144,5 +153,19 @@ export function buildApp(
     commands,
     createHttpContext(clock, sessionId),
   );
+  const marketData = new MarketDataService(
+    options.chartProviders ?? {
+      synthetic: new SyntheticChartProvider(clock),
+      ...(yahooTransport ? { yahoo: new YahooChartProvider(yahooTransport, clock, budget) } : {}),
+    },
+    new MemoryDatasetRepository(),
+    options.rawArchive ?? new MemoryRawArchive(),
+    new FintechMarketQualityValidator(),
+    instruments,
+    clock,
+    ids,
+    commands,
+  );
+  registerMarketDataRoutes(app, marketData, createHttpContext(clock, sessionId));
   return app;
 }
