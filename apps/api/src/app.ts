@@ -1,3 +1,5 @@
+import { SqliteRecovery } from "@portfolio-atlas/adapters";
+import { registerRecoveryRoutes } from "./http/recovery.js";
 import { AccessControl } from "./security/access.js";
 import type { AccessConfig } from "@portfolio-atlas/contracts";
 import { ReportService } from "@portfolio-atlas/core";
@@ -446,6 +448,16 @@ export function buildApp(
   registerReportRoutes(
     app,
     new ReportService(snapshots, service, ledger, clock, ids, commands),
+    createHttpContext(clock, sessionId, storage),
+  );
+  registerRecoveryRoutes(
+    app,
+    database,
+    storage === "sqlite" && !options.rawArchive
+      ? new SqliteRecovery(database, dirname(resolve(options.databasePath!)))
+      : null,
+    commands,
+    clock,
     createHttpContext(clock, sessionId, storage),
   );
   return app;

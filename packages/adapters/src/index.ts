@@ -28,3 +28,5 @@ export * from "./analytics/fintech-lot-scoring.js";
 export * from "./analytics/fintech-paper-execution.js";
 
 export * from "./analytics/fintech-monitor.js";
+
+export * from "./persistence/sqlite/recovery.js";
