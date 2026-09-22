@@ -1,3 +1,4 @@
+import { useApprovalPermission } from "../../shared/use-approval";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -12,7 +13,6 @@ import {
 } from "@portfolio-atlas/contracts";
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
-import "../data-quality/data-quality.css";
 import "../valuation/valuation.css";
 import "../research/research.css";
 const pct = (v: number) => (v * 100).toFixed(3) + "%";
@@ -98,6 +98,7 @@ export function RebalanceDesk() {
       setBusy(false);
     }
   }
+  const canApprove = useApprovalPermission("rebalance", proposal?.id, proposal?.revision);
   async function approve() {
     if (!proposal) return;
     setBusy(true);
@@ -447,7 +448,7 @@ export function RebalanceDesk() {
             </p>
             <button
               className="primary"
-              disabled={busy || proposal.status !== "ready"}
+              disabled={!canApprove || busy || proposal.status !== "ready"}
               onClick={() => void approve()}
             >
               Approve paper-trade proposal

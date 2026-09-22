@@ -11,7 +11,6 @@ import {
 } from "@portfolio-atlas/contracts";
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
-import "../data-quality/data-quality.css";
 type View = "providerClose" | "splitAdjustedClose" | "totalReturnClose" | "convertedClose";
 const views: { key: View; label: string }[] = [
   { key: "providerClose", label: "Provider prices" },

@@ -10,7 +10,6 @@ import {
 import { read, write } from "../../shared/api";
 import { LearningShell } from "../../app/LearningShell";
 import { CandleChart } from "./CandleChart";
-import "./data-quality.css";
 export function DataQualityDesk() {
   const [storage, setStorage] = useState<"memory" | "sqlite">("memory");
   const [instruments, setInstruments] = useState<Instrument[]>([]),

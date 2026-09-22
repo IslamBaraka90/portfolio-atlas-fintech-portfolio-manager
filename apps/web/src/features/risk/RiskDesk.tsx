@@ -11,7 +11,6 @@ import {
 } from "@portfolio-atlas/contracts";
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
-import "../data-quality/data-quality.css";
 import "../valuation/valuation.css";
 import "../research/research.css";
 const key = (r: { id: string; revision: number }) => r.id + ":" + r.revision;

@@ -23,6 +23,8 @@ export default defineConfig({
         WEB_ORIGIN: "http://127.0.0.1:5174",
         DATA_MODE: "synthetic",
         DATABASE_PATH: ":memory:",
+        AUTH_CONFIG_PATH: "",
+        AUTH_SECURE_COOKIE: "false",
       },
     },
     {

@@ -35,7 +35,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: chapter-1-browser-evidence
+          name: portfolio-atlas-course-evidence
           path: |
             playwright-report/
             test-results/

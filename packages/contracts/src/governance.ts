@@ -26,7 +26,10 @@ export const accessConfigSchema = z
       .max(100),
   })
   .superRefine((v, c) => {
-    if (v.validFrom >= v.validTo || v.actors.some((a) => a.validFrom >= a.validTo))
+    if (
+      Date.parse(v.validFrom) >= Date.parse(v.validTo) ||
+      v.actors.some((a) => Date.parse(a.validFrom) >= Date.parse(a.validTo))
+    )
       c.addIssue({ code: "custom", message: "Effective intervals must be increasing." });
     if (
       new Set(v.actors.map((a) => a.id)).size !== v.actors.length ||

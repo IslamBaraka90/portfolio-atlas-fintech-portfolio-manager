@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve, sep } from "node:path";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -70,6 +73,7 @@ test("server roles, workspace scope, creator separation, actor binding and repla
     "report-create",
   );
   assert.equal(report.statusCode, 201, report.body);
+  assert.equal((await send("reviewer", "/governance/approvals")).json().data[0].canApprove, true);
   const route = "/reports/" + report.json().data.id + "/approval";
   const approval = {
     expectedRevision: 1,
@@ -167,6 +171,7 @@ test("browser sessions require CSRF, expire, revoke on logout and never expose b
 });
 test("a price override records authenticated prior and new mark evidence and rejects analysts", async (t) => {
   const access = testAccess();
+  access.actors.find((a) => a.id === "analyst")!.roles = ["analyst"];
   access.actors.find((a) => a.id === "operator")!.roles = ["operator", "analyst", "approver"];
   const app = buildApp({ accessConfig: access, clock: { now: () => fixtureTime } });
   t.after(() => app.close());
@@ -230,7 +235,7 @@ test("a price override records authenticated prior and new mark evidence and rej
   assert.equal(changed.overrides[0].prior.price, "100.00000000");
   assert.equal(changed.overrides[0].next.price, "110");
   assert.equal(changed.policyRevision, access.policyRevision);
-  // A reader is denied before any schema or resource information can leak.
+  // An analyst without override authority is denied before financial validation.
   assert.equal(
     (
       await app.inject({
@@ -238,11 +243,102 @@ test("a price override records authenticated prior and new mark evidence and rej
         url: "/api/v1/valuations",
         payload: input,
         headers: {
-          authorization: "Bearer " + testToken("reader"),
-          "idempotency-key": "reader-override",
+          authorization: "Bearer " + testToken("analyst"),
+          "idempotency-key": "analyst-override",
         },
       })
     ).statusCode,
     403,
   );
+});
+
+test("configured scope cannot downgrade on restart and revoked credentials lose access", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "portfolio-atlas-access-")),
+    databasePath = join(directory, "book.sqlite");
+  try {
+    const local = buildApp({ databasePath, clock: { now: () => fixtureTime } });
+    const post = async (path: string, payload: object) => {
+      const response = await local.inject({
+        method: "POST",
+        url: "/api/v1" + path,
+        payload,
+        headers: { "idempotency-key": "legacy-" + path.replaceAll("/", "-") },
+      });
+      assert.equal(response.statusCode, 201, response.body);
+      return response.json().data;
+    };
+    const mandate = await post("/mandates", demoMandate);
+    const portfolio = await post("/portfolios", {
+      name: "Legacy local book",
+      mandateId: mandate.id,
+    });
+    const legacy = await post("/reports", {
+      portfolioId: portfolio.id,
+      title: "Unauthenticated draft",
+      asOf: fixtureTime,
+      dataCutoff: fixtureTime,
+    });
+    await local.close();
+    const initial = buildApp({
+      databasePath,
+      accessConfig: testAccess(),
+      clock: { now: () => fixtureTime },
+    });
+    const rejected = await initial.inject({
+      method: "POST",
+      url: "/api/v1/reports/" + legacy.id + "/approval",
+      headers: {
+        authorization: "Bearer " + testToken("reviewer"),
+        "idempotency-key": "legacy-approve",
+      },
+      payload: {
+        expectedRevision: 1,
+        actor: "Reviewer",
+        reason: "Review a legacy unauthenticated draft.",
+        acknowledgeExceptions: true,
+      },
+    });
+    assert.equal(rejected.statusCode, 403);
+    assert.equal(
+      (
+        await initial.inject({
+          url: "/api/v1/governance/approvals",
+          headers: { authorization: "Bearer " + testToken("reviewer") },
+        })
+      ).json().data[0].canApprove,
+      false,
+    );
+    await initial.close();
+    assert.throws(() => buildApp({ databasePath }), /cannot change scope/);
+    const wrong = testAccess();
+    wrong.scopeId = "other-workspace";
+    assert.throws(() => buildApp({ databasePath, accessConfig: wrong }), /cannot change scope/);
+    const revoked = testAccess();
+    revoked.actors = revoked.actors.filter((a) => a.id !== "reader");
+    const restored = buildApp({
+      databasePath,
+      accessConfig: revoked,
+      clock: { now: () => fixtureTime },
+    });
+    try {
+      assert.equal(
+        (
+          await restored.inject({
+            url: "/api/v1/portfolios",
+            headers: { authorization: "Bearer " + testToken("reader") },
+          })
+        ).statusCode,
+        401,
+      );
+    } finally {
+      await restored.close();
+    }
+  } finally {
+    const target = resolve(directory),
+      root = resolve(tmpdir()) + sep;
+    assert.ok(
+      target.startsWith(root) && target.slice(root.length).startsWith("portfolio-atlas-access-"),
+    );
+    rmSync(target, { recursive: true, force: true });
+  }
 });

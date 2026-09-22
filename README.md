@@ -4,7 +4,9 @@
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current checkpoint: Chapters 1–6 — from instrument evidence to NAV and benchmarks.** Create a learning portfolio, validate instruments and candles, inspect corporate actions and FX, then post immutable events and rebuild cash, FIFO lots and journal balances. Freeze decimal valuations, explain missing price/FX evidence, and compare declared benchmark conventions. SQLite preserves the workspace across restarts. The full course through Chapter 17 is in active implementation.
+**Chapters 1–17 are implemented.** The React desk connects validated market data, a decimal accounting book, D14 portfolio construction, paper execution, custody reconciliation, risk, cash-flow-aware performance, immutable reports and governed recovery. The backend uses fintech-algorithms **0.13.2** and Yahoo Finance v4 through adapters. Follow the chronological task commits and chapter learning guides.
+
+The complete course branch is \`codex/chapter-17-governance-recovery\`. Chapters are published as stacked pull requests; review them in order. Public deployment and specialist assets remain separate extensions.
 
 ## Start here
 
@@ -29,7 +31,7 @@ npm ci --ignore-scripts
 npm run dev
 ```
 
-Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. Teaching defaults are synthetic. Chapter 5 introduces durable SQLite storage under .data/portfolio-atlas.sqlite; saved workspace records survive API restarts. Playwright explicitly uses ephemeral in-memory SQLite.
+For the complete published build, first run \`git switch codex/chapter-17-governance-recovery\` (after fetching the branch). Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. Teaching defaults are synthetic. Chapter 5 introduces durable SQLite storage under .data/portfolio-atlas.sqlite; saved workspace records survive API restarts. Most browser fixtures use memory SQLite; the governance journey runs its own temporary durable workspace.
 
 Follow the [Chapter 1 learning guide](docs/chapters/01-learning-guide.md) for the code-reading order, complete walkthrough and chronological commit map. See the [HTTP reference](docs/chapters/01-http-reference.md) and [recording notes](docs/video/chapter-01-recording-notes.md).
 
@@ -46,6 +48,21 @@ CI runs the same checks on Node 22.22.0. Browser tests use ports 3101 and 5174; 
 
 See the [Chapter 2 guide](docs/chapters/02-learning-guide.md) for instrument discovery, live Yahoo setup and the recorded provider smoke check.
 
+## Governance and recovery
+
+The default loopback app uses a clearly labeled local OS owner for solo lessons. Run \`npm run auth:provision\`, configure private AUTH_CONFIG_PATH and restart to use reader, analyst, operator and approver sessions with separation of duties. See the [access runbook](docs/runbooks/access-and-incidents.md).
+
+The governance desk creates protected checkpoints and verifies real restores into a separate directory. Hashes, SQLite integrity, ledger replay and every frozen report revision must match. See the [recovery runbook](docs/runbooks/backup-and-recovery.md).
+
+## Chapter learning guides
+
+| Chapters | Follow the evidence                                                                                                                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1–4      | [Mandate](docs/chapters/01-learning-guide.md), [identity](docs/chapters/02-learning-guide.md), [candles](docs/chapters/03-learning-guide.md), [actions and FX](docs/chapters/04-learning-guide.md)                                                     |
+| 5–8      | [Book](docs/chapters/05-learning-guide.md), [valuation](docs/chapters/06-learning-guide.md), [research](docs/chapters/07-learning-guide.md), [risk inputs](docs/chapters/08-learning-guide.md)                                                         |
+| 9–12     | [Construction](docs/chapters/09-learning-guide.md), [causal validation](docs/chapters/10-learning-guide.md), [rebalance](docs/chapters/11-learning-guide.md), [paper execution](docs/chapters/12-learning-guide.md)                                    |
+| 13–17    | [Settlement](docs/chapters/13-learning-guide.md), [monitoring](docs/chapters/14-learning-guide.md), [performance](docs/chapters/15-learning-guide.md), [reports](docs/chapters/16-learning-guide.md), [governance](docs/chapters/17-learning-guide.md) |
+
 ## Workspace
 
 | Location             | Responsibility                                                  |
@@ -55,19 +72,19 @@ See the [Chapter 2 guide](docs/chapters/02-learning-guide.md) for instrument dis
 | `packages/contracts` | Provider-neutral API and event contracts                        |
 | `packages/core`      | Financial domain, use cases, and ports                          |
 | `packages/adapters`  | Yahoo Finance, fintech-algorithms, persistence, paper execution |
-| `packages/testing`   | Synthetic fixtures, clocks, and future test helpers             |
+| `packages/testing`   | Synthetic fixtures, clocks, and replay helpers                  |
 | `PRPs`               | Implementation-ready chapter plans and acceptance evidence      |
 | `docs`               | Architecture, decisions, teaching sequence, progress            |
 
-## Planned capabilities
+## Implemented teaching capabilities
 
-Instrument identity and eligibility; OHLCV validation; corporate actions; cash and positions; valuation and benchmarks; investment research; covariance and portfolio construction; strategy validation; rebalancing and tax-lot policies; paper orders and settlement; live risk; performance attribution; evidence-linked reports.
+Instrument identity and eligibility; OHLCV validation; corporate actions; cash and positions; valuation and benchmarks; investment research; covariance and portfolio construction; strategy validation; rebalancing and tax-lot policies; paper orders and settlement; portfolio risk monitoring; performance attribution; evidence-linked reports.
 
 Specialist assets and jurisdiction-specific rules are extensions with explicit scope. Live brokerage connectivity is a future decision; the teaching course uses a paper broker.
 
 ## Learning and contribution workflow
 
-Implement one requested chapter at a time. Commit each meaningful, verified task using:
+Replay one chapter at a time. Each meaningful task has a chronological commit using:
 
 ```text
 chapter-1 task-1: define mandate contracts to make portfolio constraints explicit

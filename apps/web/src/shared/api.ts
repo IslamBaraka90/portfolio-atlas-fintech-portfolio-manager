@@ -1,3 +1,4 @@
+import { currentSession, refreshSession } from "./session";
 import { z } from "zod";
 import { envelopeSchema, type ApiEnvelope } from "@portfolio-atlas/contracts";
 
@@ -36,12 +37,17 @@ export async function write<T>(
   body: unknown,
   schema: z.ZodType<T>,
 ) {
-  const fingerprint = JSON.stringify({ method, path, body });
+  const session = currentSession() ?? (await refreshSession());
+  const fingerprint = JSON.stringify({ actor: session.actor?.id, method, path, body });
   const key = commandKeys.get(fingerprint) ?? crypto.randomUUID();
   commandKeys.set(fingerprint, key);
   const result = await request(path, schema, {
     method,
-    headers: { "content-type": "application/json", "idempotency-key": key },
+    headers: {
+      "content-type": "application/json",
+      "idempotency-key": key,
+      ...(session.csrf ? { "x-csrf-token": session.csrf } : {}),
+    },
     body: JSON.stringify(body),
   });
   if (commandKeys.get(fingerprint) === key) commandKeys.delete(fingerprint);
@@ -65,6 +71,7 @@ async function request<T>(
   }
   const body: unknown = await response.json();
   if (!response.ok) {
+    if (response.status === 401) void refreshSession().catch(() => {});
     const parsed = errorSchema.safeParse(body);
     if (parsed.success)
       throw new ApiError(

@@ -1,5 +1,7 @@
+import { useSession } from "../shared/session";
 import type { ReactNode } from "react";
 const chapters = [
+  { id: 17, title: "Governance & recovery", hash: "#governance" },
   { id: 16, title: "Management reports", hash: "#reports" },
   { id: 15, title: "Performance & attribution", hash: "#performance" },
   { id: 14, title: "Monitoring & alerts", hash: "#monitoring" },
@@ -18,6 +20,7 @@ const chapters = [
   { id: 2, title: "Instrument discovery", hash: "#instruments" },
 ].sort((a, b) => a.id - b.id);
 export function LearningShell({ active, children }: { active: number; children: ReactNode }) {
+  const session = useSession();
   const chapter = chapters.find((item) => item.id === active);
   return (
     <div className="app-shell">
@@ -85,7 +88,11 @@ export function LearningShell({ active, children }: { active: number; children: 
           </span>
           <div>
             <span className="connection-dot" />
-            Local learning environment
+            <a className="session-link" href="#governance">
+              {session?.mode === "configured_sessions"
+                ? (session.actor?.name ?? "Sign in")
+                : "Local OS owner"}
+            </a>
           </div>
         </header>
         <main id="desk" tabIndex={-1}>

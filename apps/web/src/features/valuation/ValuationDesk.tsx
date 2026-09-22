@@ -17,7 +17,6 @@ import {
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
 import { BenchmarkDesk } from "./BenchmarkDesk";
-import "../data-quality/data-quality.css";
 import "./valuation.css";
 interface Choice {
   datasetId: string;

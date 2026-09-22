@@ -5,6 +5,7 @@ import { directTransactions, type Transactions } from "../ports/transactions.js"
 export interface CommandContext {
   key: string;
   requestId: string;
+  reviewReason?: string;
   principal?: { actor: Actor; policyRevision: string; local: boolean };
 }
 export function canonical(value: unknown): string {
@@ -66,7 +67,16 @@ export class Commands {
         "IDEMPOTENCY_CONFLICT",
         "This key belongs to an in-flight command.",
       );
-    return this.commit(canonical({ operation, input }), context, action, () => true);
+    return this.commit(
+      canonical({
+        operation,
+        input,
+        ...(context.reviewReason ? { reviewReason: context.reviewReason } : {}),
+      }),
+      context,
+      action,
+      () => true,
+    );
   }
   async executePrepared<T>(
     operation: string,
@@ -75,7 +85,11 @@ export class Commands {
     prepare: () => Promise<() => T>,
     persist: (value: T) => boolean = () => true,
   ): Promise<T> {
-    const fingerprint = canonical({ operation, input }),
+    const fingerprint = canonical({
+        operation,
+        input,
+        ...(context.reviewReason ? { reviewReason: context.reviewReason } : {}),
+      }),
       saved = this.store.command(context.key),
       running = this.pending.get(context.key);
     if (saved) return this.replay<T>(saved, fingerprint);

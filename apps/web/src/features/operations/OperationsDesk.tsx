@@ -1,3 +1,4 @@
+import { ApprovalButton } from "../../shared/use-approval";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -551,7 +552,10 @@ export function OperationsDesk() {
                   {r.request.evidenceRef} · journal{" "}
                   {r.journalEventIds.join(", ") || "no correction"}{" "}
                   {r.status === "proposed" && (
-                    <button
+                    <ApprovalButton
+                      kind="resolution"
+                      resourceId={r.id}
+                      revision={r.revision}
                       className="secondary"
                       disabled={busy}
                       onClick={() =>
@@ -566,7 +570,7 @@ export function OperationsDesk() {
                       }
                     >
                       Approve resolution
-                    </button>
+                    </ApprovalButton>
                   )}
                 </li>
               ))}

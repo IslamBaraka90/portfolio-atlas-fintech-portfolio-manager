@@ -290,7 +290,7 @@ export class AccessControl {
   }
   private creator(kind: string, id: string, revision: number) {
     return this.db.get("creator", kind + ":" + id + ":" + revision) as
-      { actorId: string } | undefined;
+      { actorId: string; scopeId: string; local: boolean } | undefined;
   }
   inbox(principal: Principal) {
     return (["rebalance", "resolution", "report"] as const).flatMap((kind) =>
@@ -299,11 +299,14 @@ export class AccessControl {
         .map(bodyRecord)
         .filter((v) => ["ready", "proposed", "draft"].includes(String(v.status)))
         .map((v) => {
-          const creatorId = this.creator(kind, String(v.id), Number(v.revision))?.actorId ?? null;
+          const creator = this.creator(kind, String(v.id), Number(v.revision));
+          const creatorId = creator?.actorId ?? null;
           const canApprove =
             principal.local ||
             (principal.actor.roles.includes("approver") &&
               creatorId !== null &&
+              creator?.local === false &&
+              creator.scopeId === this.scopeId &&
               creatorId !== principal.actor.id);
           return {
             kind,
@@ -335,7 +338,13 @@ export class AccessControl {
     if (kind && !p.local) {
       const data = bodyRecord(input),
         creator = this.creator(kind, String(data.id), Number(data.expectedRevision));
-      if (!p.actor.roles.includes("approver") || !creator || creator.actorId === p.actor.id)
+      if (
+        !p.actor.roles.includes("approver") ||
+        !creator ||
+        creator.local !== false ||
+        creator.scopeId !== this.scopeId ||
+        creator.actorId === p.actor.id
+      )
         throw new ApplicationError(
           "ACCESS_DENIED",
           "Another authenticated actor must approve this revision; creator evidence is required.",
@@ -357,6 +366,8 @@ export class AccessControl {
     if (kind && typeof data.id === "string")
       this.db.append("creator", kind + ":" + data.id + ":" + data.revision, 1, {
         actorId: p.actor.id,
+        scopeId: p.actor.scopeId,
+        local: p.local,
       });
     const overrides: { instrumentId: string; prior: unknown; next: unknown; reason: string }[] = [];
     if (operation === "valuation.create" && Array.isArray(request.overrides)) {
@@ -386,7 +397,8 @@ export class AccessControl {
         requestId: context.requestId,
         decision: "committed",
         reason:
-          typeof request.reason === "string" ? request.reason : "Authorized command committed.",
+          context.reviewReason ??
+          (typeof request.reason === "string" ? request.reason : "Authorized command committed."),
         resourceId:
           typeof data.id === "string"
             ? data.id

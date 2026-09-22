@@ -1,3 +1,4 @@
+import { useApprovalPermission } from "../../shared/use-approval";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -54,6 +55,7 @@ export function ReportDesk() {
     [ack, setAck] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const canApprove = useApprovalPermission("report", report?.id, report?.revision);
   async function refresh() {
     const [p, v, m, f, a, r, t, s] = await Promise.all([
       read("/portfolios", z.array(portfolioSchema)),
@@ -406,7 +408,7 @@ export function ReportDesk() {
                   </label>
                   <button
                     className="primary"
-                    disabled={busy}
+                    disabled={!canApprove || busy}
                     onClick={() =>
                       void act(async () => {
                         await accept(

@@ -10,7 +10,6 @@ import {
 } from "@portfolio-atlas/contracts";
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
-import "../data-quality/data-quality.css";
 import "../valuation/valuation.css";
 const pct = (n: number) => (n * 100).toFixed(2) + "%";
 export function ValidationDesk() {

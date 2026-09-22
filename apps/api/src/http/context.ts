@@ -34,9 +34,17 @@ export function createHttpContext(
     command(request: FastifyRequest) {
       const key = keySchema.parse(request.headers["idempotency-key"]);
       const p = request.principal;
+      const reason =
+        request.routeOptions.url?.endsWith("/approval") &&
+        request.body &&
+        typeof request.body === "object" &&
+        "reason" in request.body
+          ? z.string().trim().min(10).max(500).parse(request.body.reason)
+          : undefined;
       return {
         key: p ? JSON.stringify([p.actor.scopeId, p.actor.id, key]) : key,
         requestId: request.id,
+        ...(reason ? { reviewReason: reason } : {}),
         ...(p ? { principal: p } : {}),
       };
     },

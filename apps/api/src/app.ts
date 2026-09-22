@@ -126,7 +126,13 @@ export function buildApp(
       : ("memory" as const);
   const repository = new SqlitePortfolioRepository(database);
   const ids = options.ids ?? { next: () => randomUUID() };
-  const access = new AccessControl(database, clock, options.accessConfig, options.secureCookie);
+  let access: AccessControl;
+  try {
+    access = new AccessControl(database, clock, options.accessConfig, options.secureCookie);
+  } catch (error) {
+    database.close();
+    throw error;
+  }
   const commands = new Commands(repository, database, access);
   const service = new PortfolioService(repository, clock, ids, commands);
   const yahooTransport = options.yahooEnabled ? createYahooTransport() : null;

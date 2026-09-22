@@ -108,5 +108,6 @@ export const rebalanceProposalSchema = z.strictObject({
 });
 export type RebalanceProposal = z.infer<typeof rebalanceProposalSchema>;
 export const proposalApprovalSchema = z.strictObject({
+  reason: z.string().trim().min(10).max(500).optional(),
   expectedRevision: z.number().int().positive(),
 });
