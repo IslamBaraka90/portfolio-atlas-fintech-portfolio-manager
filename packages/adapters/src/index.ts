@@ -21,3 +21,4 @@ export * from "./analytics/fintech-algorithms/benchmark-engine.js";
 export * from "./market-data/synthetic-company-provider.js";
 export * from "./market-data/yahoo-finance/company-provider.js";
 export * from "./analytics/fintech-algorithms/research-engine.js";
+export * from "./analytics/fintech-algorithms/risk-engine.js";

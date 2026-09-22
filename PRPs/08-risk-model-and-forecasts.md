@@ -1,8 +1,8 @@
 # PRP 08 — Expected returns, covariance and risk inputs
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/08-learning-guide.md and docs/progress.md.
 Chapter: 8. Editorial duration estimate: 20 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under the full-build authorization recorded in AGENTS.md.
 
 ## Learner promise
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A covariance matrix's asset order must match the expected-return vector exactly.
-- [ ] Identical returns generate perfect dependence where variances are nonzero; constant series produces an undefined correlation state.
-- [ ] Pairwise deletion cannot silently produce a matrix used as a valid PSD covariance estimate.
-- [ ] Daily and annual inputs cannot be mixed without an explicit conversion.
-- [ ] Historical mean returns are labeled estimates/assumptions, not guaranteed forecasts.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A covariance matrix's asset order must match the expected-return vector exactly.
+- [x] Identical returns generate perfect dependence where variances are nonzero; constant series produces an undefined correlation state.
+- [x] Pairwise deletion cannot silently produce a matrix used as a valid PSD covariance estimate.
+- [x] Daily and annual inputs cannot be mixed without an explicit conversion.
+- [x] Historical mean returns are labeled estimates/assumptions, not guaranteed forecasts.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 A checked risk-model snapshot. Chapter 9 requires the user's D14 package release checkpoint.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Publish this checkpoint and continue to Chapter 9. The 0.13.2 D14 release gate is already satisfied.
 
 ## Evidence to fill during implementation
 
