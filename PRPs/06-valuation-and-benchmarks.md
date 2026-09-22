@@ -1,8 +1,8 @@
 # PRP 06 — Valuation, NAV and an honest benchmark
 
-Status: planned; implementation has not started.
+Status: implemented; final verification recorded in docs/progress.md.
 Chapter: 6. Editorial duration estimate: 20 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Continuous full-course implementation is authorized.
 
 ## Learner promise
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] 8,995 cash plus 10 shares at 110 gives NAV 10,095.
-- [ ] After an external deposit of 500, NAV is 10,595; the deposit is not profit.
-- [ ] Missing FX for a foreign holding produces incomplete coverage, not a zero holding.
-- [ ] A total-return portfolio must not be silently compared with a price-only benchmark.
-- [ ] Repeating a valuation against the same frozen references gives the same result.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] 8,995 cash plus 10 shares at 110 gives NAV 10,095.
+- [x] After an external deposit of 500, NAV is 10,595; the deposit is not profit.
+- [x] Missing FX for a foreign holding produces incomplete coverage, not a zero holding.
+- [x] A total-return portfolio must not be silently compared with a price-only benchmark.
+- [x] Repeating a valuation against the same frozen references gives the same result.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Valuations and benchmark snapshots. Chapter 7 attaches research to the investable universe.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Publish the verified checkpoint and continue to Chapter 7 under full-build authorization.
 
 ## Evidence to fill during implementation
 
@@ -105,3 +105,5 @@ Update progress with completed tasks and commit references. Stop after this chap
 - Commands and observed results:
 - UI walkthrough/screenshots:
 - Remaining limitations and next prerequisite:
+
+Implementation guide: [Chapter 6](../docs/chapters/06-learning-guide.md).

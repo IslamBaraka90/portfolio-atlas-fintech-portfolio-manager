@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–5 are implemented; Chapters 1–4 are published as stacked PRs and Chapter 5 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–6 are implemented. Chapters 1–5 are published as stacked PRs with green checks; Chapter 6 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -152,3 +152,13 @@ Task 3 (54ba297) adds event replay, FIFO costs, reservations, journal balancing 
 Task 5 checks partial-journal rollback and durable restart, repeated latest-active corrections, and tampering with both an original and its reversal. Final gate results follow. Chapter 6 continues under full-build authorization.
 
 Final Chapter 5 gates: strict typecheck passed; all 62 unit/API checks passed; production build and browser dependency guard passed; Prettier and Markdown lint (74 files) passed; all 11 connected Chromium journeys passed. Chapter 4 GitHub checks are green. SQLite failure/retry/restart evidence and reversed-history tamper checks passed.
+
+## Chapter 6 checkpoints
+
+Task 1 (92d48db) freezes share basis, decimal NAV, freshness, FX and benchmark conventions. Task 2 (e78f52f) rebuilds selected journal checkpoints and values accepted marks with incomplete coverage preserved. Task 3 (03d39ca) uses looked-up D03/D00 methods for equal-initial-weight buy-and-hold price/gross-total-return histories. Task 4 (73e7605) connects HTTP, persistent snapshots and the React desk.
+
+Independent expected values: NAV 10,095; after external deposit 10,595; EUR 90 at 0.9 EUR/USD adds USD 100. The two-asset buy-and-hold example returns 10%, versus 12.5% for daily resetting. A 10 dividend on a 100→90→99 path gives +10% gross total return versus −1% price return.
+
+The focused API test passed through dataset revisions, missing/stale price and FX, convention mismatch, restart and command replay. The connected Chromium journey passed, including incomplete NAV and restored coverage. Desktop and 390px captures were inspected. Chapter 5 remote checks are green. Final Chapter 6 gates follow.
+
+Final Chapter 6 gates: all 70 unit/API checks and 12 connected Chromium journeys passed. Strict typecheck, production build, browser dependency guard, formatting and Markdown lint (76 files) passed. No live fundamental data or portfolio performance results are claimed by this chapter.

@@ -16,3 +16,5 @@ export * from "./analytics/fintech-algorithms/basis-drift-lesson.js";
 export * from "./persistence/sqlite/database.js";
 export * from "./persistence/sqlite/repositories.js";
 export * from "./persistence/sqlite/ledger-repository.js";
+export * from "./persistence/sqlite/snapshot-repository.js";
+export * from "./analytics/fintech-algorithms/benchmark-engine.js";

@@ -44,6 +44,26 @@ export class LedgerService {
       );
     return state;
   }
+  atCheckpoint(portfolioId: string, checkpoint: number, asOf: string): BookState {
+    this.portfolios.getPortfolio(portfolioId);
+    const history = this.repository.events(portfolioId);
+    if (!Number.isInteger(checkpoint) || checkpoint < 0 || checkpoint > history.length)
+      throw new ApplicationError("INVALID_SNAPSHOT", "Journal checkpoint does not exist.");
+    const events = history.slice(0, checkpoint);
+    if (events.some((event) => Date.parse(event.recordedAt) > Date.parse(asOf)))
+      throw new ApplicationError(
+        "INVALID_SNAPSHOT",
+        "Book evidence was recorded after the requested cutoff.",
+      );
+    const journal = this.repository
+      .journal(portfolioId)
+      .filter((entry) => entry.sequence <= checkpoint);
+    return bookStateSchema.parse({
+      events,
+      journal,
+      book: reconcileBook(portfolioId, events, journal, asOf),
+    });
+  }
   private append(input: PostingInput, now: string) {
     const state = this.requireReconciled(input.portfolioId);
     const existing = state.events.find((event) => event.input.sourceRef === input.sourceRef);

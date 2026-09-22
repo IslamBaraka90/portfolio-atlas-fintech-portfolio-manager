@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 const chapters = [
+  { id: 6, title: "Value & benchmark", hash: "#valuation" },
   { id: 5, title: "Portfolio book", hash: "#book" },
   { id: 4, title: "Actions & currency", hash: "#actions" },
   { id: 3, title: "Candle quality", hash: "#market-data" },
