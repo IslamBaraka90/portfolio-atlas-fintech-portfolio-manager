@@ -27,6 +27,10 @@ export class InstrumentService {
   list() {
     return this.repository.all();
   }
+  revisions(id: string) {
+    this.get(id);
+    return this.repository.revisions(id);
+  }
   get(id: string) {
     const instrument = this.repository.get(id);
     if (!instrument)

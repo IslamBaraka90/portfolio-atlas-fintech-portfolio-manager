@@ -57,6 +57,19 @@ test("instrument API preserves two candidates, saved identity and revision-aware
     payload: { ...input, instrumentRevision: 99 },
   });
   assert.equal(stale.statusCode, 409);
+  const refreshed = await app.inject({
+    method: "POST",
+    url: "/api/v1/instruments/resolutions",
+    headers: { "idempotency-key": "refresh-aurora" },
+    payload: { candidateId: candidates[0]!.candidateId },
+  });
+  assert.equal(refreshed.json().data.instrument.revision, 2);
+  const history = await app.inject("/api/v1/instruments/" + instrument.instrumentId + "/revisions");
+  assert.deepEqual(
+    history.json().data.map((item: { revision: number }) => item.revision),
+    [1, 2],
+  );
+  assert.equal(instrument.revision, 1);
 });
 test("live mode is disabled by default without a network attempt; aliases are inspectable", async (t) => {
   const app = buildApp();

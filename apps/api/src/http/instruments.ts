@@ -29,6 +29,10 @@ export function registerInstrumentRoutes(
       sources.size > 1 ? "mixed" : (records[0]?.source ?? "synthetic"),
     );
   });
+  app.get("/api/v1/instruments/:id/revisions", async (request) => {
+    const id = z.object({ id: identifierSchema }).parse(request.params).id;
+    return http.response(service.revisions(id), request, service.get(id).source);
+  });
   app.get("/api/v1/instruments/:id", async (request) => {
     const record = service.get(z.object({ id: identifierSchema }).parse(request.params).id);
     return http.response(record, request, record.source);

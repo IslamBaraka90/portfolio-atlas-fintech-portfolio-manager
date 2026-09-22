@@ -36,7 +36,7 @@ export class FintechIdentityResolver implements IdentityResolver {
           observedAt: alias.observedAt,
           availableAt: alias.availableAt,
           status: "active",
-          confidence: "authoritative",
+          confidence: alias.provider === "synthetic" ? "authoritative" : "inferred",
           checkDigitStatus: "not_applicable",
           assignmentAuthority: alias.evidenceSource,
           sourceDocumentId: alias.assertionId,

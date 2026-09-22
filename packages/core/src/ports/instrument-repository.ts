@@ -9,6 +9,7 @@ export interface InstrumentRepository {
   candidate(id: string): InstrumentCandidate | undefined;
   saveCandidate(candidate: InstrumentCandidate): void;
   all(): Instrument[];
+  revisions(id: string): Instrument[];
   get(id: string): Instrument | undefined;
   save(instrument: Instrument): void;
 }

@@ -4,7 +4,7 @@
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current checkpoint: Chapter 1 — Mandate Lab.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapters 2–17 remain planned; Yahoo discovery, candles, accounting and analytics arrive in their own chapters.
+**Current checkpoint: Chapters 1–2 — Mandate Lab and Instrument Discovery.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapter 2 adds an instrument explorer, explicit Yahoo live mode, identity evidence and eligibility. Candles, accounting and analytics arrive in the following chapters.
 
 ## Start here
 
@@ -43,6 +43,8 @@ npm run test:browser
 ```
 
 CI runs the same checks on Node 22.22.0. Browser tests use ports 3101 and 5174; normal development uses 3100 and 5173.
+
+See the [Chapter 2 guide](docs/chapters/02-learning-guide.md) for instrument discovery, live Yahoo setup and the recorded provider smoke check.
 
 ## Workspace
 

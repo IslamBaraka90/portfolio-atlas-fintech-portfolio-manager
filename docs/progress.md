@@ -3,8 +3,8 @@
 ## Current checkpoint
 
 Chapter 0: complete and published. Chapter 1: implemented and locally verified; branch publication follows the final checkpoint.
-Next chapter, when requested: [Chapter 2 — Instrument identity](../PRPs/02-instrument-identity.md).
-Chapters 2–17 remain planned. D14 readiness has not been announced.
+Current run: Chapter 2 complete; continue with Chapter 3 under the user's Chapters 2–8 authorization.
+Chapters 1–2 are implemented. Chapters 3–8 are authorized next; Chapters 9–17 remain planned. D14 readiness has not been announced.
 
 The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
 
@@ -116,3 +116,7 @@ Task 2 implements the Yahoo v4 class adapter and deterministic synthetic provide
 Task 3 resolves effective-dated aliases through the verified D02 export and evaluates mandate/instrument revisions. All 28 unit/API tests and type checks pass. Independent cases cover ticker continuity, half-open intervals, future evidence, overlapping aliases, disallowed types, similar-name securities and Yahoo symbol mismatch.
 
 Task 4 connects search, explicit resolution, saved instruments, eligibility and alias queries to the React explorer. All 30 unit/API tests and eight browser journeys pass. Yahoo-disabled mode remains visibly unavailable; no synthetic fallback occurs. Desktop and mobile screenshots were produced.
+
+Task 5 adds focused concurrent-command verification, immutable instrument history, browser regression and a real opt-in Yahoo smoke. Live AAPL search/quote succeeded at 2026-09-22T10:52:40–42Z; legal tick remains null and permanent identity remains unverified. See the Chapter 2 guide for exact observations.
+
+Final Chapter 2 gates: 32 unit/API checks and eight browser journeys passed; strict types, formatting, Markdown lint, production build and browser dependency guard passed. Desktop and 390px mobile evidence inspected.

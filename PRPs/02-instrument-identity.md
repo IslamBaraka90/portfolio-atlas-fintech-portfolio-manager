@@ -1,6 +1,6 @@
 # PRP 02 — Instrument identity and eligibility
 
-Status: planned; implementation has not started.
+Status: implemented; verification and teaching evidence are in [the Chapter 2 guide](../docs/chapters/02-learning-guide.md).
 Chapter: 2. Editorial duration estimate: 20 minutes.
 Implementation starts when the maintainer explicitly requests this chapter.
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] Two instruments with similar names or symbols cannot be merged without explicit evidence.
-- [ ] A ticker change retains instrumentId while preserving alias effective intervals.
-- [ ] A provider currency subunit cannot be treated as an equal numeric amount in the main currency.
-- [ ] priceHint does not become legal tick size.
-- [ ] No Yahoo access occurs during synthetic default tests; provider failure returns an unavailable state.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] Two instruments with similar names or symbols cannot be merged without explicit evidence.
+- [x] A ticker change retains instrumentId while preserving alias effective intervals.
+- [x] A provider currency subunit cannot be treated as an equal numeric amount in the main currency.
+- [x] priceHint does not become legal tick size.
+- [x] No Yahoo access occurs during synthetic default tests; provider failure returns an unavailable state.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 A resolved instrument and provider port. Chapter 3 retrieves bars against that identity.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Stop after this chapter and report its result. The current maintainer request authorizes continuing through Chapter 8; proceed to Chapter 3 after verification.
 
 ## Evidence to fill during implementation
 
