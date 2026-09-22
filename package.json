@@ -41,12 +41,23 @@
     "format:check": "prettier --check .",
     "docs:check": "markdownlint-cli2",
     "check": "npm run format:check && npm run docs:check",
-    "algorithms:lookup": "node node_modules/fintech-algorithms/skills/fintech-algorithms/scripts/lookup.mjs"
+    "algorithms:lookup": "node node_modules/fintech-algorithms/skills/fintech-algorithms/scripts/lookup.mjs",
+    "build:server": "tsc -b tsconfig.build.json",
+    "build": "npm run build:server && npm run build --workspace @portfolio-atlas/web",
+    "dev": "npm run build:server && concurrently --kill-others -n types,api,web \"tsc -b tsconfig.build.json --watch --preserveWatchOutput\" \"npm run dev --workspace @portfolio-atlas/api\" \"npm run dev --workspace @portfolio-atlas/web\"",
+    "start:api": "node apps/api/dist/server.js",
+    "typecheck": "npm run build:server && tsc -p apps/web/tsconfig.json && tsc -p tsconfig.tests.json",
+    "test:unit": "npm run build:server && npm run test --workspaces --if-present",
+    "test:browser": "npm run build:server && playwright test",
+    "test": "npm run test:unit && npm run test:browser"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "22.20.4",
+    "concurrently": "10.0.5",
     "markdownlint-cli2": "0.23.3",
     "prettier": "3.9.8",
+    "tsx": "4.23.15",
     "typescript": "7.0.2"
   }
 }

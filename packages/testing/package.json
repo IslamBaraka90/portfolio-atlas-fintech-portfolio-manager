@@ -4,5 +4,20 @@
   "private": true,
   "type": "module",
   "description": "Deterministic financial examples and future test helpers",
-  "license": "MIT"
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@portfolio-atlas/contracts": "0.0.0"
+  }
 }

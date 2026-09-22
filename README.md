@@ -1,10 +1,10 @@
 # Portfolio Atlas — Open-Source Portfolio Manager
 
-[![Documentation checks](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml/badge.svg)](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml)
+[![Chapter checks](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml/badge.svg)](https://github.com/IslamBaraka90/portfolio-atlas-fintech-portfolio-manager/actions/workflows/documentation.yml)
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current release: planning foundation.** The workspace, dependencies, architecture, and chapter PRPs are initialized. Application functions, API routes, database migrations, the Yahoo adapter, and React screens are scheduled for the chapters below; none is implemented yet.
+**Current checkpoint: Chapter 1 — Mandate Lab.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapters 2–17 remain planned; Yahoo discovery, candles, accounting and analytics arrive in their own chapters.
 
 ## Start here
 
@@ -20,17 +20,29 @@ Each chapter answers a question a portfolio manager actually asks: Can I trust t
 
 The backend exposes the financial reasoning in small domain modules. The frontend grows alongside it, showing decisions, evidence, rejected inputs, and exceptional states. A deterministic teaching portfolio makes every chapter reproducible; a separate Yahoo mode introduces real provider behavior.
 
-## Install the foundation
+## Run the learning desk
 
 Use Node 22.22 (the recorded development runtime) and npm 10 or a supported Node 24 runtime. The lockfile pins the dependency graph.
 
 ```bash
 npm ci --ignore-scripts
-npm run check
-npm run algorithms:lookup -- show D01-F02-A01
+npm run dev
 ```
 
-The available checks validate documentation and formatting. Chapter 1 adds runnable API/web commands, TypeScript checks, and behavior tests alongside the first implementation. There is no working dashboard to launch at this stage.
+Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. All inputs are synthetic. Restarting the API clears session data.
+
+Follow the [Chapter 1 learning guide](docs/chapters/01-learning-guide.md) for the code-reading order, complete walkthrough and chronological commit map. See the [HTTP reference](docs/chapters/01-http-reference.md) and [recording notes](docs/video/chapter-01-recording-notes.md).
+
+```bash
+npm run check
+npm run typecheck
+npm run test:unit
+npm run build
+npx playwright install chromium
+npm run test:browser
+```
+
+CI runs the same checks on Node 22.22.0. Browser tests use ports 3101 and 5174; normal development uses 3100 and 5173.
 
 ## Workspace
 

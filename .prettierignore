@@ -3,3 +3,7 @@ node_modules/
 dist/
 coverage/
 .agents/
+
+artifacts/
+playwright-report/
+test-results/

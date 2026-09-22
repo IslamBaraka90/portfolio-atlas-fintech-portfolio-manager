@@ -6,6 +6,17 @@
   "description": "Fastify HTTP boundary and dependency composition",
   "license": "MIT",
   "dependencies": {
-    "fastify": "5.12.5"
+    "fastify": "5.12.5",
+    "@portfolio-atlas/contracts": "0.0.0",
+    "@portfolio-atlas/core": "0.0.0",
+    "@portfolio-atlas/adapters": "0.0.0",
+    "@portfolio-atlas/testing": "0.0.0",
+    "zod": "4.6.5"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -b",
+    "start": "node dist/server.js",
+    "test": "tsx --test test/*.test.ts"
   }
 }

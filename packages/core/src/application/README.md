@@ -2,4 +2,4 @@
 
 Use cases coordinating ports and domain rules. Inject clocks and IDs for deterministic replay.
 
-This directory currently documents ownership; it contains no runtime implementation.
+Chapter 1 application orchestration is implemented in ../use-cases/portfolio-service.ts.

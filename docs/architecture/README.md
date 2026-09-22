@@ -29,14 +29,14 @@ An arrow into ports means the adapter implements the interface. Core never impor
 
 | Workspace | Inputs and outputs                             | Allowed dependencies                                             |
 | --------- | ---------------------------------------------- | ---------------------------------------------------------------- |
-| api       | HTTP contracts to use-case outcomes            | core, contracts, adapters, Fastify                               |
+| api       | HTTP contracts to use-case outcomes            | core, contracts, adapters, testing fixtures, Fastify             |
 | web       | API DTOs to React views                        | contracts, React, presentation libraries                         |
-| contracts | Wire schemas and domain-independent event DTOs | schema tools selected in Chapter 1                               |
+| contracts | Wire schemas and domain-independent event DTOs | Zod runtime schemas                                              |
 | core      | Domain records, policies, commands, results    | contracts where appropriate; no transport/provider clients       |
 | adapters  | External data and algorithms to port contracts | core, contracts, Yahoo, fintech-algorithms, later storage driver |
 | testing   | Synthetic inputs and independent oracles       | contracts; targeted helper dependencies as needed                |
 
-Dependencies are added when a chapter introduces a real import. Private workspace names reserve the boundaries now. Do not add circular dependencies or import source files across workspace directories.
+Dependencies are added when a chapter introduces a real import. Chapter 1 establishes workspace exports and project references. Do not add circular dependencies or import source files across workspace directories.
 
 ## One request, end to end
 
@@ -58,7 +58,7 @@ Do not claim durability, multi-user isolation, or production readiness for an in
 
 ## Runtime progression
 
-Chapter 1 adds API and Vite entry points, scripts, strict TypeScript validation, tests, and an accessible mandate screen. Chapter 2 adds Yahoo instrument discovery. Chapter 3 adds bars and their quality report. The foundation contains package/configuration files and documentation only.
+Chapter 1 implements API and Vite entry points, scripts, strict TypeScript validation, tests, and an accessible mandate screen. Chapter 2 will add Yahoo instrument discovery. Chapter 3 will add bars and their quality report. The current adapter implementation is memory storage; provider and analytics adapters remain planned.
 
 Use a fake clock and stable synthetic IDs in tests. Use UTC instants plus the exchange's IANA timezone and explicit session dates; midnight UTC is not a universal session boundary.
 

@@ -2,4 +2,4 @@
 
 Future deterministic clock, ID, fixture loaders, and contract assertions; implement alongside actual test needs.
 
-This directory currently documents ownership; it contains no runtime implementation.
+mandate-fixtures.ts supplies deterministic synthetic records to tests and the local lesson endpoint.

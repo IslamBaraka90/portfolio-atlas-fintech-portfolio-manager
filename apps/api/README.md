@@ -1,7 +1,7 @@
 # Fastify HTTP boundary and dependency composition
 
-The API will validate incoming contracts, call core use cases, and map typed outcomes to HTTP. It owns process configuration and wiring. Financial calculations belong in core or analytics adapters; Yahoo calls belong in the provider adapter.
+The API validates incoming contracts, calls core use cases, and maps typed outcomes to HTTP. It owns process configuration and wiring. Financial calculations belong in core or analytics adapters; Yahoo calls belong in the provider adapter.
 
-Status: structure and dependencies only. No application implementation exists yet.
+Chapter 1 is implemented: Fastify validates contracts, invokes versioned mandate use cases and returns findings with session metadata. Start through the root development command. See the [HTTP reference](../../docs/chapters/01-http-reference.md).
 
 See the [chapter plans](../../PRPs/README.md) and [architecture](../../docs/architecture/README.md).

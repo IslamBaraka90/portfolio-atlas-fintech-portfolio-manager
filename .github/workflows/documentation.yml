@@ -1,4 +1,4 @@
-name: Documentation and workspace foundation
+name: Chapter checks
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 jobs:
   documentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-node@v7.0.0
@@ -21,3 +21,23 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Check documentation and configuration formatting
         run: npm run check
+      - name: Check strict TypeScript boundaries
+        run: npm run typecheck
+      - name: Verify contracts, domain rules, use cases and HTTP behavior
+        run: npm run test:unit
+      - name: Build applications and enforce browser dependency boundary
+        run: npm run build
+      - name: Install the Chromium test browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify the connected learning journey
+        run: npm run test:browser
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: chapter-1-browser-evidence
+          path: |
+            playwright-report/
+            test-results/
+            artifacts/
+          retention-days: 7

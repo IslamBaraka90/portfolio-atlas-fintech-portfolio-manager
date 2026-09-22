@@ -2,4 +2,4 @@
 
 Own HTTP routes, request validation, errors, and transport concerns. Forward financial decisions to use cases.
 
-This directory currently documents ownership; it contains no runtime implementation.
+routes.ts implements Chapter 1 mandate, portfolio, evaluation, lesson and audit routes.
