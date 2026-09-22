@@ -26,3 +26,5 @@ export * from "./analytics/fintech-algorithms/construction-engine.js";
 export * from "./analytics/fintech-drawdown.js";
 export * from "./analytics/fintech-lot-scoring.js";
 export * from "./analytics/fintech-paper-execution.js";
+
+export * from "./analytics/fintech-monitor.js";

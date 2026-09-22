@@ -1,3 +1,4 @@
+import { instrumentSchema } from "./instruments.js";
 import { z } from "zod";
 import { snapshotRefSchema, valuationSnapshotSchema } from "./valuation.js";
 import { mandateSchema } from "./mandates.js";
@@ -46,6 +47,7 @@ export const monitorSnapshotSchema = z.strictObject({
   request: monitorRequestSchema,
   valuation: valuationSnapshotSchema,
   mandate: mandateSchema,
+  instruments: z.array(instrumentSchema),
   target: targetSnapshotSchema.nullable(),
   riskModel: riskModelSnapshotSchema.nullable(),
   fresh: z.boolean(),

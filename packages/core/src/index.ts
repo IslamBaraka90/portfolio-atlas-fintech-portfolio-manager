@@ -44,3 +44,6 @@ export * from "./use-cases/paper-execution-service.js";
 export * from "./use-cases/settlement-service.js";
 export * from "./use-cases/reconciliation-service.js";
 export * from "./domain/reconciliation/reconcile-statement.js";
+
+export * from "./ports/monitor-analytics.js";
+export * from "./domain/risk-monitoring/monitor-portfolio.js";
