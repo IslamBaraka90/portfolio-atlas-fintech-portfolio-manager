@@ -1,3 +1,17 @@
+import {
+  MemoryInstrumentRepository,
+  SyntheticInstrumentProvider,
+  YahooInstrumentProvider,
+  createYahooTransport,
+  FintechIdentityResolver,
+  RequestBudget,
+} from "@portfolio-atlas/adapters";
+import { Commands, InstrumentService } from "@portfolio-atlas/core";
+import type { InstrumentProvider } from "@portfolio-atlas/core";
+import type { DataMode } from "@portfolio-atlas/contracts";
+import { syntheticInstruments } from "@portfolio-atlas/testing";
+import { createHttpContext } from "./http/context.js";
+import { registerInstrumentRoutes } from "./http/instruments.js";
 import { randomUUID } from "node:crypto";
 import Fastify from "fastify";
 import { ZodError } from "zod";
@@ -12,7 +26,16 @@ import { registerRoutes } from "./http/routes.js";
 
 // Construction is separate from listening, so HTTP behavior can be tested with inject().
 export function buildApp(
-  options: { logger?: boolean; clock?: Clock; ids?: IdFactory; allowedOrigin?: string } = {},
+  options: {
+    logger?: boolean;
+    clock?: Clock;
+    ids?: IdFactory;
+    allowedOrigin?: string;
+    yahooEnabled?: boolean;
+    yahooTimeoutMs?: number;
+    yahooConcurrency?: number;
+    instrumentProviders?: Partial<Record<DataMode, InstrumentProvider>>;
+  } = {},
 ) {
   const app = Fastify({
     logger: options.logger ?? false,
@@ -22,11 +45,31 @@ export function buildApp(
   const clock = options.clock ?? { now: () => new Date().toISOString() };
   // Composition is the only place HTTP, application rules and storage are joined.
   // Every app owns a fresh memory store; tests inject deterministic clocks and IDs.
-  const service = new PortfolioService(
-    new MemoryPortfolioRepository(),
+  const repository = new MemoryPortfolioRepository();
+  const ids = options.ids ?? { next: () => randomUUID() };
+  const commands = new Commands(repository);
+  const service = new PortfolioService(repository, clock, ids, commands);
+  const providers: Partial<Record<DataMode, InstrumentProvider>> = options.instrumentProviders ?? {
+    synthetic: new SyntheticInstrumentProvider(syntheticInstruments, clock),
+    ...(options.yahooEnabled
+      ? {
+          yahoo: new YahooInstrumentProvider(
+            createYahooTransport(),
+            clock,
+            new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000),
+          ),
+        }
+      : {}),
+  };
+  const instruments = new InstrumentService(
+    providers,
+    new MemoryInstrumentRepository(),
     clock,
-    options.ids ?? { next: () => randomUUID() },
+    ids,
+    commands,
+    service,
   );
+  const sessionId = randomUUID();
   const allowedOrigins = new Set([
     options.allowedOrigin ?? "http://127.0.0.1:5173",
     "http://localhost:5173",
@@ -93,6 +136,13 @@ export function buildApp(
       requestId: request.id,
     }),
   );
-  registerRoutes(app, service, clock, randomUUID());
+  registerRoutes(app, service, clock, sessionId);
+  registerInstrumentRoutes(
+    app,
+    instruments,
+    new FintechIdentityResolver(),
+    commands,
+    createHttpContext(clock, sessionId),
+  );
   return app;
 }

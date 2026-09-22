@@ -1,6 +1,6 @@
 # Yahoo Finance adapter contract
 
-Status: specified and dependency installed; implementation begins in Chapters 2–3. Package: yahoo-finance2 4.0.2. Boundary: packages/adapters/src/market-data/yahoo-finance.
+Status: Chapter 2 search/quote adapter implemented and live-smoke checked; chart ingestion follows in Chapter 3. Package: yahoo-finance2 4.0.2. Boundary: packages/adapters/src/market-data/yahoo-finance.
 
 Read the package's installed agent skill and declarations before implementing. The current npm major is v4; the bundled skill still contains some v3 wording. The installed v4 declarations own the call contract.
 

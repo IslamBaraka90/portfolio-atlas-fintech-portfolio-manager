@@ -16,6 +16,9 @@ if (process.env.DATA_MODE && process.env.DATA_MODE !== "synthetic") {
 
 const app = buildApp({
   logger: true,
+  yahooEnabled: process.env.YAHOO_ENABLED === "true",
+  yahooTimeoutMs: Number(process.env.YAHOO_REQUEST_TIMEOUT_MS ?? 10000),
+  yahooConcurrency: Number(process.env.YAHOO_MAX_CONCURRENCY ?? 2),
   allowedOrigin: process.env.WEB_ORIGIN ?? "http://127.0.0.1:" + (process.env.WEB_PORT ?? "5173"),
 });
 for (const signal of ["SIGINT", "SIGTERM"] as const) {

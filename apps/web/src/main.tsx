@@ -1,10 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./app/App";
+import { WorkspaceRouter } from "./app/WorkspaceRouter";
 import "./app/styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <WorkspaceRouter />
   </StrictMode>,
 );
+import "./features/instruments/instruments.css";

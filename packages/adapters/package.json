@@ -9,7 +9,8 @@
     "fintech-algorithms": "0.13.1",
     "yahoo-finance2": "4.0.2",
     "@portfolio-atlas/contracts": "0.0.0",
-    "@portfolio-atlas/core": "0.0.0"
+    "@portfolio-atlas/core": "0.0.0",
+    "zod": "4.6.5"
   },
   "exports": {
     ".": {

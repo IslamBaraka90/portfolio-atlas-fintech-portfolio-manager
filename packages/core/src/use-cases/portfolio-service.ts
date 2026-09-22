@@ -10,40 +10,17 @@ import type {
 import { evaluateMandate } from "../domain/evaluate-mandate.js";
 import type { Clock, IdFactory, PortfolioRepository } from "../ports/portfolio-repository.js";
 
-export class ApplicationError extends Error {
-  constructor(
-    public readonly code:
-      "NOT_FOUND" | "REVISION_CONFLICT" | "IDEMPOTENCY_CONFLICT" | "CURRENCY_IN_USE",
-    message: string,
-  ) {
-    super(message);
-  }
-}
-export interface CommandContext {
-  key: string;
-  requestId: string;
-}
-
-// Object property order is irrelevant to a command; array order remains explicit.
-function canonical(value: unknown): string {
-  if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
-  if (value !== null && typeof value === "object")
-    return (
-      "{" +
-      Object.entries(value)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, item]) => JSON.stringify(key) + ":" + canonical(item))
-        .join(",") +
-      "}"
-    );
-  return JSON.stringify(value);
-}
+import { ApplicationError } from "./errors.js";
+import { Commands, type CommandContext } from "./commands.js";
+export { ApplicationError } from "./errors.js";
+export type { CommandContext } from "./commands.js";
 
 export class PortfolioService {
   constructor(
     private readonly repository: PortfolioRepository,
     private readonly clock: Clock,
     private readonly ids: IdFactory,
+    private readonly commands = new Commands(repository),
   ) {}
 
   listMandates() {
@@ -208,19 +185,6 @@ export class PortfolioService {
     });
   }
   private once<T>(operation: string, input: unknown, context: CommandContext, execute: () => T): T {
-    const fingerprint = canonical({ operation, input });
-    const previous = this.repository.command(context.key);
-    if (previous) {
-      if (previous.fingerprint !== fingerprint)
-        throw new ApplicationError(
-          "IDEMPOTENCY_CONFLICT",
-          "This command key was already used with different input.",
-        );
-      // The fingerprint binds this stored result to this operation's input and return type.
-      return previous.result as T;
-    }
-    const result = execute();
-    this.repository.saveCommand(context.key, fingerprint, result);
-    return structuredClone(result);
+    return this.commands.executeSync(operation, input, context, execute);
   }
 }
