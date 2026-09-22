@@ -171,6 +171,8 @@ test("missing and stale prices/FX remain null instead of manufacturing complete 
     ).status,
     "incomplete",
   );
+  f.post({ kind: "withdrawal", currency: "EUR", amount: "90" });
+  assert.equal(valueBook(f.book(), f.request, "USD", [f.mark()], []).totals.nav, "10095.00");
 });
 test("action evidence must match book share units; overrides retain their own explicit evidence", () => {
   const f = fixture();

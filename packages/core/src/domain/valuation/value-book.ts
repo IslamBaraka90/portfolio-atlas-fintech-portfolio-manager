@@ -15,7 +15,9 @@ export function valueBook(
   fxEvidence: FxObservation[],
 ) {
   function convert(amount: string, from: Currency) {
-    if (from === baseCurrency) return { value: amount, fxId: null, reasons: [] as string[] };
+    // Known zero cash has zero base value without inventing a missing FX quote.
+    if (from === baseCurrency || new D(amount).isZero())
+      return { value: amount, fxId: null, reasons: [] as string[] };
     const fx = fxEvidence.find(
       (q) =>
         (q.baseCurrency === from && q.quoteCurrency === baseCurrency) ||

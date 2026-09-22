@@ -81,6 +81,20 @@ test("frozen NAV and benchmark API retain checkpoint, source revisions and resta
   const first = await post("/valuations", "value-first", request);
   assert.equal(first.totals.nav, "10095.00");
   assert.equal(first.positions[0].mark.status, "accepted");
+  for (const [suffix, changes] of [
+    ["unknown-checkpoint", { checkpoint: 99 }],
+    ["future", { asOf: "2099-01-01T00:00:00Z" }],
+    ["unrecorded-book", { asOf: "2026-09-01T00:00:00Z" }],
+  ] as const) {
+    const rejected = await app.inject({
+      method: "POST",
+      url: "/api/v1/valuations",
+      headers: { "idempotency-key": "value-invalid-" + suffix },
+      payload: { ...request, ...changes },
+    });
+    assert.equal(rejected.statusCode, 409, rejected.body);
+    assert.equal(rejected.json().error.code, "INVALID_SNAPSHOT");
+  }
   await post("/ledger/events", "value-deposit-more", {
     ...base,
     kind: "deposit",

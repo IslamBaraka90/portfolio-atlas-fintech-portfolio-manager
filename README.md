@@ -4,7 +4,7 @@
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current checkpoint: Chapters 1–5 — from instrument evidence to the portfolio book.** Create a learning portfolio, validate instruments and candles, inspect corporate actions and FX, then post immutable events and rebuild cash, FIFO lots and journal balances. SQLite preserves the workspace across restarts. The full course through Chapter 17 is in active implementation.
+**Current checkpoint: Chapters 1–6 — from instrument evidence to NAV and benchmarks.** Create a learning portfolio, validate instruments and candles, inspect corporate actions and FX, then post immutable events and rebuild cash, FIFO lots and journal balances. Freeze decimal valuations, explain missing price/FX evidence, and compare declared benchmark conventions. SQLite preserves the workspace across restarts. The full course through Chapter 17 is in active implementation.
 
 ## Start here
 
