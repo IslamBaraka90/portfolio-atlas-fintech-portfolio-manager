@@ -14,7 +14,10 @@ if (process.env.DATA_MODE && process.env.DATA_MODE !== "synthetic") {
   throw new Error("Chapter 1 supports synthetic data only.");
 }
 
-const app = buildApp({ logger: true });
+const app = buildApp({
+  logger: true,
+  allowedOrigin: process.env.WEB_ORIGIN ?? "http://127.0.0.1:" + (process.env.WEB_PORT ?? "5173"),
+});
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.on(signal, () => {
     void app.close().then(() => process.exit(0));
