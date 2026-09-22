@@ -21,6 +21,7 @@ import { AllocationEditor } from "../features/mandates/AllocationEditor";
 import { EvaluationResults } from "../features/mandates/EvaluationResults";
 
 export function App() {
+  const [storage, setStorage] = useState<"memory" | "sqlite">("memory");
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [draft, setDraft] = useState<MandateInput | null>(null);
   const [allocation, setAllocation] = useState<CandidateAllocation | null>(null);
@@ -46,6 +47,7 @@ export function App() {
           read("/portfolios", z.array(portfolioSchema), controller.signal),
         ]);
         if (controller.signal.aborted) return;
+        setStorage(example.metadata.storage);
         const previousSession = sessionStorage.getItem("atlas-session");
         sessionStorage.setItem("atlas-session", example.metadata.sessionId);
         sessionRef.current = example.metadata.sessionId;
@@ -211,7 +213,7 @@ export function App() {
     setResponse(null);
     setError(null);
     setAllocation(structuredClone(lesson.scenarios[0]!.allocation));
-    setNotice("New portfolio draft. Saved portfolios remain available for this API session.");
+    setNotice("New portfolio draft. Saved portfolios remain available in this workspace.");
   }
   return (
     <LearningShell active={1}>
@@ -244,8 +246,12 @@ export function App() {
       <div className="session-strip">
         <span className="badge synthetic">Synthetic data</span>
         <span>
-          <strong>Session-only storage.</strong> Restarting the API clears portfolios, revisions and
-          evaluations.
+          <strong>
+            {storage === "sqlite" ? "Durable SQLite storage." : "Session-only storage."}
+          </strong>{" "}
+          {storage === "sqlite"
+            ? "Saved portfolios, revisions and evaluations survive API restarts."
+            : "Restarting the API clears portfolios, revisions and evaluations."}
         </span>
         <button
           className="text-button"
@@ -357,7 +363,7 @@ export function App() {
                   <span>
                     {dirty
                       ? "Unsaved changes — save before evaluating."
-                      : "Saved in this API session."}
+                      : "Saved in this workspace."}
                   </span>
                 </div>
               )}

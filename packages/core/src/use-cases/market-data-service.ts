@@ -34,7 +34,7 @@ export class MarketDataService {
     return value;
   }
   ingest(request: IngestionRequest, context: CommandContext): Promise<IngestionResult> {
-    return this.commands.execute<IngestionResult>(
+    return this.commands.executePrepared<IngestionResult>(
       "market-data.ingest",
       request,
       context,
@@ -47,7 +47,7 @@ export class MarketDataService {
           );
         const provider = this.providers[instrument.source];
         if (!provider)
-          return {
+          return () => ({
             status: "unavailable",
             source: instrument.source,
             dataset: null,
@@ -56,48 +56,55 @@ export class MarketDataService {
               message: "This market-data provider is disabled.",
               retryable: false,
             },
-          };
+          });
         const reply = await provider.chart(instrument, request);
         if (reply.status === "unavailable")
-          return {
+          return () => ({
             status: "unavailable",
             source: instrument.source,
             dataset: null,
             failure: reply.failure,
-          };
+          });
         const evidence = await this.archive.save(reply.data.raw);
         // Archive first. Failure to preserve source evidence cannot publish a dataset.
         const quality = this.quality.validate(reply.data, instrument, request, reply.observedAt);
-        const previous = this.repository
-          .all()
-          .find(
-            (row) =>
-              row.instrument.instrumentId === instrument.instrumentId &&
-              row.request.from === request.from &&
-              row.request.to === request.to &&
-              row.request.scenario === request.scenario,
-          );
-        const dataset = marketDatasetSchema.parse({
-          id: previous?.id ?? this.ids.next(),
-          revision: (previous?.revision ?? 0) + 1,
-          createdAt: this.clock.now(),
-          instrument,
-          request,
-          source: instrument.source,
-          observedAt: reply.observedAt,
-          cache: reply.cache,
-          sourceHash: evidence.hash,
-          archiveRef: evidence.reference,
-          interval: "1d",
-          timezone: reply.data.timezone,
-          quoteUnit: reply.data.quoteUnit,
-          basis: reply.data.basis,
-          availability: "observed_now_not_historical",
-          rows: reply.data.rows,
-          quality,
-        });
-        this.repository.save(dataset);
-        return { status: "ingested", source: instrument.source, dataset, failure: null };
+        return () => {
+          if (this.instruments.get(request.instrumentId).revision !== request.instrumentRevision)
+            throw new ApplicationError(
+              "REVISION_CONFLICT",
+              "Instrument changed during provider retrieval.",
+            );
+          const previous = this.repository
+            .all()
+            .find(
+              (row) =>
+                row.instrument.instrumentId === instrument.instrumentId &&
+                row.request.from === request.from &&
+                row.request.to === request.to &&
+                row.request.scenario === request.scenario,
+            );
+          const dataset = marketDatasetSchema.parse({
+            id: previous?.id ?? this.ids.next(),
+            revision: (previous?.revision ?? 0) + 1,
+            createdAt: this.clock.now(),
+            instrument,
+            request,
+            source: instrument.source,
+            observedAt: reply.observedAt,
+            cache: reply.cache,
+            sourceHash: evidence.hash,
+            archiveRef: evidence.reference,
+            interval: "1d",
+            timezone: reply.data.timezone,
+            quoteUnit: reply.data.quoteUnit,
+            basis: reply.data.basis,
+            availability: "observed_now_not_historical",
+            rows: reply.data.rows,
+            quality,
+          });
+          this.repository.save(dataset);
+          return { status: "ingested", source: instrument.source, dataset, failure: null };
+        };
       },
       (result) => result.status === "ingested",
     );

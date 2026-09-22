@@ -4,7 +4,7 @@
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current checkpoint: Chapters 1–4 — Mandates, Instruments, Candles, Corporate Actions and FX.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapter 2 adds an instrument explorer, explicit Yahoo live mode, identity evidence and eligibility. Chapter 3 archives daily source evidence and explains candle acceptance, quarantine and coverage in React. Accounting and analytics follow.
+**Current checkpoint: Chapters 1–5 — from instrument evidence to the portfolio book.** Create a learning portfolio, validate instruments and candles, inspect corporate actions and FX, then post immutable events and rebuild cash, FIFO lots and journal balances. SQLite preserves the workspace across restarts. The full course through Chapter 17 is in active implementation.
 
 ## Start here
 
@@ -29,7 +29,7 @@ npm ci --ignore-scripts
 npm run dev
 ```
 
-Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. All inputs are synthetic. Restarting the API clears session data.
+Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. Teaching defaults are synthetic. Chapter 5 introduces durable SQLite storage under .data/portfolio-atlas.sqlite; saved workspace records survive API restarts. Playwright explicitly uses ephemeral in-memory SQLite.
 
 Follow the [Chapter 1 learning guide](docs/chapters/01-learning-guide.md) for the code-reading order, complete walkthrough and chronological commit map. See the [HTTP reference](docs/chapters/01-http-reference.md) and [recording notes](docs/video/chapter-01-recording-notes.md).
 
@@ -81,7 +81,7 @@ Every PRP supplies proposed task commits, backend and React outcomes, numerical 
 - [Yahoo Finance client](https://github.com/gadicc/yahoo-finance2) and its bundled agent skill.
 - [The Fintech Builder](https://thefintechbuilder.com/) for the underlying learning topics.
 
-The foundation pins fintech-algorithms 0.13.1 and yahoo-finance2 4.0.2. Portfolio construction has a [D14 release gate](docs/decisions/0003-d14-release-gate.md): the maintainer will announce when that package surface is ready.
+The app pins fintech-algorithms 0.13.2 and yahoo-finance2 4.0.2. D14 is published with 20 contract-tier methods; see the [release adoption evidence](docs/decisions/0003-d14-release-gate.md).
 
 Yahoo Finance is an unofficial, replaceable data source. Its availability and history do not establish point-in-time completeness, exchange eligibility, or market-data redistribution rights. Public fixtures are synthetic.
 

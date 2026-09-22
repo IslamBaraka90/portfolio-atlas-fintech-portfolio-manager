@@ -1,4 +1,5 @@
 import { CorporateActionsDesk } from "../features/corporate-actions/CorporateActionsDesk";
+import { PortfolioBook } from "../features/portfolio/PortfolioBook";
 import { DataQualityDesk } from "../features/data-quality/DataQualityDesk";
 import { useEffect, useState } from "react";
 import { App } from "./App";
@@ -16,7 +17,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#actions" ? (
+  return hash.split("?")[0] === "#book" ? (
+    <PortfolioBook />
+  ) : hash.split("?")[0] === "#actions" ? (
     <CorporateActionsDesk />
   ) : hash.split("?")[0] === "#market-data" ? (
     <DataQualityDesk />

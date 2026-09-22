@@ -23,6 +23,7 @@ export function registerRoutes(
   service: PortfolioService,
   clock: Clock,
   sessionId: string,
+  storage: "memory" | "sqlite" = "memory",
 ) {
   function response<T>(data: T, request: FastifyRequest): ApiEnvelope<T> {
     return {
@@ -30,7 +31,7 @@ export function registerRoutes(
       metadata: {
         schemaVersion: "1",
         mode: "synthetic",
-        storage: "memory",
+        storage,
         sessionId,
         generatedAt: clock.now(),
       },
@@ -44,9 +45,9 @@ export function registerRoutes(
 
   app.get("/api/v1/health", async () => ({
     name: "Portfolio Atlas",
-    chapter: 1,
+    chapter: 5,
     mode: "synthetic",
-    storage: "memory",
+    storage,
     sessionId,
   }));
   app.get("/api/v1/lesson", async (request) => {

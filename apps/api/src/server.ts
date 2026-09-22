@@ -17,6 +17,9 @@ if (process.env.DATA_MODE && process.env.DATA_MODE !== "synthetic") {
 
 const app = buildApp({
   logger: true,
+  databasePath:
+    process.env.DATABASE_PATH ??
+    fileURLToPath(new URL("../../../.data/portfolio-atlas.sqlite", import.meta.url)),
   rawArchive: new FileRawArchive(
     fileURLToPath(new URL("../../../.data/market-data/", import.meta.url)),
   ),

@@ -1,6 +1,6 @@
 # fintech-algorithms integration
 
-Status: dependency and lookup tooling ready; application adapter planned. Exact baseline: 0.13.1.
+Status: adapters implemented for Chapters 2–4. Current pinned release: 0.13.2.
 
 ## API discovery before implementation
 
@@ -18,7 +18,7 @@ The [capability inventory](../references/dependency-capabilities.json) records t
 
 Catalog topics, canonical articles, installed npm functions, and Portfolio Atlas features have separate states. A chapter can teach a planned catalog topic without pretending an npm import exists. Application-specific ledger, workflow, and reporting behavior may need implementation here from explicitly researched definitions.
 
-D14 remains gated by [ADR 0003](../decisions/0003-d14-release-gate.md). Do not import local private D14 source or guess future package paths.
+D14 is published in 0.13.2; method adoption follows [ADR 0003](../decisions/0003-d14-release-gate.md). Do not import local private D14 source or guess future package paths.
 
 ## Numerical evidence
 
@@ -28,7 +28,7 @@ Use D00 foundations for relevant existing calculations after contract lookup. So
 
 ## Known documentation drift at this baseline
 
-The installed 0.13.1 docs payload contains 697 topics. The lookup script's no-match text still says 324, and some skill verification totals still describe an earlier release. Do not treat these static sentences as inventory. Read installed docs.json and the domain counts. No upstream package files are patched by this project.
+The installed 0.13.2 docs payload contains 717 topics. The lookup script's no-match text still says 324, and some skill verification totals still describe an earlier release. Do not treat these static sentences as inventory. Read installed docs.json and the domain counts. No upstream package files are patched by this project.
 
 The public guide's generic Bar illustration is not a substitute for a particular topic's installed input shape. The OHLC validator accepts row provenance including bar_id/source/symbol, and returns one verdict per row. See the Yahoo adapter contract.
 

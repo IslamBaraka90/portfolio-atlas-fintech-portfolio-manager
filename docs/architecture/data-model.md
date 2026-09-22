@@ -18,7 +18,7 @@ Status: design contract. No runtime schemas or database migrations are implement
 | Provenance          | Provider, requested symbol, returned symbol, request window, fetchedAt, source hash/reference, usage restrictions |
 | Deletion/correction | Version or reversing event with author, reason, effective time, and recorded time                                 |
 
-Money representation and calculation libraries must be selected in Chapter 5. Financial amounts must not be accumulated using uncontrolled binary floating point.
+Chapter 5 selects bounded decimal strings, decimal.js 10.6.0 and Node 22.22 SQLite; see ADR 0004. Financial amounts must not be accumulated using uncontrolled binary floating point.
 
 ## Principal entities
 

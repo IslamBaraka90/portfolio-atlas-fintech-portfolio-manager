@@ -2,9 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–4 are implemented. Chapters 1–3 are published as stacked PRs with passing GitHub checks; Chapter 4 publication follows its final verified checkpoint. Chapters 5–8 continue under the current authorization. Chapters 9–17 remain planned, and D14 readiness has not been announced.
-
-The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
+Chapters 0–5 are implemented; Chapters 1–4 are published as stacked PRs and Chapter 5 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -47,8 +45,8 @@ The initial remote main matched the local foundation commit. The final publicati
 
 ## Package checkpoint
 
-fintech-algorithms: 0.13.1. yahoo-finance2: 4.0.2.
-D14: waiting for the maintainer's announcement; follow [ADR 0003](decisions/0003-d14-release-gate.md).
+fintech-algorithms: 0.13.2. yahoo-finance2: 4.0.2.
+D14: 20 published contract-tier methods; follow [ADR 0003](decisions/0003-d14-release-gate.md).
 
 The Yahoo adapter is specified and its dependency installed. Instrument discovery begins in Chapter 2; candle ingestion and validation begin in Chapter 3.
 
@@ -56,13 +54,9 @@ The Yahoo adapter is specified and its dependency installed. Instrument discover
 
 Replace states with observed results after each task. Record the commit, commands, outcomes and limitations. A directory or installed dependency does not count as a functioning feature. Distinguish synthetic demonstrations, live observations, package parity and independent expected results.
 
-## Next user prompt
+## Current execution request
 
-```text
-Start Chapter 2 of Portfolio Atlas using PRPs/02-instrument-identity.md.
-Implement instrument discovery and eligibility with the pinned Yahoo Finance v4 adapter.
-Keep the teaching style and chronological task commits. Stop at the chapter handoff.
-```
+Continue the full implementation through Chapter 17. No further chapter-start prompt is required.
 
 ## Chapter 1 task evidence
 
@@ -138,3 +132,23 @@ Independent examples passed: 100/2 = 50; gross dividend factor 50/52; USD 100 ×
 Task 5 adds archive tamper detection, independent basis-drift diagnosis and final recording evidence. Current-price research is explicitly distinguished from historical backtest availability. Chapter 5 is authorized next.
 
 Final Chapter 4 gates: 50 unit/API checks and all ten connected Chromium journeys passed. Formatting, Markdown lint (71 files), strict types, production build and browser dependency guard passed. Desktop and 390px mobile captures were inspected. The basis-drift example independently flags log(1.01) × 10,000 ≈ 99.503309 bps while accepting the exact split factor.
+
+## Chapter 5 work in progress
+
+Task 1 (0fab906) freezes decimal strings, half-even currency rounding, FIFO book lots, fee expense, immediate teaching settlement, reservations and the latest-event correction boundary.
+
+Task 2 introduces Node 22.22 SQLite migration 1 and decimal.js 10.6.0. Commands atomically commit state and replay records; provider preparation occurs outside the transaction. All 54 unit/API checks passed, including full evidence restart and injected commit failure rollback. Browser regression follows the storage metadata update. No book posting capability is claimed until the next tasks.
+
+Task 2 browser regression: all ten connected journeys passed with SQLite-backed application composition. Persistent and ephemeral storage are labeled accurately.
+
+## 0.13.2 release checkpoint
+
+The release is pinned exactly. The installed payload has 717 topics, including 20 D14 contract-tier methods. Strict type checks and all 60 existing unit/API checks passed after upgrade, including independent symmetric and asymmetric two-asset minima and inverse-volatility weights. npm reported zero known vulnerabilities during installation. The full Chapters 1–17 authorization supersedes the former D14 stop.
+
+## Chapter 5 completion checks
+
+Task 3 (54ba297) adds event replay, FIFO costs, reservations, journal balancing and corrections. Task 4 (0ac06bc) connects the API and React book. The connected Chromium walkthrough passed with duplicate-command replay, an 8-share correction, immutable original journal and rejected unaffordable purchase. Desktop and mobile captures were inspected; mobile has no page overflow.
+
+Task 5 checks partial-journal rollback and durable restart, repeated latest-active corrections, and tampering with both an original and its reversal. Final gate results follow. Chapter 6 continues under full-build authorization.
+
+Final Chapter 5 gates: strict typecheck passed; all 62 unit/API checks passed; production build and browser dependency guard passed; Prettier and Markdown lint (74 files) passed; all 11 connected Chromium journeys passed. Chapter 4 GitHub checks are green. SQLite failure/retry/restart evidence and reversed-history tamper checks passed.

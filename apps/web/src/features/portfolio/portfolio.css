@@ -1,0 +1,30 @@
+.book-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.book-fields button {
+  align-self: flex-start;
+}
+.book-event {
+  padding: 14px 0;
+  border-bottom: 1px solid #dfe4dc;
+  overflow-wrap: anywhere;
+}
+.book-event summary {
+  cursor: pointer;
+  line-height: 1.6;
+}
+.book-event pre {
+  overflow: auto;
+  padding: 16px;
+  background: #f3f5ee;
+  font-size: 0.8rem;
+}
+.chapter-table-wrap {
+  margin-bottom: 20px;
+}

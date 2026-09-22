@@ -2,7 +2,7 @@
 
 A **Product Requirements Prompt** is the implementation contract for a chapter: problem, scope, inputs and outputs, backend and React work, meaningful validation, task commits, video walkthrough, and next boundary.
 
-Current stage: Chapters 1–4 implemented. Chapters 5–17 remain planned. Chapters 5–8 are authorized in this continuous run; Chapter 9 waits for D14. See the [Chapter 1 guide](../docs/chapters/01-learning-guide.md) and [progress ledger](../docs/progress.md).
+Current stage: Chapters 1–5 implemented; Chapter 6 is next. All remaining chapters through 17 are now authorized. D14 ships in the pinned 0.13.2 release. See the [progress ledger](../docs/progress.md).
 
 | Chapter | Build outcome                                               | Plan                                          |
 | ------- | ----------------------------------------------------------- | --------------------------------------------- |
@@ -27,11 +27,11 @@ Current stage: Chapters 1–4 implemented. Chapters 5–17 remain planned. Chapt
 
 ## Execution rules
 
-The maintainer selects the next chapter. Read [AGENTS.md](../AGENTS.md), [progress](../docs/progress.md) and the PRP. Implement its meaningful tasks, validate each task, commit frequently, record evidence, and stop at the chapter boundary.
+The maintainer authorized continuous implementation through Chapter 17. Read [AGENTS.md](../AGENTS.md), [progress](../docs/progress.md) and the PRP. Implement its meaningful tasks, validate each task, commit frequently, record evidence, publish the chapter checkpoint, and continue.
 
 A dependency being installed, a directory existing, or a topic being named never marks a feature complete. Some application capabilities rely on catalog topics that are not yet npm exports.
 
-Chapter 9 has a [D14 package gate](../docs/decisions/0003-d14-release-gate.md). Earlier chapters can proceed. Package availability and API contracts are checked again when each chapter begins.
+Chapter 9 uses the verified [D14 package gate](../docs/decisions/0003-d14-release-gate.md). Earlier chapters can proceed. Package availability and API contracts are checked again when each chapter begins.
 
 ## Course support
 

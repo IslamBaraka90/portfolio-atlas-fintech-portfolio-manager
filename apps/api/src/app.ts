@@ -1,22 +1,28 @@
+import { dirname, resolve, join } from "node:path";
+import { SqliteLedgerRepository } from "@portfolio-atlas/adapters";
+import { LedgerService } from "@portfolio-atlas/core";
+import { registerLedgerRoutes } from "./http/ledger.js";
+import { FileRawArchive } from "@portfolio-atlas/adapters";
+import {
+  SqliteDatabase,
+  SqlitePortfolioRepository,
+  SqliteInstrumentRepository,
+  SqliteDatasetRepository,
+  SqliteActionRepository,
+} from "@portfolio-atlas/adapters";
 import { basisDriftLesson } from "@portfolio-atlas/adapters";
 import { CorporateActionService, AdjustmentService } from "@portfolio-atlas/core";
-import {
-  MemoryActionRepository,
-  ProviderActionNormalizer,
-  FintechAdjustmentEngine,
-} from "@portfolio-atlas/adapters";
+import { ProviderActionNormalizer, FintechAdjustmentEngine } from "@portfolio-atlas/adapters";
 import { registerCorporateActionRoutes } from "./http/corporate-actions.js";
 import { MarketDataService, type ChartProvider, type RawArchive } from "@portfolio-atlas/core";
 import {
   SyntheticChartProvider,
   YahooChartProvider,
   FintechMarketQualityValidator,
-  MemoryDatasetRepository,
   MemoryRawArchive,
 } from "@portfolio-atlas/adapters";
 import { registerMarketDataRoutes } from "./http/market-data.js";
 import {
-  MemoryInstrumentRepository,
   SyntheticInstrumentProvider,
   YahooInstrumentProvider,
   createYahooTransport,
@@ -32,7 +38,6 @@ import { registerInstrumentRoutes } from "./http/instruments.js";
 import { randomUUID } from "node:crypto";
 import Fastify from "fastify";
 import { ZodError } from "zod";
-import { MemoryPortfolioRepository } from "@portfolio-atlas/adapters";
 import {
   ApplicationError,
   PortfolioService,
@@ -46,6 +51,7 @@ export function buildApp(
   options: {
     chartProviders?: Partial<Record<DataMode, ChartProvider>>;
     rawArchive?: RawArchive;
+    databasePath?: string;
     logger?: boolean;
     clock?: Clock;
     ids?: IdFactory;
@@ -63,10 +69,16 @@ export function buildApp(
   });
   const clock = options.clock ?? { now: () => new Date().toISOString() };
   // Composition is the only place HTTP, application rules and storage are joined.
-  // Every app owns a fresh memory store; tests inject deterministic clocks and IDs.
-  const repository = new MemoryPortfolioRepository();
+  // Tests default to isolated in-memory SQLite; the server supplies a durable file path.
+  const database = new SqliteDatabase(options.databasePath ?? ":memory:");
+  app.addHook("onClose", async () => database.close());
+  const storage =
+    options.databasePath && options.databasePath !== ":memory:"
+      ? ("sqlite" as const)
+      : ("memory" as const);
+  const repository = new SqlitePortfolioRepository(database);
   const ids = options.ids ?? { next: () => randomUUID() };
-  const commands = new Commands(repository);
+  const commands = new Commands(repository, database);
   const service = new PortfolioService(repository, clock, ids, commands);
   const yahooTransport = options.yahooEnabled ? createYahooTransport() : null;
   const budget = new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000);
@@ -80,13 +92,18 @@ export function buildApp(
   };
   const instruments = new InstrumentService(
     providers,
-    new MemoryInstrumentRepository(),
+    new SqliteInstrumentRepository(database),
     clock,
     ids,
     commands,
     service,
   );
-  const sessionId = randomUUID();
+  let workspace = database.get("workspace", "main") as { sessionId: string } | undefined;
+  if (!workspace) {
+    workspace = { sessionId: randomUUID() };
+    database.run(() => database.append("workspace", "main", 1, workspace));
+  }
+  const sessionId = workspace.sessionId;
   const allowedOrigins = new Set([
     options.allowedOrigin ?? "http://127.0.0.1:5173",
     "http://localhost:5173",
@@ -153,21 +170,25 @@ export function buildApp(
       requestId: request.id,
     }),
   );
-  registerRoutes(app, service, clock, sessionId);
+  registerRoutes(app, service, clock, sessionId, storage);
   registerInstrumentRoutes(
     app,
     instruments,
     new FintechIdentityResolver(),
     commands,
-    createHttpContext(clock, sessionId),
+    createHttpContext(clock, sessionId, storage),
   );
-  const rawArchive = options.rawArchive ?? new MemoryRawArchive();
+  const rawArchive =
+    options.rawArchive ??
+    (storage === "sqlite"
+      ? new FileRawArchive(join(dirname(resolve(options.databasePath!)), "market-data"))
+      : new MemoryRawArchive());
   const marketData = new MarketDataService(
     options.chartProviders ?? {
       synthetic: new SyntheticChartProvider(clock),
       ...(yahooTransport ? { yahoo: new YahooChartProvider(yahooTransport, clock, budget) } : {}),
     },
-    new MemoryDatasetRepository(),
+    new SqliteDatasetRepository(database),
     rawArchive,
     new FintechMarketQualityValidator(),
     instruments,
@@ -175,8 +196,8 @@ export function buildApp(
     ids,
     commands,
   );
-  registerMarketDataRoutes(app, marketData, createHttpContext(clock, sessionId));
-  const actionRepository = new MemoryActionRepository();
+  registerMarketDataRoutes(app, marketData, createHttpContext(clock, sessionId, storage));
+  const actionRepository = new SqliteActionRepository(database);
   const actions = new CorporateActionService(
     actionRepository,
     rawArchive,
@@ -200,8 +221,20 @@ export function buildApp(
     actions,
     adjustments,
     marketData,
-    createHttpContext(clock, sessionId),
+    createHttpContext(clock, sessionId, storage),
     basisDriftLesson(),
+  );
+  registerLedgerRoutes(
+    app,
+    new LedgerService(
+      new SqliteLedgerRepository(database),
+      service,
+      instruments,
+      clock,
+      ids,
+      commands,
+    ),
+    createHttpContext(clock, sessionId, storage),
   );
   return app;
 }

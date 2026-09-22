@@ -18,6 +18,7 @@ import { read, write } from "../../shared/api";
 import { LearningShell } from "../../app/LearningShell";
 
 export function InstrumentExplorer() {
+  const [storage, setStorage] = useState<"memory" | "sqlite">("memory");
   const [query, setQuery] = useState("Aurora");
   const [mode, setMode] = useState<DataMode>("synthetic");
   const [search, setSearch] = useState<InstrumentSearchResult | null>(null);
@@ -41,6 +42,7 @@ export function InstrumentExplorer() {
         setMandates(policies.data);
         setMandateId(policies.data[0]?.id ?? "");
         setSaved(records.data);
+        setStorage(records.metadata.storage);
       })
       .catch((failure: unknown) => {
         if (!abort.signal.aborted) setError(String(failure));
@@ -161,8 +163,10 @@ export function InstrumentExplorer() {
           {mode === "synthetic" ? "Synthetic data" : "Yahoo observations"}
         </span>
         <span>
-          Session-only instrument records. Live metadata is an observation, not permanent identity
-          proof.
+          {storage === "sqlite"
+            ? "Instrument revisions are saved in SQLite."
+            : "Instrument records last for this API session."}{" "}
+          Live metadata is an observation, not permanent identity proof.
         </span>
       </div>
       <p className="live-notice" role="status">
