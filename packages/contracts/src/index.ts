@@ -16,3 +16,4 @@ export * from "./rebalancing.js";
 export * from "./orders.js";
 export * from "./operations.js";
 export * from "./monitoring.js";
+export * from "./performance.js";
