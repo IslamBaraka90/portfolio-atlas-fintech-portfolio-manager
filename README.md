@@ -4,7 +4,7 @@
 
 Build a portfolio tracker, investment analytics engine, and reporting desk with **React, TypeScript, Yahoo Finance, and fintech-algorithms**. Follow one portfolio from instrument validation and trustworthy candles through construction, paper execution, reconciliation, risk, and performance reporting.
 
-**Current checkpoint: Chapters 1–2 — Mandate Lab and Instrument Discovery.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapter 2 adds an instrument explorer, explicit Yahoo live mode, identity evidence and eligibility. Candles, accounting and analytics arrive in the following chapters.
+**Current checkpoint: Chapters 1–3 — Mandates, Instrument Discovery and Candle Quality.** Create a learning portfolio, save mandate revisions and inspect explained allocation decisions in a connected React app. Chapter 2 adds an instrument explorer, explicit Yahoo live mode, identity evidence and eligibility. Chapter 3 archives daily source evidence and explains candle acceptance, quarantine and coverage in React. Accounting and analytics follow.
 
 ## Start here
 
@@ -88,3 +88,5 @@ Yahoo Finance is an unofficial, replaceable data source. Its availability and hi
 ## License
 
 [MIT](LICENSE) for this project's code and documentation. Upstream dependencies and provider data retain their own licenses and usage terms.
+
+The [Chapter 3 candle-quality guide](docs/chapters/03-learning-guide.md) connects raw evidence, validation, immutable datasets and the React quality desk.
