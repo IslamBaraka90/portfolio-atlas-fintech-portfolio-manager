@@ -158,7 +158,8 @@ export function PortfolioBook() {
         </h1>
         <p className="chapter-intro">
           Post an event, follow its journal, and rebuild the cash and lots. All amounts below are
-          teaching entries with immediate settlement.
+          teaching entries. Deferred paper fills and custody acknowledgments are managed in Chapter
+          13.
         </p>
         {error && (
           <div role="alert" tabIndex={-1} ref={errorRef} className="error-banner">
@@ -419,7 +420,9 @@ export function PortfolioBook() {
                         <td data-testid="settled-cash">{c.settled}</td>
                         <td>{c.reserved}</td>
                         <td>{c.available}</td>
-                        <td>{c.pending}</td>
+                        <td>
+                          {c.pending} (economic {c.economic ?? c.settled})
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -444,7 +447,9 @@ export function PortfolioBook() {
                             ?.returnedSymbol ?? p.instrumentId}
                         </th>
                         <td data-testid="position-quantity">{p.quantity}</td>
-                        <td>{p.pendingQuantity}</td>
+                        <td>
+                          {p.pendingQuantity} (custody {p.custodyQuantity ?? p.quantity})
+                        </td>
                         <td>
                           {p.costBasis} {p.currency}
                         </td>

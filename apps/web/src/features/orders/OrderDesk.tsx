@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
+  settlementPolicySchema,
+  type SettlementPolicy,
   rebalanceProposalSchema,
   paperBatchSchema,
   paperEventSchema,
@@ -14,6 +16,8 @@ import "../data-quality/data-quality.css";
 import "../valuation/valuation.css";
 import "../research/research.css";
 export function OrderDesk() {
+  const [policies, setPolicies] = useState<SettlementPolicy[]>([]),
+    [policyId, setPolicyId] = useState("");
   const [proposals, setProposals] = useState<RebalanceProposal[]>([]),
     [batches, setBatches] = useState<PaperBatch[]>([]),
     [batch, setBatch] = useState<PaperBatch | null>(null),
@@ -31,8 +35,10 @@ export function OrderDesk() {
     Promise.all([
       read("/rebalances", z.array(rebalanceProposalSchema), abort.signal),
       read("/paper-batches", z.array(paperBatchSchema), abort.signal),
+      read("/settlement-policies", z.array(settlementPolicySchema), abort.signal),
     ])
-      .then(([p, b]) => {
+      .then(([p, b, calendars]) => {
+        setPolicies(calendars.data);
         setProposals(p.data);
         setBatches(b.data);
       })
@@ -63,6 +69,7 @@ export function OrderDesk() {
               proposal: { id: p.id, revision: p.revision },
               clientBatchId: clientId,
               orderType: type,
+              settlementPolicy: policyId ? { id: policyId, revision: 1 } : null,
             },
             paperBatchSchema,
           )
@@ -170,6 +177,17 @@ export function OrderDesk() {
               <select value={type} onChange={(e) => setType(e.target.value)}>
                 <option value="market">Protected market</option>
                 <option value="limit">Limit at proposal price</option>
+              </select>
+            </label>
+            <label>
+              Settlement policy
+              <select value={policyId} onChange={(e) => setPolicyId(e.target.value)}>
+                <option value="">Immediate teaching settlement</option>
+                {policies.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} � {p.lagBusinessDays} business days
+                  </option>
+                ))}
               </select>
             </label>
             <button
