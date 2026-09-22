@@ -1,3 +1,4 @@
+import { PerformanceDesk } from "../features/performance/PerformanceDesk";
 import { MonitorDesk } from "../features/monitoring/MonitorDesk";
 import { OperationsDesk } from "../features/operations/OperationsDesk";
 import { OrderDesk } from "../features/orders/OrderDesk";
@@ -26,7 +27,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#monitoring" ? (
+  return hash.split("?")[0] === "#performance" ? (
+    <PerformanceDesk />
+  ) : hash.split("?")[0] === "#monitoring" ? (
     <MonitorDesk />
   ) : hash.split("?")[0] === "#operations" ? (
     <OperationsDesk />

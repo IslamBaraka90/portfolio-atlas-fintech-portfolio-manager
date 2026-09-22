@@ -76,7 +76,32 @@ export function calculatePerformance(
       global.push("Journal occurred time falls outside its valuation interval.");
     const flows = externalFlows.filter((f) => between.some((e) => e.id === f.sourceRef));
     const total = flows.reduce((s, f) => s.plus(f.amount), new D(0));
-    if (flows.some((f) => Date.parse(f.at) !== Date.parse(b.request.asOf)))
+    // A single immediate flow can be bridged after recording only when the
+    // same marked holdings/FX and exact NAV difference prove no observed value change.
+    const signature = (v: ValuationSnapshot) =>
+      JSON.stringify({
+        positions: v.positions.map((p) => ({
+          id: p.instrumentId,
+          quantity: p.quantity,
+          currency: p.currency,
+          value: p.marketValueBase,
+          price: p.mark.price,
+          quotedAt: p.mark.quotedAt,
+          sourceHash: p.mark.sourceHash,
+          dataset: p.mark.dataset,
+          rowId: p.mark.rowId,
+          reviewId: p.mark.reviewId,
+          override: p.mark.override,
+        })),
+        fx: v.fxEvidence,
+      });
+    const bridge =
+      flows.length === 1 &&
+      between.length === 1 &&
+      Date.parse(b.request.asOf) - Date.parse(a.request.asOf) <= 60000 &&
+      signature(a) === signature(b) &&
+      end.minus(begin).eq(total);
+    if (!bridge && flows.some((f) => Date.parse(f.at) !== Date.parse(b.request.asOf)))
       reasons.push("Missing valuation at an external-flow instant; exact TWR unavailable.");
     if (begin.lte(0)) reasons.push("Beginning capital must be positive.");
     const feeRows = between.filter((e) => e.input.kind === "fee" || "fee" in e.input);
@@ -103,7 +128,15 @@ export function calculatePerformance(
       fees: foreignFees ? "unavailable" : signedMoney(fees),
       netReturn: net?.toNumber() ?? null,
       feeAddedBackReturn: gross?.toNumber() ?? null,
-      reasons: [...reasons, ...(foreignFees ? ["Fee add-back needs event-time FX."] : [])],
+      reasons: [
+        ...(bridge
+          ? [
+              "Verified immediate flow-only bridge: unchanged marked holdings and FX, exact NAV change equals external flow.",
+            ]
+          : []),
+        ...reasons,
+        ...(foreignFees ? ["Fee add-back needs event-time FX."] : []),
+      ],
     });
   }
   // An invalid later interval invalidates the entire linked result.

@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–12 are implemented. Chapters 1–11 are published as stacked PRs with green checks; Chapter 12 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0-14 are implemented and published as stacked PRs. Chapter 15 implementation is underway. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
