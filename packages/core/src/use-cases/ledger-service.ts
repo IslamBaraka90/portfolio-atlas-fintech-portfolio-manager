@@ -17,6 +17,17 @@ import { normalizePosting, invalid } from "../domain/accounting/decimal.js";
 import { activeEvents, postingEntry, reversalEntry } from "../domain/accounting/project-book.js";
 import { reconcileBook } from "../domain/accounting/reconcile-book.js";
 export class LedgerService {
+  private manualWriteGuard: (portfolioId: string) => void = () => {};
+  setManualWriteGuard(guard: (portfolioId: string) => void) {
+    this.manualWriteGuard = guard;
+  }
+  // Internal orchestration only: caller owns the shared command transaction.
+  // The repository rejects writes outside it; there is no HTTP route to this method.
+  postWithinTransaction(value: PostingInput): BookState {
+    const input = normalizePosting(value);
+    this.append(input, this.clock.now());
+    return this.get(input.portfolioId);
+  }
   constructor(
     private readonly repository: LedgerRepository,
     private readonly portfolios: PortfolioService,
@@ -109,6 +120,7 @@ export class LedgerService {
   post(value: PostingInput, context: CommandContext): BookState {
     const input = normalizePosting(value);
     return this.commands.executeSync("ledger.post", input, context, () => {
+      this.manualWriteGuard(input.portfolioId);
       this.append(input, this.clock.now());
       return this.get(input.portfolioId);
     });
@@ -120,6 +132,7 @@ export class LedgerService {
       replacement: parsed.replacement ? normalizePosting(parsed.replacement) : null,
     };
     return this.commands.executeSync("ledger.correct", input, context, () => {
+      this.manualWriteGuard(input.portfolioId);
       const state = this.requireReconciled(input.portfolioId),
         active = activeEvents(state.events);
       const original = active.find((event) => event.id === input.originalEventId);

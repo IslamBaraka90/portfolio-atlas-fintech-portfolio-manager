@@ -1,8 +1,8 @@
 # PRP 12 — Pre-trade controls and paper execution
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/12-learning-guide.md and docs/progress.md.
 Chapter: 12. Editorial duration estimate: 25 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under full-build authorization.
 
 ## Learner promise
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] An order for 10 filled with 4 then 6 ends at 10, never 14 after an event replay.
-- [ ] A rejection releases its valid reservation; a partial fill preserves only the remaining commitment.
-- [ ] A stale price or revoked restriction blocks submission even if the target was previously approved.
-- [ ] A cancel request is not shown as cancelled until the declared acknowledgment transition.
-- [ ] A daily-bar model labels uncertain intrabar ordering and never claims observed market fills.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] An order for 10 filled with 4 then 6 ends at 10, never 14 after an event replay.
+- [x] A rejection releases its valid reservation; a partial fill preserves only the remaining commitment.
+- [x] A stale price or revoked restriction blocks submission even if the target was previously approved.
+- [x] A cancel request is not shown as cancelled until the declared acknowledgment transition.
+- [x] A daily-bar model labels uncertain intrabar ordering and never claims observed market fills.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Paper fills and unsettled obligations. Chapter 13 completes settlement and reconciliation.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue through Chapter 17 under full-build authorization.
 
 ## Evidence to fill during implementation
 

@@ -39,3 +39,5 @@ export * from "./domain/validation/validate-strategy.js";
 export * from "./ports/lot-scoring.js";
 export * from "./domain/rebalancing/plan-rebalance.js";
 export * from "./use-cases/rebalance-service.js";
+export * from "./ports/paper-execution.js";
+export * from "./use-cases/paper-execution-service.js";

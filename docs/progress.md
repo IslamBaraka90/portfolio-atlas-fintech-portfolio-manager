@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–11 are implemented. Chapters 1–10 are published as stacked PRs with green checks; Chapter 11 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–12 are implemented. Chapters 1–11 are published as stacked PRs with green checks; Chapter 12 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -204,3 +204,11 @@ Tasks 1–4: b57ba97, 6fc17e3, 63782e7, b0fb2ec. Whole-lot cash-funded sizing, t
 Independent case: 39 shares each at 100, purchases 7,800, fees 7.80, available cash 2,192.20 and NAV 9,992.20. A balanced book now correctly avoids fee-buffer-induced turnover. Contributions, reserved funds, off-tick/stale marks, FIFO final cents, same-time lot order, expired proposals and changed book/valuation/instrument evidence are covered. D14 negative score −40 is not cash.
 
 Browser verification found successful command keys were being reused for later deliberate submissions. Keys now remain only until confirmed success; the lost-response retry regression still passes. Final gates: 105 unit/API tests, 17 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (87 files) passed. Desktop/mobile captures inspected. Chapter 10 remote checks are green. Continue to paper execution.
+
+## Chapter 12 evidence
+
+Tasks 1–4: f83558d, 52849b5, 2791007, 4002570. Exact approved-proposal consumption, single active batch per portfolio, atomic reservations, protected market/limit opening model, partial fills, cancel acknowledgments, stable event IDs and a connected blotter. D12 tick/residual methods use verified installed fields and integer atom checks.
+
+Independent replay: 4 then 6 fills at 390 produce 10 shares, fees 3.90 and cash 6,096.10. Duplicate events and restart never double-post. Injected journal failure rolls back release/fill/re-reserve. Current cash must fund acceptance; unexecuted sales cannot. Revoked restrictions and stale approvals reject submission. The browser commits a fill then loses its response and safely retries; it also demonstrates protected-market rejection and cancellation release.
+
+Final gates: 111 unit/API tests and 18 Chromium journeys passed. Types, production build, browser dependency guard, formatting and Markdown lint (89 files) passed. Desktop/mobile screenshots inspected. Chapter 11 remote checks are green. Continue to explicitly configured deferred settlement and reconciliation.
