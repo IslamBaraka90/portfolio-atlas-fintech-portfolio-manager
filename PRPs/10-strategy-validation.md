@@ -1,8 +1,8 @@
 # PRP 10 — Time-aware backtesting and decision validation
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/10-learning-guide.md and docs/progress.md.
 Chapter: 10. Editorial duration estimate: 25 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under full-build authorization.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A decision based on a bar close cannot fill earlier within that bar under the declared daily model.
-- [ ] Changing a future observation cannot alter earlier decisions.
-- [ ] Training scalers/models cannot fit on the holdout period.
-- [ ] Today's Yahoo universe/history is not automatically a survivorship-safe historical universe.
-- [ ] A deliberately late filing fails the information cutoff gate.
-- [ ] Same frozen input and seed reproduce the same run; costs flow into accounting and reported returns.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A decision based on a bar close cannot fill earlier within that bar under the declared daily model.
+- [x] Changing a future observation cannot alter earlier decisions.
+- [x] Training scalers/models cannot fit on the holdout period.
+- [x] Today's Yahoo universe/history is not automatically a survivorship-safe historical universe.
+- [x] A deliberately late filing fails the information cutoff gate.
+- [x] Same frozen input and seed reproduce the same run; costs flow into accounting and reported returns.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 A validated or explicitly limited decision policy. Chapter 11 translates a current target into practical trades.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue through Chapter 17 under the full-build authorization.
 
 ## Evidence to fill during implementation
 

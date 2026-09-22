@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–9 are implemented. Chapters 1–8 are published as stacked PRs with green checks; Chapter 9 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–10 are implemented. Chapters 1–9 are published as stacked PRs with green checks; Chapter 10 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -188,3 +188,11 @@ Tasks 1–4: 05961ee, 29e5fbb, 25d9e4b, 7b6d36b. Verified installed D14 signatur
 Examples: equal weights with 20% cash produce 40/40/20; inverse volatility 0.1/0.2 produces 2/3 and 1/3; a two-asset minimum variance example gives 8/11 in the first asset. A doubled volatility stress quadruples variance. Failed convergence, impossible capacity, unknown sectors, cost rejection and revision mismatch retain explicit outcomes. Proposal creation leaves the accounting checkpoint unchanged.
 
 Final gates: 94 unit/API checks, 15 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (83 files) passed. Desktop and 390px mobile captures were inspected. Chapter 8 remote checks are green. Continue to causal strategy validation.
+
+## Chapter 10 evidence
+
+Tasks 1–4: 8f0c8f7, 8008857, e12e131, 69c135b. Authored historical bars and membership, causal folds, isolated existing-ledger replay, package drawdown, saved API evidence and React timeline/cost comparison.
+
+Independent expected values: 74 shares at 107, fee 7.92, final NAV 10,362.08 versus 10,370.00 without fees. Authored delisting recovery produces a FIFO loss of 7,548 and zero-fee NAV 2,452. Future holdout mutation preserves earlier results and fitted scores. Late filings and missing sessions block performance.
+
+Final gates: 98 unit/API tests and 16 browser journeys passed, along with strict types, production build, browser dependency guard, formatting and Markdown lint (85 files). An untracked PR-body Markdown file under .git initially tripped documentation lint; renaming this tool-owned temporary file to .txt resolved it without changing project checks. Desktop and mobile screenshots inspected. Chapter 9 remote checks are green. Continue to current-target rebalancing.
