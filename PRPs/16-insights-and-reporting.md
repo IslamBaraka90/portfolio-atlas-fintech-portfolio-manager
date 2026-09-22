@@ -1,6 +1,6 @@
 # PRP 16 — Management insights and the reporting desk
 
-Status: planned; implementation has not started.
+Status: implemented and verified; see docs/progress.md and docs/chapters/16-learning-guide.md.
 Chapter: 16. Editorial duration estimate: 20 minutes.
 Implementation starts when the maintainer explicitly requests this chapter.
 
@@ -60,16 +60,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] Holdings, cash and liabilities reconcile to the reported NAV under its valuation policy.
-- [ ] UI, JSON and CSV use identical frozen references and currency/rounding rules.
-- [ ] A later price correction creates a superseding revision without altering the issued snapshot.
-- [ ] A missing valuation or reconciliation break is visible in report coverage.
-- [ ] Every insight has an as-of time, source/result reference and bounded explanation.
-- [ ] A spreadsheet-targeted CSV export handles formula-like user text safely.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] Holdings, cash and liabilities reconcile to the reported NAV under its valuation policy.
+- [x] UI, JSON and CSV use identical frozen references and currency/rounding rules.
+- [x] A later price correction creates a superseding revision without altering the issued snapshot.
+- [x] A missing valuation or reconciliation break is visible in report coverage.
+- [x] Every insight has an as-of time, source/result reference and bounded explanation.
+- [x] A spreadsheet-targeted CSV export handles formula-like user text safely.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
