@@ -7,3 +7,4 @@ export * from "./use-cases/commands.js";
 export * from "./use-cases/instrument-service.js";
 export * from "./domain/instrument-eligibility.js";
 export * from "./ports/market-data.js";
+export * from "./use-cases/market-data-service.js";
