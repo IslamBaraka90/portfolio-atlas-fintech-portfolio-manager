@@ -58,3 +58,7 @@ The React desk shows period end, observation/availability times, revisions, meth
 - Package docs and declarations own algorithm signatures; captured common-size examples can be elided, so complete inputs are checked independently.
 
 Read-only AAPL source inspection succeeded at 2026-09-22T12:40:24.488Z with three annual records. The original JSON hash was e0050736a1d4bfb4769c66f40ff6cb77a9be555ace3079c664eea7d9a4bfdb46. This establishes provider shape only, not independent filing verification. Raw response remains in ignored local artifacts.
+
+## Installed SMA discrepancy
+
+The 0.13.2 catalog advertises nullable input, but the optimized declaration and implementation reject null. The adapter calls the installed numeric SMA on each contiguous valid segment and restores original indexes. Warm-up restarts after each missing value; segments are never concatenated. Known missing sessions or ambiguous date ordering make the entire trend unavailable.
