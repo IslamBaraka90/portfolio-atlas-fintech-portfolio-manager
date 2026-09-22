@@ -212,3 +212,11 @@ Tasks 1–4: f83558d, 52849b5, 2791007, 4002570. Exact approved-proposal consump
 Independent replay: 4 then 6 fills at 390 produce 10 shares, fees 3.90 and cash 6,096.10. Duplicate events and restart never double-post. Injected journal failure rolls back release/fill/re-reserve. Current cash must fund acceptance; unexecuted sales cannot. Revoked restrictions and stale approvals reject submission. The browser commits a fill then loses its response and safely retries; it also demonstrates protected-market rejection and cancellation release.
 
 Final gates: 111 unit/API tests and 18 Chromium journeys passed. Types, production build, browser dependency guard, formatting and Markdown lint (89 files) passed. Desktop/mobile screenshots inspected. Chapter 11 remote checks are green. Continue to explicitly configured deferred settlement and reconciliation.
+
+## Chapter 13 evidence
+
+Tasks 1�4: 15b92be, 4da67b3, 9f27d34, acf2d70, 8a61971. Authored calendars, deferred payable/receivable accounting, partial and failed delivery, active-batch checkpoint updates, independent immutable statements, conservative matching and approved reverse/repost.
+
+Independent examples: buy 10 at 390 plus 3.90 fee; settled cash stays 10,000 while economic cash becomes 6,096.10. Nine delivered shares leave settled cash 6,486.49 and 390.39 payable. Final delivery leaves 6,096.10 cash and 10 custody shares. NAV is unchanged by settlement. A 100 versus 90 deposit break closes only in a new run after reversal/replacement; the original break and statement revisions remain unchanged. Ambiguous or reused candidates never clear a fill.
+
+Final gates: 117 unit/API tests, 19 connected Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (91 files) passed. Browser selectors were corrected to the actual accessible control names; desktop and 390px screenshots inspected. The build reports the application bundle exceeding its 500 kB advisory threshold; lazy chapter loading is a Chapter 17 delivery task. D43/D30 and inferred corporate-action entitlements remain explicitly unsupported; evidenced receipts are reconciled. Chapter 12 remote checks are green. Continue to risk monitoring.

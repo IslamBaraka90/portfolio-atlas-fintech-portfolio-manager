@@ -1,3 +1,4 @@
+import { settlementPolicySchema } from "./operations.js";
 import { z } from "zod";
 import { rebalanceProposalSchema } from "./rebalancing.js";
 import { moneyTextSchema, quantityTextSchema } from "./accounting.js";
@@ -15,6 +16,7 @@ export const paperSubmitSchema = z.strictObject({
   proposal: snapshotRefSchema,
   clientBatchId: z.string().regex(/^[A-Za-z0-9_-]{8,64}$/),
   orderType: z.enum(["market", "limit"]).default("market"),
+  settlementPolicy: snapshotRefSchema.nullable().default(null),
 });
 export type PaperSubmit = z.infer<typeof paperSubmitSchema>;
 export const paperEventSchema = z
@@ -53,7 +55,9 @@ export const paperFillSchema = z.strictObject({
   fee: moneyTextSchema,
   ledgerEventId: z.string(),
   source: z.literal("authored_paper_opening_event"),
-  settlementPolicy: z.literal("immediate_teaching"),
+  settlementPolicy: z.enum(["immediate_teaching", "deferred_teaching"]),
+  settlementId: z.string().nullable().default(null),
+  dueDate: z.iso.date().nullable().default(null),
 });
 export type PaperFill = z.infer<typeof paperFillSchema>;
 export const paperOrderSchema = z.strictObject({
@@ -101,6 +105,7 @@ export const paperBatchSchema = z.strictObject({
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
   proposal: rebalanceProposalSchema,
+  settlementPolicy: settlementPolicySchema.nullable().default(null),
   expectedBookCheckpoint: z.number().int().nonnegative(),
   status: z.enum(["active", "complete"]),
   orders: z.array(paperOrderSchema),

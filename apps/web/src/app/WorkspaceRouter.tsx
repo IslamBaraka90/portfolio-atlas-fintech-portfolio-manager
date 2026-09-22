@@ -1,3 +1,4 @@
+import { OperationsDesk } from "../features/operations/OperationsDesk";
 import { OrderDesk } from "../features/orders/OrderDesk";
 import { RebalanceDesk } from "../features/rebalancing/RebalanceDesk";
 import { ValidationDesk } from "../features/validation/ValidationDesk";
@@ -24,7 +25,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#orders" ? (
+  return hash.split("?")[0] === "#operations" ? (
+    <OperationsDesk />
+  ) : hash.split("?")[0] === "#orders" ? (
     <OrderDesk />
   ) : hash.split("?")[0] === "#rebalancing" ? (
     <RebalanceDesk />

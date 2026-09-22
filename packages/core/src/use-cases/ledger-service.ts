@@ -119,6 +119,8 @@ export class LedgerService {
   }
   post(value: PostingInput, context: CommandContext): BookState {
     const input = normalizePosting(value);
+    if (["pending_buy", "pending_sell", "settlement", "settlement_failure"].includes(input.kind))
+      invalid("Use the paper or operations workflow for deferred events.");
     return this.commands.executeSync("ledger.post", input, context, () => {
       this.manualWriteGuard(input.portfolioId);
       this.append(input, this.clock.now());
@@ -133,44 +135,62 @@ export class LedgerService {
     };
     return this.commands.executeSync("ledger.correct", input, context, () => {
       this.manualWriteGuard(input.portfolioId);
-      const state = this.requireReconciled(input.portfolioId),
-        active = activeEvents(state.events);
-      const original = active.find((event) => event.id === input.originalEventId);
-      if (!original || active.at(-1)?.id !== original.id)
-        throw new ApplicationError(
-          "CORRECTION_CONFLICT",
-          "Only the latest active event can be corrected; dependent historical restatements are not implemented.",
-        );
+      const special = ["pending_buy", "pending_sell", "settlement", "settlement_failure"];
+      const referencedEvent = this.get(input.portfolioId).events.find(
+        (e) => e.id === input.originalEventId,
+      );
       if (
-        input.replacement &&
-        (input.replacement.portfolioId !== input.portfolioId ||
-          state.events.some((event) => event.input.sourceRef === input.replacement!.sourceRef))
+        (input.replacement && special.includes(input.replacement.kind)) ||
+        (referencedEvent && special.includes(referencedEvent.input.kind))
       )
-        invalid("Replacement requires this portfolio and a new source reference.");
-      const originalJournal = state.journal.find((entry) => entry.eventId === original.id)!;
-      const now = this.clock.now(),
-        id = this.ids.next();
-      const reversal: LedgerEvent = ledgerEventSchema.parse({
-        id,
-        portfolioId: input.portfolioId,
-        sequence: state.events.length + 1,
-        recordedAt: now,
-        instrumentSnapshot: original.instrumentSnapshot,
-        input: {
-          kind: "reversal",
-          portfolioId: input.portfolioId,
-          sourceRef: "reversal:" + id,
-          // A correction is appended after every prior event, even when the
-          // latest active event predates already-reversed events.
-          occurredAt: state.events.at(-1)!.input.occurredAt,
-          note: "Correction reversal",
-          originalEventId: original.id,
-          reason: input.reason,
-        },
-      });
-      this.repository.append(reversal, reversalEntry(originalJournal, reversal));
-      if (input.replacement) this.append(input.replacement, now);
-      return this.get(input.portfolioId);
+        invalid("Use the operations correction workflow for deferred events.");
+      return this.correctWithinTransaction(input);
     });
+  }
+  // Approved operations correction; outer command owns the transaction and audit record.
+  correctWithinTransaction(value: CorrectionRequest): BookState {
+    const parsed = correctionRequestSchema.parse(value);
+    const input = {
+      ...parsed,
+      replacement: parsed.replacement ? normalizePosting(parsed.replacement) : null,
+    };
+    const state = this.requireReconciled(input.portfolioId),
+      active = activeEvents(state.events);
+    const original = active.find((event) => event.id === input.originalEventId);
+    if (!original || active.at(-1)?.id !== original.id)
+      throw new ApplicationError(
+        "CORRECTION_CONFLICT",
+        "Only the latest active event can be corrected; dependent historical restatements are not implemented.",
+      );
+    if (
+      input.replacement &&
+      (input.replacement.portfolioId !== input.portfolioId ||
+        state.events.some((event) => event.input.sourceRef === input.replacement!.sourceRef))
+    )
+      invalid("Replacement requires this portfolio and a new source reference.");
+    const originalJournal = state.journal.find((entry) => entry.eventId === original.id)!;
+    const now = this.clock.now(),
+      id = this.ids.next();
+    const reversal: LedgerEvent = ledgerEventSchema.parse({
+      id,
+      portfolioId: input.portfolioId,
+      sequence: state.events.length + 1,
+      recordedAt: now,
+      instrumentSnapshot: original.instrumentSnapshot,
+      input: {
+        kind: "reversal",
+        portfolioId: input.portfolioId,
+        sourceRef: "reversal:" + id,
+        // A correction is appended after every prior event, even when the
+        // latest active event predates already-reversed events.
+        occurredAt: state.events.at(-1)!.input.occurredAt,
+        note: "Correction reversal",
+        originalEventId: original.id,
+        reason: input.reason,
+      },
+    });
+    this.repository.append(reversal, reversalEntry(originalJournal, reversal));
+    if (input.replacement) this.append(input.replacement, now);
+    return this.get(input.portfolioId);
   }
 }

@@ -1,8 +1,8 @@
 # PRP 13 — Settlement, custody and reconciliation
 
-Status: planned; implementation has not started.
+Status: implemented and verified; see docs/chapters/13-learning-guide.md and docs/progress.md.
 Chapter: 13. Editorial duration estimate: 20 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under the full-build authorization.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A filled trade can remain unsettled; the UI shows both states.
-- [ ] One ambiguous statement line cannot clear two different fills.
-- [ ] A 1-share difference appears as an unresolved quantity break with both sources.
-- [ ] Resolving a break records the original discrepancy and any journal correction.
-- [ ] Replaying a settlement event never posts cash twice.
-- [ ] Configured holidays and market rules determine dates; T+1 is not hard-coded universally.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A filled trade can remain unsettled; the UI shows both states.
+- [x] One ambiguous statement line cannot clear two different fills.
+- [x] A 1-share difference appears as an unresolved quantity break with both sources.
+- [x] Resolving a break records the original discrepancy and any journal correction.
+- [x] Replaying a settlement event never posts cash twice.
+- [x] Configured holidays and market rules determine dates; T+1 is not hard-coded universally.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Reconciled snapshots and operational exceptions. Chapter 14 monitors the portfolio continuously.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue to Chapter 14 under the full-build authorization.
 
 ## Evidence to fill during implementation
 

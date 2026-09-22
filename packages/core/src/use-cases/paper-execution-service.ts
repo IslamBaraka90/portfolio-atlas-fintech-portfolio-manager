@@ -1,3 +1,5 @@
+import type { SettlementService } from "./settlement-service.js";
+import { settlementDueDate } from "../domain/settlement/due-date.js";
 import {
   paperSubmitSchema,
   paperBatchSchema,
@@ -30,6 +32,7 @@ export class PaperExecutionService {
     private portfolios: PortfolioService,
     private instruments: InstrumentService,
     private analytics: PaperExecutionAnalytics,
+    private settlements: SettlementService,
     private clock: Clock,
     private ids: IdFactory,
     private commands: Commands,
@@ -71,7 +74,10 @@ export class PaperExecutionService {
         if (
           existing.proposal.id !== request.proposal.id ||
           existing.proposal.revision !== request.proposal.revision ||
-          existing.orders.some((o) => o.orderType !== request.orderType)
+          existing.orders.some((o) => o.orderType !== request.orderType) ||
+          (existing.settlementPolicy?.id ?? null) !== (request.settlementPolicy?.id ?? null) ||
+          (existing.settlementPolicy?.revision ?? null) !==
+            (request.settlementPolicy?.revision ?? null)
         )
           throw new ApplicationError(
             "IDEMPOTENCY_CONFLICT",
@@ -142,6 +148,10 @@ export class PaperExecutionService {
           ],
         };
       });
+      const settlementPolicy = request.settlementPolicy
+        ? this.settlements.policy(request.settlementPolicy.id, request.settlementPolicy.revision)
+        : null;
+      if (settlementPolicy) settlementDueDate(now.slice(0, 10), settlementPolicy);
       const result = paperBatchSchema.parse({
         id: this.ids.next(),
         revision: 1,
@@ -150,6 +160,7 @@ export class PaperExecutionService {
         createdAt: now,
         updatedAt: now,
         proposal,
+        settlementPolicy,
         expectedBookCheckpoint: book.book.checkpoint,
         status: "active",
         orders,
@@ -158,7 +169,9 @@ export class PaperExecutionService {
           "Daily-bar high/low cannot establish intrabar order or queue priority.",
           "Protected market orders reject openings beyond proposal protection; limit orders wait.",
           "Partial execution is transitional; final mandate compliance is not asserted.",
-          "Immediate teaching settlement; deferred custody requires a separate operations policy.",
+          settlementPolicy
+            ? "Deferred teaching settlement: obligations protect cash until explicit custody acknowledgment."
+            : "Immediate teaching settlement; these fills are already cash-settled.",
         ],
         policyVersion: "chapter-12.v1",
         packageVersion: "0.13.2",
@@ -263,9 +276,27 @@ export class PaperExecutionService {
       .toDecimalPlaces(2);
     const fee = cumulativeFee.minus(order.fees);
     const cancelPending = order.state === "cancel_pending";
+    const fillId = this.ids.next();
+    if (batch.settlementPolicy && opening.at.slice(0, 10) !== this.clock.now().slice(0, 10))
+      invalid("Deferred paper opening must belong to the current UTC teaching trade date.");
+    const dueDate = batch.settlementPolicy
+      ? settlementDueDate(opening.at.slice(0, 10), batch.settlementPolicy)
+      : null;
     this.release(batch, order, request.eventId);
     const posted = this.post(batch, request.eventId, "fill", {
-      kind: order.side,
+      kind: batch.settlementPolicy
+        ? order.side === "buy"
+          ? "pending_buy"
+          : "pending_sell"
+        : order.side,
+      ...(batch.settlementPolicy
+        ? {
+            settlementId: fillId,
+            dueDate: dueDate!,
+            calendarId: batch.settlementPolicy.id,
+            calendarRevision: batch.settlementPolicy.revision,
+          }
+        : {}),
       instrumentId: order.instrumentId,
       instrumentRevision: order.instrumentRevision,
       currency: batch.proposal.target.currency,
@@ -277,7 +308,7 @@ export class PaperExecutionService {
       (e) => e.input.sourceRef === "paper-" + request.eventId + "-fill",
     )!;
     order.fills.push({
-      id: this.ids.next(),
+      id: fillId,
       eventId: request.eventId,
       at: opening.at,
       recordedAt: this.clock.now(),
@@ -287,7 +318,9 @@ export class PaperExecutionService {
       fee: money(fee),
       ledgerEventId: ledgerEvent.id,
       source: "authored_paper_opening_event",
-      settlementPolicy: "immediate_teaching",
+      settlementPolicy: batch.settlementPolicy ? "deferred_teaching" : "immediate_teaching",
+      settlementId: batch.settlementPolicy ? fillId : null,
+      dueDate,
     });
     const result = this.analytics.residual(order.quantity, order.fills);
     order.filledQuantity = quantity(new D(result.filled));
