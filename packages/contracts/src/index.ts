@@ -18,3 +18,4 @@ export * from "./operations.js";
 export * from "./monitoring.js";
 export * from "./performance.js";
 export * from "./reporting.js";
+export * from "./governance.js";
