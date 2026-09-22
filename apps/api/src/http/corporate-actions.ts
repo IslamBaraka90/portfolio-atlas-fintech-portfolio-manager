@@ -1,3 +1,4 @@
+import type { BasisDriftReport } from "@portfolio-atlas/contracts";
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
 import { actionReviewRequestSchema, adjustmentRequestSchema } from "@portfolio-atlas/contracts";
@@ -13,7 +14,11 @@ export function registerCorporateActionRoutes(
   adjustments: AdjustmentService,
   datasets: MarketDataService,
   http: HttpContext,
+  driftLesson: BasisDriftReport,
 ) {
+  app.get("/api/v1/corporate-actions/basis-drift-lesson", async (request) =>
+    http.response(driftLesson, request),
+  );
   const id = (params: unknown) => z.object({ id: z.string().min(1) }).parse(params).id;
   app.post("/api/v1/corporate-actions/reviews", async (request, reply) => {
     const result = await actions.review(

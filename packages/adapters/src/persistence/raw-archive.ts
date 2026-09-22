@@ -34,6 +34,8 @@ export class FileRawArchive implements RawArchive {
       });
     } catch (error) {
       if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
+      // Existing content must still match its address before it can be reused.
+      await this.read(hash);
     }
     return { hash, reference: "sha256:" + hash };
   }

@@ -44,10 +44,16 @@ test("corporate-action desk separates price bases, cutoff revisions and parent l
   await page.getByRole("button", { name: "Build research views" }).click();
   await expect(page.locator(".chapter-metrics strong").first()).toHaveText("47.619048");
   await expect(page.locator(".chapter-metrics strong").last()).toHaveText("2");
+  await expect(page.getByText("Archive diagnosis: basis-drift.", { exact: false })).toBeVisible();
   await mkdir("artifacts", { recursive: true });
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo(0, 0);
+  });
   await page.screenshot({ path: "artifacts/chapter-4-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "artifacts/chapter-4-mobile.png", fullPage: true });
   await page.getByLabel("Action knowledge cutoff (UTC)").selectOption("2026-09-21T00:00:00Z");
   await page.getByRole("button", { name: "Build research views" }).click();

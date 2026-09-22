@@ -1,3 +1,4 @@
+import { basisDriftLesson } from "@portfolio-atlas/adapters";
 import { CorporateActionService, AdjustmentService } from "@portfolio-atlas/core";
 import {
   MemoryActionRepository,
@@ -200,6 +201,7 @@ export function buildApp(
     adjustments,
     marketData,
     createHttpContext(clock, sessionId),
+    basisDriftLesson(),
   );
   return app;
 }

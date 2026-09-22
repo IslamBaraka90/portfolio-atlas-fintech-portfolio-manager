@@ -1,3 +1,4 @@
+import { BasisDriftLesson } from "./BasisDriftLesson";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
@@ -398,6 +399,7 @@ export function CorporateActionsDesk() {
             ))}
           </section>
         )}
+        <BasisDriftLesson />
       </div>
     </LearningShell>
   );

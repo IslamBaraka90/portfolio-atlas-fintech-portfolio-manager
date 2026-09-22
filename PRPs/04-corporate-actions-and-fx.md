@@ -1,6 +1,6 @@
 # PRP 04 — Corporate actions, adjustment basis and FX
 
-Status: planned; implementation has not started.
+Status: implemented; see [Chapter 4 guide](../docs/chapters/04-learning-guide.md).
 Chapter: 4. Editorial duration estimate: 20 minutes.
 Implementation starts when the maintainer explicitly requests this chapter.
 
@@ -64,15 +64,15 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A 2-for-1 split maps a pre-event 100 price to 50 under backward price adjustment; holdings posting is deferred to Chapter 5.
-- [ ] USD 100 at a stated 0.90 EUR per USD rate equals EUR 90; reversing direction must use the reciprocal.
-- [ ] An event known after the decision cutoff is excluded from that historical run.
-- [ ] A dividend-adjusted series plus a separate dividend credit cannot be counted twice in the same performance calculation.
-- [ ] Changing the source dataset or action revision changes the derived revision.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A 2-for-1 split maps a pre-event 100 price to 50 under backward price adjustment; holdings posting is deferred to Chapter 5.
+- [x] USD 100 at a stated 0.90 EUR per USD rate equals EUR 90; reversing direction must use the reciprocal.
+- [x] An event known after the decision cutoff is excluded from that historical run.
+- [x] A dividend-adjusted series plus a separate dividend credit cannot be counted twice in the same performance calculation.
+- [x] Changing the source dataset or action revision changes the derived revision.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -95,7 +95,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Comparable series and action candidates. Chapter 5 books actual portfolio events separately.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+The continuous authorization covers Chapter 5 next. Continue through Chapter 8 and stop at the Chapter 9 D14 gate.
 
 ## Evidence to fill during implementation
 
