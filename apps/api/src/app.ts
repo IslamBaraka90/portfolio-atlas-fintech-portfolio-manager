@@ -1,3 +1,10 @@
+import { CompanyService, ResearchService } from "@portfolio-atlas/core";
+import {
+  SyntheticCompanyProvider,
+  YahooCompanyProvider,
+  FintechResearchEngine,
+} from "@portfolio-atlas/adapters";
+import { registerResearchRoutes } from "./http/research.js";
 import { SqliteSnapshotRepository, FintechBenchmarkEngine } from "@portfolio-atlas/adapters";
 import { ValuationService, BenchmarkService } from "@portfolio-atlas/core";
 import { registerValuationRoutes } from "./http/valuation.js";
@@ -263,5 +270,28 @@ export function buildApp(
     benchmarks,
     createHttpContext(clock, sessionId, storage),
   );
+  const companies = new CompanyService(
+    {
+      synthetic: new SyntheticCompanyProvider(clock),
+      ...(yahooTransport ? { yahoo: new YahooCompanyProvider(yahooTransport, clock, budget) } : {}),
+    },
+    snapshots,
+    rawArchive,
+    instruments,
+    clock,
+    ids,
+    commands,
+  );
+  const research = new ResearchService(
+    snapshots,
+    new FintechResearchEngine(),
+    marketData,
+    adjustments,
+    companies,
+    clock,
+    ids,
+    commands,
+  );
+  registerResearchRoutes(app, companies, research, createHttpContext(clock, sessionId, storage));
   return app;
 }
