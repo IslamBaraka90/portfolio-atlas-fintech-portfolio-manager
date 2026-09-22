@@ -18,3 +18,5 @@ export * from "./ports/ledger-repository.js";
 export * from "./use-cases/ledger-service.js";
 export * from "./domain/accounting/reconcile-book.js";
 export * from "./domain/accounting/decimal.js";
+export * from "./ports/snapshot-repository.js";
+export * from "./use-cases/valuation-service.js";
