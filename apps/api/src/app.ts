@@ -1,3 +1,6 @@
+import { PaperExecutionService } from "@portfolio-atlas/core";
+import { FintechPaperExecutionAnalytics } from "@portfolio-atlas/adapters";
+import { registerOrderRoutes } from "./http/orders.js";
 import { RebalanceService } from "@portfolio-atlas/core";
 import { FintechLotScoringEngine } from "@portfolio-atlas/adapters";
 import { registerRebalanceRoutes } from "./http/rebalancing.js";
@@ -351,5 +354,18 @@ export function buildApp(
     commands,
   );
   registerRebalanceRoutes(app, rebalances, createHttpContext(clock, sessionId, storage));
+  const paper = new PaperExecutionService(
+    snapshots,
+    rebalances,
+    ledger,
+    service,
+    instruments,
+    new FintechPaperExecutionAnalytics(),
+    clock,
+    ids,
+    commands,
+  );
+  ledger.setManualWriteGuard((id) => paper.assertManualWriteAllowed(id));
+  registerOrderRoutes(app, paper, createHttpContext(clock, sessionId, storage));
   return app;
 }
