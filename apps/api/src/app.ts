@@ -1,3 +1,5 @@
+import { PerformanceService } from "@portfolio-atlas/core";
+import { registerPerformanceRoutes } from "./http/performance.js";
 import { MonitorService } from "@portfolio-atlas/core";
 import { FintechMonitorAnalytics } from "@portfolio-atlas/adapters";
 import { registerMonitorRoutes } from "./http/monitoring.js";
@@ -402,5 +404,15 @@ export function buildApp(
     ),
     createHttpContext(clock, sessionId, storage),
   );
+  const performance = new PerformanceService(
+    snapshots,
+    valuations,
+    ledger,
+    benchmarks,
+    clock,
+    ids,
+    commands,
+  );
+  registerPerformanceRoutes(app, performance, createHttpContext(clock, sessionId, storage));
   return app;
 }

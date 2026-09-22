@@ -48,3 +48,7 @@ export * from "./domain/reconciliation/reconcile-statement.js";
 export * from "./ports/monitor-analytics.js";
 export * from "./domain/risk-monitoring/monitor-portfolio.js";
 export * from "./use-cases/monitor-service.js";
+
+export * from "./use-cases/performance-service.js";
+export * from "./domain/performance/calculate-performance.js";
+export * from "./domain/performance/money-weighted.js";
