@@ -33,3 +33,4 @@ export * from "./ports/construction-engine.js";
 export * from "./domain/construction/construct-target.js";
 export * from "./use-cases/construction-service.js";
 export * from "./ports/validation.js";
+export * from "./domain/validation/replay-fold.js";
