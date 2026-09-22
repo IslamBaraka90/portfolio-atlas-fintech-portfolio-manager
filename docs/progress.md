@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–3 are implemented. Chapters 1–2 are published as stacked PRs with passing GitHub checks; Chapter 3 publication follows its final verified checkpoint. Chapters 4–8 continue under the current authorization. Chapters 9–17 remain planned, and D14 readiness has not been announced.
+Chapters 0–4 are implemented. Chapters 1–3 are published as stacked PRs with passing GitHub checks; Chapter 4 publication follows its final verified checkpoint. Chapters 5–8 continue under the current authorization. Chapters 9–17 remain planned, and D14 readiness has not been announced.
 
 The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
 
@@ -128,3 +128,13 @@ Synthetic independent example: 12 rows, accepted indexes [0, 3, 5, 11], eight qu
 Task 5 adds exact-byte filesystem evidence checks, archive-failure retry and live chart observation. See the [learning guide](chapters/03-learning-guide.md). Chapter 4 follows under the continuous authorization.
 
 Final Chapter 3 gates: all 41 unit/API checks and nine connected Chromium journeys passed. Formatting, Markdown lint (69 files), strict types, production build and browser dependency guard passed. Live AAPL chart returned 12 rows at 2026-09-22T11:13:58.412Z; all retained and explicitly quarantined for unknown tick, identity and finality evidence.
+
+## Chapter 4 evidence
+
+Tasks 1–4: ae8bd4f, e1530f2, 6a78821, a413ff5. Frozen definitions and primary references, immutable raw-evidence reads, Yahoo event candidates, authored action revisions, verified split/dividend imports, explicit FX direction/freshness, API replay and a connected React comparison desk.
+
+Independent examples passed: 100/2 = 50; gross dividend factor 50/52; USD 100 × 0.90 = EUR 90; reciprocal returns USD 100. Revision 2 changes the dividend to 2.5; revision 3 cancellation removes it. Raw source snapshot is unchanged. Focused browser journey passed, including price toggles, revision cutoffs and parent-dataset navigation.
+
+Task 5 adds archive tamper detection, independent basis-drift diagnosis and final recording evidence. Current-price research is explicitly distinguished from historical backtest availability. Chapter 5 is authorized next.
+
+Final Chapter 4 gates: 50 unit/API checks and all ten connected Chromium journeys passed. Formatting, Markdown lint (71 files), strict types, production build and browser dependency guard passed. Desktop and 390px mobile captures were inspected. The basis-drift example independently flags log(1.01) × 10,000 ≈ 99.503309 bps while accepting the exact split factor.

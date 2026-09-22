@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve, dirname, basename } from "node:path";
 import { createHash } from "node:crypto";
@@ -20,5 +20,10 @@ test("raw archive is content-addressed and never overwrites evidence", async (t)
   const saved = await readFile(join(directory, first.hash + ".json"), "utf8");
   assert.equal(createHash("sha256").update(saved).digest("hex"), first.hash);
   assert.deepEqual(JSON.parse(saved), raw);
+  assert.deepEqual(await archive.read(first.hash), raw);
+  await assert.rejects(() => archive.read("../escape"), /hash/);
+  await writeFile(join(directory, first.hash + ".json"), "tampered", "utf8");
+  await assert.rejects(() => archive.read(first.hash), /hash mismatch/);
+  await assert.rejects(() => archive.save(raw), /hash mismatch/);
   assert.notEqual((await archive.save({ rows: [] })).hash, first.hash);
 });

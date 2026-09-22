@@ -34,6 +34,20 @@ export function DataQualityDesk() {
         setInstruments(a.data);
         setInstrumentId(a.data[0]?.instrumentId ?? "");
         setDatasets(b.data);
+        const query = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
+        if (query.get("dataset"))
+          void read(
+            "/datasets/" +
+              encodeURIComponent(query.get("dataset")!) +
+              "?" +
+              new URLSearchParams({ revision: query.get("revision") ?? "1" }),
+            marketDatasetSchema,
+            abort.signal,
+          )
+            .then((result) => setDataset(result.data))
+            .catch((e) => {
+              if (!abort.signal.aborted) setError(String(e));
+            });
       })
       .catch((e) => {
         if (!abort.signal.aborted) setError(String(e));
@@ -152,6 +166,7 @@ export function DataQualityDesk() {
                 >
                   <option value="adversarial">Break the candles</option>
                   <option value="clean">Clean daily series</option>
+                  <option value="corporate-actions">Split + dividend lesson</option>
                 </select>
               </label>
               <button className="primary" disabled={busy}>

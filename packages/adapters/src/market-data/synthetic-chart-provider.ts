@@ -1,6 +1,11 @@
 import type { IngestionRequest, Instrument } from "@portfolio-atlas/contracts";
 import type { ChartProvider, Clock, ProviderReply, ChartObservation } from "@portfolio-atlas/core";
-import { lessonBars, lessonSessions } from "@portfolio-atlas/testing";
+import {
+  lessonBars,
+  lessonSessions,
+  actionLessonBars,
+  actionLessonTimeline,
+} from "@portfolio-atlas/testing";
 export class SyntheticChartProvider implements ChartProvider {
   readonly mode = "synthetic" as const;
   constructor(private readonly clock: Clock) {}
@@ -10,16 +15,30 @@ export class SyntheticChartProvider implements ChartProvider {
   ): Promise<ProviderReply<ChartObservation>> {
     const inWindow = (date: string) => date >= request.from && date < request.to;
     // Filter by authored source session, before introducing malformed timestamps.
-    const rows = lessonBars(instrument.returnedSymbol, request.scenario === "adversarial").filter(
-      (row) => inWindow(lessonSessions[row.sourceIndex]!),
-    );
+    const rows = (
+      request.scenario === "corporate-actions"
+        ? actionLessonBars(instrument.returnedSymbol)
+        : lessonBars(instrument.returnedSymbol, request.scenario === "adversarial")
+    ).filter((row) => inWindow(lessonSessions[row.sourceIndex]!));
     const data: ChartObservation = {
       symbol: instrument.returnedSymbol,
       timezone: instrument.timezone,
       quoteUnit: instrument.quoteUnit,
       basis: "synthetic_unadjusted",
       rows,
-      raw: { fixture: "daily-candles.v1", request, rows },
+      raw: {
+        fixture: "daily-candles.v1",
+        request,
+        rows,
+        actions:
+          request.scenario === "corporate-actions"
+            ? actionLessonTimeline(
+                instrument.instrumentId,
+                instrument.quoteUnit.currency,
+                this.clock.now(),
+              )
+            : [],
+      },
       expectedSessions: lessonSessions.filter(inWindow),
       calendarEvidence: "Authored September 2026 fixture session ledger v1.",
     };
