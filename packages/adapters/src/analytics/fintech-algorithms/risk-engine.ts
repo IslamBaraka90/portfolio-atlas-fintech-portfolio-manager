@@ -1,3 +1,4 @@
+import { inspectCovariance } from "@portfolio-atlas/core";
 import { z } from "zod";
 import { simpleReturn } from "fintech-algorithms/foundations/financial-arithmetic-time-value-and-returns/simple-return";
 import { logReturn } from "fintech-algorithms/foundations/financial-arithmetic-time-value-and-returns/log-return";
@@ -215,7 +216,23 @@ export class FintechRiskEngine implements RiskEngine {
         result.warnings.push(
           "Observations do not exceed assets; sample covariance cannot be full rank.",
         );
-      return reject("Matrix validation is required before this estimate is ready.");
+      result.diagnostics = inspectCovariance(result.covarianceDaily, ids.length);
+      if (!result.diagnostics.valid) return reject(result.diagnostics.reasons.join(" "));
+      result.volatilityAnnual = result.covarianceAnnual.map((row, i) => Math.sqrt(row[i]!));
+      result.correlation = result.covarianceDaily.map((row, i) =>
+        row.map((v, j) => {
+          const a = result.covarianceDaily[i]![i]!,
+            b = result.covarianceDaily[j]![j]!;
+          return a <= result.diagnostics!.tolerance || b <= result.diagnostics!.tolerance
+            ? null
+            : Math.max(-1, Math.min(1, v / Math.sqrt(a * b)));
+        }),
+      );
+      result.warnings.push(...result.diagnostics.reasons);
+      if (result.correlation.some((row) => row.some((v) => v === null)))
+        result.warnings.push("Zero or numerically zero variance makes correlation undefined.");
+      result.status = "ready";
+      return result;
     } catch (error) {
       return reject(error instanceof Error ? error.message : "Risk estimation failed.");
     }
