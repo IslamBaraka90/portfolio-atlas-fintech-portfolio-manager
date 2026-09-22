@@ -71,6 +71,7 @@ export const paperOrderSchema = z.strictObject({
   state: orderStateSchema,
   submittedAt: z.iso.datetime(),
   acceptedAt: z.iso.datetime().nullable(),
+  lastOpeningAt: z.iso.datetime().nullable().default(null),
   filledQuantity: quantityTextSchema,
   remainingQuantity: quantityTextSchema,
   filledNotional: moneyTextSchema,

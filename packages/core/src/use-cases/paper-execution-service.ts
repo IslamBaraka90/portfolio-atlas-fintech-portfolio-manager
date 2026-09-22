@@ -54,7 +54,13 @@ export class PaperExecutionService {
       instrument.revision !== order.instrumentRevision
     )
       invalid("Mandate or instrument changed; cancel remaining orders and rebuild.");
-    if (Date.parse(this.clock.now()) >= Date.parse(batch.proposal.expiresAt))
+    if (
+      Date.parse(this.clock.now()) >= Date.parse(batch.proposal.expiresAt) ||
+      [
+        ...batch.proposal.valuation.positions.map((p) => p.mark.quotedAt),
+        ...batch.proposal.request.newPrices.map((p) => p.quotedAt),
+      ].some((at) => !at || Date.parse(this.clock.now()) - Date.parse(at) > 3600000)
+    )
       invalid("Approved proposal expired; cancel remaining orders and rebuild.");
   }
   submit(value: PaperSubmit, context: CommandContext) {
@@ -110,6 +116,7 @@ export class PaperExecutionService {
           state: "submitted",
           submittedAt: now,
           acceptedAt: null,
+          lastOpeningAt: null,
           filledQuantity: "0.00000000",
           remainingQuantity: trade.quantity,
           filledNotional: "0.00",
@@ -213,6 +220,94 @@ export class PaperExecutionService {
     order.cashReserved = "0.00";
     order.sharesCommitted = "0.00000000";
   }
+  private opening(batch: PaperBatch, order: PaperOrder, request: PaperEvent): string {
+    if (
+      !["accepted", "partially_filled", "cancel_pending"].includes(order.state) ||
+      !order.acceptedAt
+    )
+      invalid("Only an accepted live order can receive an opening fill.");
+    this.currentPolicy(batch, order);
+    const opening = request.opening!;
+    const time = Date.parse(opening.at);
+    if (
+      time <= Date.parse(order.acceptedAt!) ||
+      time > Date.parse(this.clock.now()) ||
+      (order.lastOpeningAt !== null && Date.parse(order.lastOpeningAt) >= time)
+    )
+      invalid("Opening time must follow acceptance and prior fills, and cannot be future.");
+    const price = new D(opening.price),
+      reference = new D(order.protectionPrice);
+    const tick = this.analytics.tick(opening.price, order.tickSize);
+    if (!tick.valid) invalid(tick.reason);
+    if (price.minus(reference).abs().div(reference).gt(".05"))
+      invalid("Authored opening is outside the 5% reference band.");
+    order.lastOpeningAt = opening.at;
+    const protectedPrice = order.side === "buy" ? price.lte(reference) : price.gte(reference);
+    if (!protectedPrice) {
+      if (order.orderType === "limit")
+        return "No fill: opening price did not cross the limit. Intrabar touches are not inferred.";
+      this.release(batch, order, request.eventId);
+      order.state = "rejected";
+      return "Protected market order rejected: opening exceeded the approved price protection.";
+    }
+    const shares = D.min(order.remainingQuantity, opening.capacity)
+      .div(order.lotSize)
+      .floor()
+      .mul(order.lotSize);
+    if (shares.eq(0)) return "No fill: authored opening capacity is below one executable lot.";
+    const notional = shares.mul(price).toDecimalPlaces(2);
+    const cumulativeNotional = new D(order.filledNotional).plus(notional);
+    const cumulativeFee = cumulativeNotional
+      .mul(batch.proposal.request.feeBps)
+      .div(10000)
+      .toDecimalPlaces(2);
+    const fee = cumulativeFee.minus(order.fees);
+    const cancelPending = order.state === "cancel_pending";
+    this.release(batch, order, request.eventId);
+    const posted = this.post(batch, request.eventId, "fill", {
+      kind: order.side,
+      instrumentId: order.instrumentId,
+      instrumentRevision: order.instrumentRevision,
+      currency: batch.proposal.target.currency,
+      quantity: quantity(shares),
+      unitPrice: opening.price,
+      fee: money(fee),
+    });
+    const ledgerEvent = posted.events.find(
+      (e) => e.input.sourceRef === "paper-" + request.eventId + "-fill",
+    )!;
+    order.fills.push({
+      id: this.ids.next(),
+      eventId: request.eventId,
+      at: opening.at,
+      recordedAt: this.clock.now(),
+      quantity: quantity(shares),
+      price: opening.price,
+      notional: money(notional),
+      fee: money(fee),
+      ledgerEventId: ledgerEvent.id,
+      source: "authored_paper_opening_event",
+      settlementPolicy: "immediate_teaching",
+    });
+    const result = this.analytics.residual(order.quantity, order.fills);
+    order.filledQuantity = quantity(new D(result.filled));
+    order.remainingQuantity = quantity(new D(result.remaining));
+    order.averagePrice = result.averagePrice;
+    order.filledNotional = money(cumulativeNotional);
+    order.fees = money(cumulativeFee);
+    if (result.remaining === 0) order.state = "filled";
+    else {
+      this.reserve(batch, order, request.eventId);
+      order.state = cancelPending ? "cancel_pending" : "partially_filled";
+    }
+    return (
+      "Authored opening filled " +
+      shares.toFixed() +
+      "; cumulative fee " +
+      order.fees +
+      ". Existing journal posted once."
+    );
+  }
   apply(id: string, value: PaperEvent, context: CommandContext) {
     const request = paperEventSchema.parse(value);
     return this.commands.executeSync("paper.event", { id, request }, context, () => {
@@ -259,7 +354,7 @@ export class PaperExecutionService {
         this.release(batch, order, request.eventId);
         order.state = "rejected";
         reason = reason || "Synthetic broker rejected remaining quantity.";
-      } else invalid("Opening fills are not implemented at this checkpoint.");
+      } else reason = this.opening(batch, order, request);
       order.history.push({
         eventId: request.eventId,
         at: this.clock.now(),
