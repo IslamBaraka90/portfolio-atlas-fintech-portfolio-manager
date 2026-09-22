@@ -105,3 +105,27 @@ test("iteration exhaustion and indefinite covariance never become successful pro
     false,
   );
 });
+
+test("released turnover solver reaches the independent 0.7 boundary and never certifies exhausted iterations", () => {
+  const calculation = {
+    ...input,
+    annualCovariance: [
+      [0.04, 0],
+      [0, 0.01],
+    ],
+    request: { ...input.request, method: "turnover_constrained" as const, turnoverCap: 0.1 },
+  };
+  const result = engine.calculate(calculation);
+  assert.equal(result.succeeded, true);
+  near(result.weights![0]!, 0.7);
+  near(result.weights![1]!, 0.3);
+  near(result.weights![2]!, 0);
+  assert.equal(result.solver.status, "optimal");
+  assert.ok(result.solver.gap! < 1e-8);
+  const stopped = engine.calculate({
+    ...calculation,
+    request: { ...calculation.request, maxIterations: 1 },
+  });
+  assert.equal(stopped.succeeded, false);
+  assert.equal(stopped.solver.status, "max-iterations");
+});

@@ -1,3 +1,4 @@
+import { solveTurnoverConstrainedMarkowitz } from "fintech-algorithms/portfolio-construction/practical-constraints/turnover-constrained-optimization";
 import { z } from "zod";
 import { calculate as equalWeight } from "fintech-algorithms/index-and-benchmark-engineering/weighting-and-capping/equal-weight-index";
 import { globalMinimumVariance } from "fintech-algorithms/portfolio-construction/mean-risk-optimization/global-minimum-variance";
@@ -54,6 +55,7 @@ export class FintechConstructionEngine implements ConstructionEngine {
           "Construction inputs require unique ordered IDs, matching means and a valid PSD matrix.",
         );
       let risky: number[];
+      let fullWeights: number[] | null = null;
       if (request.method === "equal_weight") {
         risky = z
           .object({ weights: z.array(finite) })
@@ -91,18 +93,50 @@ export class FintechConstructionEngine implements ConstructionEngine {
         result.solver.solutionClass = "deterministic_rule";
         result.solver.details = { normalizedScores: solved.normalizedInverseVolatilityScores };
       } else {
-        result.solver.warnings.push(
-          "Turnover optimization joins the practical-constraints checkpoint.",
+        const augmented = [
+          ...annualCovariance.map((row) => [...row, 0]),
+          assetIds.map(() => 0).concat(0),
+        ];
+        const solved = solveTurnoverConstrainedMarkowitz(
+          [...annualMeans, 0],
+          augmented,
+          request.lambdaRisk,
+          input.currentWeights,
+          request.turnoverCap,
+          { maxIterations: request.maxIterations },
         );
-        return result;
+        result.solver = {
+          status: solved.status,
+          method: "turnover-constrained-markowitz-with-cash",
+          iterations: solved.iterations,
+          solutionClass: null,
+          objective: solved.objective,
+          gap: solved.frankWolfeGap,
+          budgetResidual: solved.simplexResidual,
+          details: evidence(solved.certificate),
+          warnings: [],
+        };
+        if (solved.status !== "optimal") return result;
+        fullWeights = solved.weights;
+        risky = [];
       }
       if (
-        risky.length !== assetIds.length ||
-        risky.some((v) => !Number.isFinite(v) || v < 0) ||
-        Math.abs(sum(risky) - 1) > 1e-12
+        !fullWeights &&
+        (risky.length !== assetIds.length ||
+          risky.some((v) => !Number.isFinite(v) || v < 0) ||
+          Math.abs(sum(risky) - 1) > 1e-12)
       )
         throw new Error("Package weights failed the ordered simplex boundary.");
-      const weights = [...risky.map((v) => v * (1 - request.cashWeight)), request.cashWeight];
+      const weights = fullWeights ?? [
+        ...risky.map((v) => v * (1 - request.cashWeight)),
+        request.cashWeight,
+      ];
+      if (
+        weights.length !== assetIds.length + 1 ||
+        weights.some((w) => !Number.isFinite(w) || w < 0) ||
+        Math.abs(sum(weights) - 1) > 1e-12
+      )
+        throw new Error("Full candidate weights violate the long-only budget.");
       const covariance = [
         ...annualCovariance.map((row) => [...row, 0]),
         assetIds.map(() => 0).concat(0),
