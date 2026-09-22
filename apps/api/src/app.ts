@@ -1,3 +1,6 @@
+import { SqliteSnapshotRepository, FintechBenchmarkEngine } from "@portfolio-atlas/adapters";
+import { ValuationService, BenchmarkService } from "@portfolio-atlas/core";
+import { registerValuationRoutes } from "./http/valuation.js";
 import { dirname, resolve, join } from "node:path";
 import { SqliteLedgerRepository } from "@portfolio-atlas/adapters";
 import { LedgerService } from "@portfolio-atlas/core";
@@ -224,16 +227,40 @@ export function buildApp(
     createHttpContext(clock, sessionId, storage),
     basisDriftLesson(),
   );
-  registerLedgerRoutes(
+  const ledger = new LedgerService(
+    new SqliteLedgerRepository(database),
+    service,
+    instruments,
+    clock,
+    ids,
+    commands,
+  );
+  registerLedgerRoutes(app, ledger, createHttpContext(clock, sessionId, storage));
+  const snapshots = new SqliteSnapshotRepository(database);
+  const valuations = new ValuationService(
+    snapshots,
+    ledger,
+    service,
+    marketData,
+    actions,
+    adjustments,
+    clock,
+    ids,
+    commands,
+  );
+  const benchmarks = new BenchmarkService(
+    snapshots,
+    new FintechBenchmarkEngine(),
+    adjustments,
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  registerValuationRoutes(
     app,
-    new LedgerService(
-      new SqliteLedgerRepository(database),
-      service,
-      instruments,
-      clock,
-      ids,
-      commands,
-    ),
+    valuations,
+    benchmarks,
     createHttpContext(clock, sessionId, storage),
   );
   return app;

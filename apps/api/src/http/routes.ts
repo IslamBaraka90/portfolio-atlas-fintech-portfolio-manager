@@ -45,7 +45,7 @@ export function registerRoutes(
 
   app.get("/api/v1/health", async () => ({
     name: "Portfolio Atlas",
-    chapter: 5,
+    chapter: 6,
     mode: "synthetic",
     storage,
     sessionId,
