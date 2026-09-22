@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0-16 are implemented. Chapters 1-15 are published with green checks; Chapter 16 is at its publication checkpoint. Full-build authorization continues through Chapter 17 with fintech-algorithms 0.13.2.
+Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with green checks; Chapter 17 is at its publication checkpoint. The full-build objective uses fintech-algorithms 0.13.2, including released D14 construction. The complete branch is codex/chapter-17-governance-recovery. Public deployment and specialist extensions are separately scoped.
 
 ## Foundation tasks
 
@@ -215,7 +215,7 @@ Final gates: 111 unit/API tests and 18 Chromium journeys passed. Types, producti
 
 ## Chapter 13 evidence
 
-Tasks 1�4: 15b92be, 4da67b3, 9f27d34, acf2d70, 8a61971. Authored calendars, deferred payable/receivable accounting, partial and failed delivery, active-batch checkpoint updates, independent immutable statements, conservative matching and approved reverse/repost.
+Tasks 1-4: 15b92be, 4da67b3, 9f27d34, acf2d70, 8a61971. Authored calendars, deferred payable/receivable accounting, partial and failed delivery, active-batch checkpoint updates, independent immutable statements, conservative matching and approved reverse/repost.
 
 Independent examples: buy 10 at 390 plus 3.90 fee; settled cash stays 10,000 while economic cash becomes 6,096.10. Nine delivered shares leave settled cash 6,486.49 and 390.39 payable. Final delivery leaves 6,096.10 cash and 10 custody shares. NAV is unchanged by settlement. A 100 versus 90 deposit break closes only in a new run after reversal/replacement; the original break and statement revisions remain unchanged. Ambiguous or reused candidates never clear a fill.
 
@@ -244,3 +244,15 @@ Tasks 1-3: f1297bf, 19600b9, 5cb7d21. Exact snapshot selection, consistent valua
 Independent example: holdings 1,000 plus economic cash 9,000 equal NAV 10,000. A later mark creates NAV 10,100 in a superseding report; approved prior JSON and CSV stay byte-for-byte unchanged. Missing-section approval requires acknowledgment. Formula-like user text remains inert in CSV.
 
 Final gates: 125 unit/API checks, 22 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (97 files) passed. Desktop, 390px mobile and print-emulation captures inspected. Chapter 15 remote checks are green. Regulatory formats and PDF generation remain outside the teaching scope. Continue to governance and recovery.
+
+## Chapter 17 evidence
+
+Tasks 1-4: 878e4d3, cf8ccd5, 999cb79, 27736c3. Frozen threat/access contract, external effective-dated grants, actor/scope command keys, session/CSRF enforcement, transaction-bound creator and audit records, prior/new override evidence, protected backups, isolated restore/replay and a connected governance desk.
+
+Direct API checks reject absent credentials, reader mutations, an unrelated workspace, self-approval, expired/revoked grants, invalid CSRF and configured-scope downgrade on restart. Server identity replaces spoofed reviewer text. A configured approver cannot approve a draft created under unauthenticated local-owner authority; UI inbox and command commit both reject it. Replayed successful commands create one business audit event. The price-override example preserves prior 100.00000000, new 110, reason, actor and policy.
+
+The durable restore fixture preserves ten shares, 9,000 cash, referenced raw archives and byte-identical issued report JSON. A later live 500 deposit remains outside the restored cutoff. A changed backup byte fails before database replay and produces no replacement path. Memory lessons report recovery unavailable. The governed browser journey signs in as two actors, rejects direct self-approval, issues a report and verifies an actual restored directory.
+
+Observed local gates: 131 unit/API checks (35 API, 55 adapters, 11 contracts, 30 core), 23 Chromium journeys, strict typecheck, production build, browser dependency guard, formatting and Markdown checks. A textarea selector was corrected to its accessible textbox role; screenshot inspection caught inherited hero spacing and an overflowing audit table. Shared styles now load at the application root and the table scrolls inside the mobile viewport. Desktop and 390px captures inspected. Follow-up access checks passed after tightening legacy creator evidence. Lazy chapter imports reduce the initial JS bundle from 548.62 kB to 358.59 kB and remove the 500 kB advisory warning.
+
+Chapter 16 remote checks are green. Final Chapter 17 publication repeats all CI gates. Local-owner mode trusts the OS user and permits solo review; configured sessions enforce one workspace scope. Policy reload/revocation requires restart. Public deployment, multi-tenant hosting, MFA/federation, remote audit attestation, automatic live-book promotion and specialist financial modules are not claimed. The [access](runbooks/access-and-incidents.md), [recovery](runbooks/backup-and-recovery.md) and [recording checkpoint](video/implemented-checkpoints.md) guides complete the course handoff.

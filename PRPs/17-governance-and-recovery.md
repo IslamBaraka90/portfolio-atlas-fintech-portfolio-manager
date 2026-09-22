@@ -1,6 +1,6 @@
 # PRP 17 — Governance, access and recovery
 
-Status: planned; implementation has not started.
+Status: implemented and verified; see docs/chapters/17-learning-guide.md and docs/progress.md.
 Chapter: 17. Editorial duration estimate: 15 minutes.
 Implementation starts when the maintainer explicitly requests this chapter.
 
@@ -60,16 +60,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] An analyst cannot approve their own restricted action when separation of duties is required.
-- [ ] Direct API calls cannot bypass hidden/disabled React controls.
-- [ ] A resource ID from a different scope fails authorization.
-- [ ] An override records actor, reason, prior/new state and policy revision.
-- [ ] Backup restore plus event replay reconciles cash, quantities and frozen report references.
-- [ ] Logs/exports contain no secrets, tokens or unrelated account data.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] An analyst cannot approve their own restricted action when separation of duties is required.
+- [x] Direct API calls cannot bypass hidden/disabled React controls.
+- [x] A resource ID from a different scope fails authorization.
+- [x] An override records actor, reason, prior/new state and policy revision.
+- [x] Backup restore plus event replay reconciles cash, quantities and frozen report references.
+- [x] Logs/exports contain no secrets, tokens or unrelated account data.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,9 +96,9 @@ Update progress with completed tasks and commit references. Stop after this chap
 
 ## Evidence to fill during implementation
 
-- Definition/policy sources and applicability:
-- Final contract and fixture revisions:
-- Package versions and verified exports:
-- Commands and observed results:
-- UI walkthrough/screenshots:
-- Remaining limitations and next prerequisite:
+- Definition/policy sources and applicability: Chapter 17 definition contract; OWASP authorization/session/CSRF guidance and SQLite VACUUM INTO.
+- Final contract and fixture revisions: governance schemas, effective-dated configured grants, independent API and durable recovery fixtures.
+- Package versions and verified exports: fintech-algorithms 0.13.2 remains pinned; governance and recovery are application controls, with no fabricated package imports.
+- Commands and observed results: 131 unit/API checks, 23 browser journeys, types/build/dependency guard and documentation gates; full details in progress.
+- UI walkthrough/screenshots: two authenticated actors, direct denial, report approval, audit filter and real restore; desktop/mobile inspected.
+- Remaining limitations and next prerequisite: see access/recovery runbooks; public deployment and specialist extensions require their own scope.

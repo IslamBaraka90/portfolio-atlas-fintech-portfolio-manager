@@ -10,7 +10,7 @@ The complete course branch is \`codex/chapter-17-governance-recovery\`. Chapters
 
 ## Start here
 
-1. Read the [video journey](docs/video/series-blueprint.md).
+1. Read the [video journey](docs/video/series-blueprint.md) and [recorded commit map](docs/video/implemented-checkpoints.md).
 2. Follow the [chapter PRPs](PRPs/README.md), starting with [Chapter 1](PRPs/01-mandate-and-universe.md).
 3. Review the [architecture](docs/architecture/README.md), [data model](docs/architecture/data-model.md), and [Yahoo adapter contract](docs/architecture/yahoo-finance-adapter.md).
 4. Check the [progress ledger](docs/progress.md) before continuing a chapter.

@@ -4,6 +4,8 @@ Working title: **Build a Portfolio Manager with React, TypeScript and Yahoo Fina
 
 Repository: portfolio-atlas-fintech-portfolio-manager. Product name: Portfolio Atlas. Search terms belong naturally in the title, description, README and chapter labels; no promise of search ranking or traffic is made.
 
+The core course is implemented through Chapter 17. Use the [recorded Git checkpoints](implemented-checkpoints.md) and chapter learning guides for filming. The PRPs below preserve the original planning sequence.
+
 ## Learning promise
 
 Follow one portfolio from a client mandate through instrument identity, reliable prices, accounting, allocation, paper execution, reconciliation and a report whose figures can be traced to evidence.
