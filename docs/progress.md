@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0-14 are implemented and published as stacked PRs. Chapter 15 implementation is underway. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0-15 are implemented. Chapters 1-14 are published as stacked PRs with green checks; Chapter 15 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -228,3 +228,11 @@ Tasks 1-4: edc9348, ef2f134, 2a2bb7f, a2f10ff. Frozen risk definitions, economic
 Independent results: -10% of a 1,000 position is -100; a 40/40/20 target on 10,000 NAV loses 800 under that parallel shock. A 100 to 80 to 80 illustration has 20% maximum drawdown and 19% two-point interpolated 95% loss quantile. Acknowledgment preserves a breach; changed book/stale data cannot resolve it. A fresh 40/40/20 valuation passes the exact 40% position boundary and permits explicit cash-finding resolution.
 
 Final gates: 119 unit/API tests, 20 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (93 files) passed. The full browser run caught a hard-coded instrument revision in the new test; using the resolved fixture revision fixed cross-chapter execution, and the full rerun passed. Desktop/mobile screenshots inspected. A Windows encoding failure truncated this ledger during task 4b; task 4c restores the previously committed evidence and adds this section using explicit UTF-8. Chapter 13 remote checks are green. Current-weight history is explicitly hypothetical; liquidity remains unavailable without sufficient volume and participation policy. Continue to cash-flow-aware performance.
+
+## Chapter 15 evidence
+
+Tasks 1-4: 896041b, 7c05a1e, 0197d39, 62161a4. Frozen valuation/flow contracts, geometric TWR, labeled Dietz approximation, recorded-fee comparison, bounded IRR diagnostics, one-period Brinson-Fachler effects, linked-source checks and connected React curves/waterfall.
+
+Independent cases: 10,095 plus a 500 deposit becomes 10,595 with zero investment return. A 105.95 fee against 10,595 reduces net return by 1% while the named fee-add-back comparison is zero. Linked +10% and -10% returns yield -1%. A midpoint 100 deposit into 100, ending at 220, gives Dietz 20/150. Nonconventional -100/+230/-132 flows have period roots 21% and 44%; no arbitrary headline is selected. Attribution 0.5 + 0.5 + 0.3 percentage points reconciles to 1.3 active points with zero residual; a false account linkage remains incompatible.
+
+Final gates: 123 unit/API tests, 21 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (95 files) passed. Desktop/mobile screenshots inspected. Actual HTTP latency is handled only by the documented immediate single-flow bridge with unchanged holdings/FX and exact NAV difference. D16 exports are absent in installed 0.13.2; these application calculations use primary-source conventions and independent fixtures. Foreign-flow FX, correction restatement and multi-period/factor attribution remain explicit boundaries. Chapter 14 remote checks are green. Continue to frozen management reports.

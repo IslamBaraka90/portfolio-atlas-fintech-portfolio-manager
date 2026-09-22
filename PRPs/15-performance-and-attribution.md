@@ -1,8 +1,8 @@
 # PRP 15 — Performance measurement and attribution
 
-Status: planned; implementation has not started.
+Status: implemented and verified; see docs/chapters/15-learning-guide.md and docs/progress.md.
 Chapter: 15. Editorial duration estimate: 25 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under the full-build authorization.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] An immediate 500 deposit into NAV 10,095 produces NAV 10,595 and zero investment return over that no-market-change interval.
-- [ ] Fees reduce net return according to the frozen convention; gross results clearly exclude only the named costs.
-- [ ] TWR subperiods link geometrically, not by summing percentages.
-- [ ] An IRR with no root or multiple plausible roots reports the limitation instead of an arbitrary answer.
-- [ ] Attribution components plus residual reconcile to active return within the declared tolerance.
-- [ ] Short histories do not receive an unexplained annualized headline.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] An immediate 500 deposit into NAV 10,095 produces NAV 10,595 and zero investment return over that no-market-change interval.
+- [x] Fees reduce net return according to the frozen convention; gross results clearly exclude only the named costs.
+- [x] TWR subperiods link geometrically, not by summing percentages.
+- [x] An IRR with no root or multiple plausible roots reports the limitation instead of an arbitrary answer.
+- [x] Attribution components plus residual reconcile to active return within the declared tolerance.
+- [x] Short histories do not receive an unexplained annualized headline.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 Reconciled performance and attribution. Chapter 16 assembles a consistent report snapshot.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue to Chapter 16 under the full-build authorization.
 
 ## Evidence to fill during implementation
 
