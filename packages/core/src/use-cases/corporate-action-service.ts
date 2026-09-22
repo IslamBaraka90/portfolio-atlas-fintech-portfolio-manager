@@ -27,20 +27,22 @@ export class CorporateActionService {
     input: { datasetId: string; datasetRevision: number },
     context: CommandContext,
   ): Promise<ActionReview> {
-    return this.commands.execute("corporate-actions.review", input, context, async () => {
+    return this.commands.executePrepared("corporate-actions.review", input, context, async () => {
       const dataset = this.datasets.get(input.datasetId, input.datasetRevision);
       const raw = await this.archive.read(dataset.sourceHash);
       const normalized = this.normalizer.normalize(dataset, raw);
-      const review = actionReviewSchema.parse({
-        id: this.ids.next(),
-        createdAt: this.clock.now(),
-        datasetId: dataset.id,
-        datasetRevision: dataset.revision,
-        sourceHash: dataset.sourceHash,
-        ...normalized,
-      });
-      this.repository.saveReview(review);
-      return review;
+      return () => {
+        const review = actionReviewSchema.parse({
+          id: this.ids.next(),
+          createdAt: this.clock.now(),
+          datasetId: dataset.id,
+          datasetRevision: dataset.revision,
+          sourceHash: dataset.sourceHash,
+          ...normalized,
+        });
+        this.repository.saveReview(review);
+        return review;
+      };
     });
   }
 }

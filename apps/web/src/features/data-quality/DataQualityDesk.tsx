@@ -12,6 +12,7 @@ import { LearningShell } from "../../app/LearningShell";
 import { CandleChart } from "./CandleChart";
 import "./data-quality.css";
 export function DataQualityDesk() {
+  const [storage, setStorage] = useState<"memory" | "sqlite">("memory");
   const [instruments, setInstruments] = useState<Instrument[]>([]),
     [instrumentId, setInstrumentId] = useState("");
   const [from, setFrom] = useState("2026-09-01"),
@@ -34,6 +35,7 @@ export function DataQualityDesk() {
         setInstruments(a.data);
         setInstrumentId(a.data[0]?.instrumentId ?? "");
         setDatasets(b.data);
+        setStorage(b.metadata.storage);
         const query = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
         if (query.get("dataset"))
           void read(
@@ -349,9 +351,11 @@ export function DataQualityDesk() {
                 </p>
               ))}
               <p className="chapter-muted">
-                Memory dataset storage resets with the API. Source JSON stays in the server's local
-                ignored archive. Historical availability and corporate-action comparability are not
-                established here.
+                {storage === "sqlite"
+                  ? "Dataset revisions are saved in SQLite and survive restarts."
+                  : "Memory dataset storage resets with the API."}{" "}
+                Source JSON stays in the server's local ignored archive. Historical availability and
+                corporate-action comparability are not established here.
               </p>
             </section>
           </>

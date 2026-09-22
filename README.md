@@ -29,7 +29,7 @@ npm ci --ignore-scripts
 npm run dev
 ```
 
-Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. All inputs are synthetic. Restarting the API clears session data.
+Open <http://127.0.0.1:5173>. Create the sample portfolio, choose **Concentrated**, then **Check allocation** to see a 60% holding breach a 40% cap. Teaching defaults are synthetic. Chapter 5 introduces durable SQLite storage under .data/portfolio-atlas.sqlite; saved workspace records survive API restarts. Playwright explicitly uses ephemeral in-memory SQLite.
 
 Follow the [Chapter 1 learning guide](docs/chapters/01-learning-guide.md) for the code-reading order, complete walkthrough and chronological commit map. See the [HTTP reference](docs/chapters/01-http-reference.md) and [recording notes](docs/video/chapter-01-recording-notes.md).
 

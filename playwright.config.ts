@@ -22,6 +22,7 @@ export default defineConfig({
         WEB_PORT: "5174",
         WEB_ORIGIN: "http://127.0.0.1:5174",
         DATA_MODE: "synthetic",
+        DATABASE_PATH: ":memory:",
       },
     },
     {

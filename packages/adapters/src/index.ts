@@ -13,3 +13,6 @@ export * from "./market-data/action-normalizer.js";
 export * from "./persistence/memory-action-repository.js";
 export * from "./analytics/fintech-algorithms/adjustment-engine.js";
 export * from "./analytics/fintech-algorithms/basis-drift-lesson.js";
+export * from "./persistence/sqlite/database.js";
+export * from "./persistence/sqlite/repositories.js";
+export * from "./persistence/sqlite/ledger-repository.js";

@@ -8,7 +8,11 @@ const keySchema = z
   .min(8)
   .max(128)
   .regex(/^[A-Za-z0-9_-]+$/);
-export function createHttpContext(clock: Clock, sessionId: string) {
+export function createHttpContext(
+  clock: Clock,
+  sessionId: string,
+  storage: "memory" | "sqlite" = "memory",
+) {
   return {
     response<T>(
       data: T,
@@ -20,7 +24,7 @@ export function createHttpContext(clock: Clock, sessionId: string) {
         metadata: {
           schemaVersion: "1",
           mode,
-          storage: "memory",
+          storage,
           sessionId,
           generatedAt: clock.now(),
         },

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const metadataSchema = z.strictObject({
   schemaVersion: z.literal("1"),
   mode: z.enum(["synthetic", "yahoo", "mixed"]),
-  storage: z.literal("memory"),
+  storage: z.enum(["memory", "sqlite"]),
   sessionId: z.string(),
   generatedAt: z.iso.datetime(),
 });
