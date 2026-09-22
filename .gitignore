@@ -16,3 +16,6 @@ artifacts/
 Thumbs.db
 .idea/
 .vscode/
+
+playwright-report/
+test-results/

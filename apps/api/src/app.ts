@@ -38,41 +38,35 @@ export function buildApp(
       origin &&
       !allowedOrigins.has(origin)
     ) {
-      return reply
-        .code(403)
-        .send({
-          error: {
-            code: "ORIGIN_DENIED",
-            message: "Use the local learning app to submit browser commands.",
-            fields: [],
-          },
-          requestId: request.id,
-        });
+      return reply.code(403).send({
+        error: {
+          code: "ORIGIN_DENIED",
+          message: "Use the local learning app to submit browser commands.",
+          fields: [],
+        },
+        requestId: request.id,
+      });
     }
   });
   app.setErrorHandler((error, request, reply) => {
     if (error instanceof ZodError) {
-      return reply
-        .code(400)
-        .send({
-          error: {
-            code: "INVALID_INPUT",
-            message: "Check the submitted fields.",
-            fields: error.issues.map((issue) => ({
-              path: issue.path.join(".") || "request",
-              message: issue.message,
-            })),
-          },
-          requestId: request.id,
-        });
+      return reply.code(400).send({
+        error: {
+          code: "INVALID_INPUT",
+          message: "Check the submitted fields.",
+          fields: error.issues.map((issue) => ({
+            path: issue.path.join(".") || "request",
+            message: issue.message,
+          })),
+        },
+        requestId: request.id,
+      });
     }
     if (error instanceof ApplicationError)
-      return reply
-        .code(error.code === "NOT_FOUND" ? 404 : 409)
-        .send({
-          error: { code: error.code, message: error.message, fields: [] },
-          requestId: request.id,
-        });
+      return reply.code(error.code === "NOT_FOUND" ? 404 : 409).send({
+        error: { code: error.code, message: error.message, fields: [] },
+        requestId: request.id,
+      });
     const status =
       typeof error === "object" &&
       error !== null &&
@@ -81,27 +75,23 @@ export function buildApp(
         ? error.statusCode
         : 500;
     if (status >= 500) request.log.error(error);
-    return reply
-      .code(status)
-      .send({
-        error: {
-          code: status >= 500 ? "INTERNAL_ERROR" : "INVALID_REQUEST",
-          message:
-            status >= 500
-              ? "The server could not complete this request."
-              : "The HTTP request could not be read.",
-          fields: [],
-        },
-        requestId: request.id,
-      });
+    return reply.code(status).send({
+      error: {
+        code: status >= 500 ? "INTERNAL_ERROR" : "INVALID_REQUEST",
+        message:
+          status >= 500
+            ? "The server could not complete this request."
+            : "The HTTP request could not be read.",
+        fields: [],
+      },
+      requestId: request.id,
+    });
   });
   app.setNotFoundHandler((request, reply) =>
-    reply
-      .code(404)
-      .send({
-        error: { code: "NOT_FOUND", message: "Route not found.", fields: [] },
-        requestId: request.id,
-      }),
+    reply.code(404).send({
+      error: { code: "NOT_FOUND", message: "Route not found.", fields: [] },
+      requestId: request.id,
+    }),
   );
   registerRoutes(app, service, clock, randomUUID());
   return app;

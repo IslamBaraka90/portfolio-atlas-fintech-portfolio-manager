@@ -10,9 +10,9 @@ Complete one task at a time. Add meaningful tests when behavior is introduced. P
 
 Commit format: `chapter-N task-M: do X to achieve Y`. Keep each task reviewable and explain errors and financial limits. Push completed work to its branch; merge according to the user's instruction. Never manufacture passing evidence or advance to another chapter automatically.
 
-## Planning foundation
+## Current verification
 
-At chapter 0, `npm run check` validates formatting and Markdown. Runtime scripts, API handlers, tests, React components, and persistence migrations will appear with their chapters. Directory READMEs state intended ownership, not implemented behavior.
+Run formatting, Markdown, TypeScript, unit/API, production-build and browser checks for Chapter 1. See the [learning guide](docs/chapters/01-learning-guide.md) for commands. Planned provider and later-domain directories still contain ownership READMEs only.
 
 ## Package changes
 

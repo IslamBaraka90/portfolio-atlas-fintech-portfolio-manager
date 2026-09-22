@@ -47,7 +47,9 @@
     "dev": "npm run build:server && concurrently --kill-others -n types,api,web \"tsc -b tsconfig.build.json --watch --preserveWatchOutput\" \"npm run dev --workspace @portfolio-atlas/api\" \"npm run dev --workspace @portfolio-atlas/web\"",
     "start:api": "node apps/api/dist/server.js",
     "typecheck": "npm run build:server && tsc -p apps/web/tsconfig.json && tsc -p tsconfig.tests.json",
-    "test:unit": "npm run build:server && npm run test --workspaces --if-present"
+    "test:unit": "npm run build:server && npm run test --workspaces --if-present",
+    "test:browser": "npm run build:server && playwright test",
+    "test": "npm run test:unit && npm run test:browser"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

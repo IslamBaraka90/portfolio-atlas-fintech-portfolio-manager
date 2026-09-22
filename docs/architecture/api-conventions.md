@@ -1,10 +1,10 @@
 # API conventions
 
-Status: proposed contracts. No endpoint is implemented.
+Status: Chapter 1 routes implemented. See the [concrete HTTP reference](../chapters/01-http-reference.md). Later endpoint families remain proposed.
 
 ## Request context
 
-Use /api/v1 as the initial prefix. Mutating requests carry a requestId; financially consequential requests also require an idempotency key and expected resource revision. Decisions accept an explicit asOf/knowledge cutoff. The API injects clocks for recording activity rather than inventing historical availability.
+Use /api/v1 as the initial prefix. The server generates a requestId for every request. Every Chapter 1 mutation requires an idempotency key; edits and evaluations also require the expected mandate revision. Decisions accept an explicit asOf/knowledge cutoff. The API injects clocks for recording activity rather than inventing historical availability.
 
 ## Result envelope
 
@@ -19,7 +19,7 @@ An HTTP success does not mean data quality passed or a trade is authorized. Fina
 - 409: conflicting revision, duplicate key with different payload, or invalid state transition.
 - 422: well-formed but unsupported financial scope or missing required decision inputs.
 - 429/503: provider throttling or temporary unavailability, with bounded retry semantics.
-- Unexpected failures: safe message and correlationId, without provider cookies, credentials, or private payloads.
+- Unexpected failures: safe message and requestId, without provider cookies, credentials, or private payloads.
 
 Business outcomes such as ineligible instrument, rejected candle, infeasible target, or breached limit are typed reasons with evidence. Choose one consistent endpoint-specific mapping in the relevant PRP; do not catch every failure and return empty data.
 

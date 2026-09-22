@@ -2,4 +2,4 @@
 
 Financial records, invariants, and policies grouped by their purpose; no provider or framework imports.
 
-This directory currently documents ownership; it contains no runtime implementation.
+evaluate-mandate.ts implements the pure Chapter 1 policy evaluator.

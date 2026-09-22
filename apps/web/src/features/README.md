@@ -2,4 +2,4 @@
 
 Add feature folders by chapter: mandates, instruments, data quality, portfolio, research, risk, orders, performance, reports.
 
-This directory currently documents ownership; it contains no runtime implementation.
+mandates contains the mandate form, candidate allocation editor and server-result table.

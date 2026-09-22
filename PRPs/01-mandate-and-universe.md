@@ -1,8 +1,8 @@
 # PRP 01 — Mandate and investable universe
 
-Status: planned; implementation has not started.
+Status: implemented and verified on the Chapter 1 branch. See the [learning guide](../docs/chapters/01-learning-guide.md).
 Chapter: 1. Editorial duration estimate: 25 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+The maintainer requested this chapter. Subsequent chapters still require a separate request.
 
 ## Learner promise
 
@@ -34,11 +34,11 @@ API: POST/GET mandates and portfolios, plus POST /mandates/:id/evaluations. Use 
 
 React: Portfolio creation form, mandate summary, synthetic allocation editor, and a constraint-results table with the exact rule, observed value, bound and reason. Include empty/loading/error states and a session-only storage badge.
 
-## Planned implementation locations
+## Implementation locations
 
-packages/contracts/src/mandates; packages/core/src/domain/mandates; packages/core/src/application/mandates; packages/core/src/ports/repositories; packages/adapters/src/persistence; apps/api/src/http/mandates; apps/web/src/features/mandates.
+packages/contracts/src/mandates.ts; packages/core/src/domain/evaluate-mandate.ts; packages/core/src/use-cases/portfolio-service.ts; packages/core/src/ports/portfolio-repository.ts; packages/adapters/src/persistence; apps/api/src/http/routes.ts; apps/web/src/features/mandates.
 
-These paths describe future files/modules. The current repository contains ownership READMEs, not these implementations. Tests and fixtures live beside the domain or in packages/testing as appropriate.
+These modules are implemented. The use-cases directory makes application orchestration explicit; the original application ownership placeholder remains a pointer. Tests live in workspace test directories and shared synthetic fixtures live in packages/testing.
 
 ## Tasks and commit checkpoints
 
@@ -68,16 +68,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A 60% single position breaches a 40% maximum; 40% is accepted at the declared equality boundary.
-- [ ] A 5% cash allocation fails a 10% floor; 10% passes; weights summing to 110% are invalid.
-- [ ] A minimum cash bound greater than the maximum feasible cash produces a conflict with a reason.
-- [ ] An unknown sector is not silently counted as unconstrained exposure.
-- [ ] Reusing a command/revision incorrectly produces an explicit conflict; restarting an in-memory process visibly loses session data.
-- [ ] The React screen shows server results and keyboard-accessible errors; no Yahoo or financial engine ships in its bundle.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A 60% single position breaches a 40% maximum; 40% is accepted at the declared equality boundary.
+- [x] A 5% cash allocation fails a 10% floor; 10% passes; weights summing to 110% are invalid.
+- [x] A minimum cash bound greater than the maximum feasible cash produces a conflict with a reason.
+- [x] An unknown sector is not silently counted as unconstrained exposure.
+- [x] Reusing a command/revision incorrectly produces an explicit conflict; restarting an in-memory process visibly loses session data.
+- [x] The React screen shows server results and keyboard-accessible errors; no Yahoo or financial engine ships in its bundle.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -104,9 +104,9 @@ Update progress with completed tasks and commit references. Stop after this chap
 
 ## Evidence to fill during implementation
 
-- Definition/policy sources and applicability:
-- Final contract and fixture revisions:
-- Package versions and verified exports:
-- Commands and observed results:
-- UI walkthrough/screenshots:
-- Remaining limitations and next prerequisite:
+- Definition/policy sources and applicability: [authored teaching definition](../docs/chapters/01-definition-contract.md); inclusive basis-point limits, synthetic long-only allocations.
+- Final contract and fixture revisions: schema v1, policy chapter-1.v1; DEMO-AURORA, DEMO-HARBOR and DEMO-INDEX.
+- Package versions and verified exports: fintech-algorithms 0.13.1 and yahoo-finance2 4.0.2 remain pinned; no financial package/provider export is invoked in Chapter 1.
+- Commands and observed results: [progress ledger](../docs/progress.md) records type/build, contract/domain/API and browser gates.
+- UI walkthrough/screenshots: [learning guide](../docs/chapters/01-learning-guide.md) and [recording notes](../docs/video/chapter-01-recording-notes.md); browser suite generates desktop/mobile artifacts.
+- Remaining limitations and next prerequisite: session memory, synthetic classifications, no authentication or live data. Chapter 2 instrument discovery is next; D14 remains gated.

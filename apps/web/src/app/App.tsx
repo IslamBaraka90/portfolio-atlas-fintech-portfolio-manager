@@ -115,14 +115,17 @@ export function App() {
   async function save() {
     if (!draft) return;
     await run("Saving", async () => {
-      const saved = mandate
-        ? await write(
-            "PUT",
-            "/mandates/" + mandate.id,
-            { expectedRevision: mandate.revision, mandate: draft },
-            mandateSchema,
-          )
-        : await write("POST", "/mandates", draft, mandateSchema);
+      const saved =
+        mandate && !portfolio && !dirty
+          ? await read("/mandates/" + mandate.id, mandateSchema)
+          : mandate
+            ? await write(
+                "PUT",
+                "/mandates/" + mandate.id,
+                { expectedRevision: mandate.revision, mandate: draft },
+                mandateSchema,
+              )
+            : await write("POST", "/mandates", draft, mandateSchema);
       checkSession(saved.metadata.sessionId);
       setMandate(saved.data);
       setDraft(mandateInputSchema.strip().parse(saved.data));
