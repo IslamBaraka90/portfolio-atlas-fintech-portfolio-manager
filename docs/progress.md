@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–10 are implemented. Chapters 1–9 are published as stacked PRs with green checks; Chapter 10 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–11 are implemented. Chapters 1–10 are published as stacked PRs with green checks; Chapter 11 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -196,3 +196,11 @@ Tasks 1–4: 8f0c8f7, 8008857, e12e131, 69c135b. Authored historical bars and me
 Independent expected values: 74 shares at 107, fee 7.92, final NAV 10,362.08 versus 10,370.00 without fees. Authored delisting recovery produces a FIFO loss of 7,548 and zero-fee NAV 2,452. Future holdout mutation preserves earlier results and fitted scores. Late filings and missing sessions block performance.
 
 Final gates: 98 unit/API tests and 16 browser journeys passed, along with strict types, production build, browser dependency guard, formatting and Markdown lint (85 files). An untracked PR-body Markdown file under .git initially tripped documentation lint; renaming this tool-owned temporary file to .txt resolved it without changing project checks. Desktop and mobile screenshots inspected. Chapter 9 remote checks are green. Continue to current-target rebalancing.
+
+## Chapter 11 evidence
+
+Tasks 1–4: b57ba97, 6fc17e3, 63782e7, b0fb2ec. Whole-lot cash-funded sizing, triggers, minimum trades, FIFO previews, D14 illustrative fixed-sale comparison, post-fee constraints and revision-safe approval.
+
+Independent case: 39 shares each at 100, purchases 7,800, fees 7.80, available cash 2,192.20 and NAV 9,992.20. A balanced book now correctly avoids fee-buffer-induced turnover. Contributions, reserved funds, off-tick/stale marks, FIFO final cents, same-time lot order, expired proposals and changed book/valuation/instrument evidence are covered. D14 negative score −40 is not cash.
+
+Browser verification found successful command keys were being reused for later deliberate submissions. Keys now remain only until confirmed success; the lost-response retry regression still passes. Final gates: 105 unit/API tests, 17 Chromium journeys, strict types, production build, browser dependency guard, formatting and Markdown lint (87 files) passed. Desktop/mobile captures inspected. Chapter 10 remote checks are green. Continue to paper execution.

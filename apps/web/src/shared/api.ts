@@ -27,8 +27,8 @@ export async function read<T>(
   return request(path, schema, { ...(signal ? { signal } : {}) });
 }
 
-// Reusing a key for the same command makes a network retry safe. The server still
-// owns conflict detection. Nothing is persisted in browser storage.
+// Retain a command key until a valid success response arrives, so uncertain retries
+// are safe. A later deliberate submission is a new command, even with the same body.
 const commandKeys = new Map<string, string>();
 export async function write<T>(
   method: "POST" | "PUT",
@@ -39,11 +39,13 @@ export async function write<T>(
   const fingerprint = JSON.stringify({ method, path, body });
   const key = commandKeys.get(fingerprint) ?? crypto.randomUUID();
   commandKeys.set(fingerprint, key);
-  return request(path, schema, {
+  const result = await request(path, schema, {
     method,
     headers: { "content-type": "application/json", "idempotency-key": key },
     body: JSON.stringify(body),
   });
+  if (commandKeys.get(fingerprint) === key) commandKeys.delete(fingerprint);
+  return result;
 }
 export function resetCommandKeys() {
   commandKeys.clear();

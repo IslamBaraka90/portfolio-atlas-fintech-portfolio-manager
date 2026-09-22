@@ -1,3 +1,6 @@
+import { RebalanceService } from "@portfolio-atlas/core";
+import { FintechLotScoringEngine } from "@portfolio-atlas/adapters";
+import { registerRebalanceRoutes } from "./http/rebalancing.js";
 import { ValidationService } from "@portfolio-atlas/core";
 import { FintechDrawdownEngine } from "@portfolio-atlas/adapters";
 import { historicalFixture } from "@portfolio-atlas/testing";
@@ -335,5 +338,18 @@ export function buildApp(
     commands,
   );
   registerValidationRoutes(app, validation, createHttpContext(clock, sessionId, storage));
+  const rebalances = new RebalanceService(
+    snapshots,
+    construction,
+    valuations,
+    ledger,
+    service,
+    instruments,
+    new FintechLotScoringEngine(),
+    clock,
+    ids,
+    commands,
+  );
+  registerRebalanceRoutes(app, rebalances, createHttpContext(clock, sessionId, storage));
   return app;
 }

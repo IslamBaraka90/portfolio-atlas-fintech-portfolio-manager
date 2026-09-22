@@ -1,8 +1,8 @@
 # PRP 11 — Rebalancing, cash flows and tax-lot policies
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/11-learning-guide.md and docs/progress.md.
 Chapter: 11. Editorial duration estimate: 20 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implemented under full-build authorization.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] A new contribution can reduce required sells under the cash-flow-first rule.
-- [ ] After rounding and costs, available cash never falls below the mandate floor.
-- [ ] Chosen lot quantities cannot exceed remaining lots.
-- [ ] An unchanged already-balanced portfolio produces no trades.
-- [ ] A changed position or price revision invalidates the old proposal's approval.
-- [ ] Tax outputs show assumed policy/jurisdiction and cannot imply universal legal treatment.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] A new contribution can reduce required sells under the cash-flow-first rule.
+- [x] After rounding and costs, available cash never falls below the mandate floor.
+- [x] Chosen lot quantities cannot exceed remaining lots.
+- [x] An unchanged already-balanced portfolio produces no trades.
+- [x] A changed position or price revision invalidates the old proposal's approval.
+- [x] Tax outputs show assumed policy/jurisdiction and cannot imply universal legal treatment.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 An approved paper-trade proposal. Chapter 12 applies fresh pre-trade checks and simulates order lifecycle.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue through Chapter 17 under full-build authorization.
 
 ## Evidence to fill during implementation
 
