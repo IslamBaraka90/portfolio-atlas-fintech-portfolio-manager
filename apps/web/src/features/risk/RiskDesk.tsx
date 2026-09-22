@@ -131,7 +131,7 @@ export function RiskDesk() {
                     {source(r)!.instrument.returnedSymbol} · {source(r)!.request.scenario} ·
                     adjustment r{r.revision} · {r.status}
                   </label>
-                  {assumption === "scenario" && (
+                  {assumption === "scenario" && selected.includes(key(r)) && (
                     <label>
                       Annual return assumption for {source(r)!.instrument.returnedSymbol}
                       <input

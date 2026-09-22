@@ -2,7 +2,7 @@
 
 ## Current checkpoint
 
-Chapters 0–7 are implemented. Chapters 1–6 are published as stacked PRs with green checks; Chapter 7 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
+Chapters 0–8 are implemented. Chapters 1–7 are published as stacked PRs with green checks; Chapter 8 is at its publication checkpoint. The user authorizes the full build through Chapter 17 and announced D14 in fintech-algorithms 0.13.2; the previous Chapter 9 stopping point is revoked. Preserve task commits and verification at every chapter.
 
 ## Foundation tasks
 
@@ -172,3 +172,11 @@ Independent examples passed: three-slot SMA 102; net income / revenue 15%, +5 pe
 Live AAPL fundamentals smoke succeeded at 2026-09-22T12:47:34.602Z with three 12M USD records; source hash and exact limitations are in the learning guide. The installed optimized SMA rejects nullable inputs despite its catalog description; contiguous numeric segments preserve null slots and restart warm-up.
 
 Final Chapter 7 gates: 80 unit/API checks and all 13 connected Chromium journeys passed. Strict typecheck, production build, browser dependency guard, formatting and Markdown lint (78 files) passed. Desktop and 390px mobile screenshots were inspected after presentation fixes. Chapter 6 remote checks are green. Chapter 8 continues under the full-build authorization.
+
+## Chapter 8 evidence
+
+Tasks 1–4: 2d5ba68, 2b50d22, a90fe0b, a8978a5. Ordered aligned daily returns, explicit simple/log and price/gross-total-return conventions, sample/EWMA/scaled-identity shrinkage, bounded matrix diagnostics, immutable API snapshots and React method comparison.
+
+Independent examples passed: covariance [[0.01, -0.005], [-0.005, 0.01]], correlation -0.5, annual diagonal 2.52 at 252 sessions; EWMA weight mass 0.75 and seed mass 0.25. Identical clean AURA/HARB paths produce rank 1; shrinkage produces rank 2 for that sample. Constant paths retain undefined correlation. Missing sessions, wrong revisions, mixed currencies and future observations fail before estimation.
+
+The initial whole-course browser run exposed duplicate scenario fields for unselected histories. Scenario fields now appear only for selected inputs. The complete rerun passed all 14 Chromium journeys. Final gates also passed: 89 unit/API checks, strict types, production build, browser dependency guard, formatting and Markdown lint (80 files). Desktop and 390px captures were inspected. Chapter 7 remote checks are green. Continue to released D14 construction under the full-build authorization.
