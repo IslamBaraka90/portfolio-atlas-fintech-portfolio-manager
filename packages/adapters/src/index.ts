@@ -4,3 +4,8 @@ export * from "./market-data/yahoo-finance/instrument-provider.js";
 export * from "./market-data/synthetic-instrument-provider.js";
 export * from "./persistence/memory-instrument-repository.js";
 export * from "./analytics/fintech-algorithms/identity-resolver.js";
+export * from "./market-data/yahoo-finance/chart-provider.js";
+export * from "./market-data/synthetic-chart-provider.js";
+export * from "./persistence/raw-archive.js";
+export * from "./analytics/fintech-algorithms/market-quality.js";
+export * from "./persistence/memory-dataset-repository.js";

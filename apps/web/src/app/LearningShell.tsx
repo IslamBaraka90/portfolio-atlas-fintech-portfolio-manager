@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 const chapters = [
+  { id: 3, title: "Candle quality", hash: "#market-data" },
   { id: 1, title: "Mandate lab", hash: "#mandates" },
   { id: 2, title: "Instrument discovery", hash: "#instruments" },
-];
+].sort((a, b) => a.id - b.id);
 export function LearningShell({ active, children }: { active: number; children: ReactNode }) {
   const chapter = chapters.find((item) => item.id === active);
   return (

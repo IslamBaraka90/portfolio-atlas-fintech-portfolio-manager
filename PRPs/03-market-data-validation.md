@@ -1,6 +1,6 @@
 # PRP 03 — Market data ingestion and candle validation
 
-Status: planned; implementation has not started.
+Status: implemented; see [Chapter 3 guide](../docs/chapters/03-learning-guide.md).
 Chapter: 3. Editorial duration estimate: 25 minutes.
 Implementation starts when the maintainer explicitly requests this chapter.
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] O=100 H=99 L=98 C=101 fails OHLC geometry; O=100 H=102 L=99 C=101 passes.
-- [ ] A null close is quarantined and remains visible at its original timestamp.
-- [ ] Zero volume is distinguishable from missing volume; negative volume is invalid.
-- [ ] An unknown tick size cannot silently use 0.01 for every instrument.
-- [ ] An incomplete daily session does not become decision-ready merely because the row is last.
-- [ ] A provider timeout cannot yield a fake empty successful dataset or switch to synthetic mode.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] O=100 H=99 L=98 C=101 fails OHLC geometry; O=100 H=102 L=99 C=101 passes.
+- [x] A null close is quarantined and remains visible at its original timestamp.
+- [x] Zero volume is distinguishable from missing volume; negative volume is invalid.
+- [x] An unknown tick size cannot silently use 0.01 for every instrument.
+- [x] An incomplete daily session does not become decision-ready merely because the row is last.
+- [x] A provider timeout cannot yield a fake empty successful dataset or switch to synthetic mode.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 A versioned dataset with quality evidence. Chapter 4 establishes corporate-action and FX comparability.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+The continuous user authorization covers Chapter 4 next. Continue through Chapter 8, then stop at the Chapter 9 D14 gate.
 
 ## Evidence to fill during implementation
 

@@ -2,9 +2,7 @@
 
 ## Current checkpoint
 
-Chapter 0: complete and published. Chapter 1: implemented and locally verified; branch publication follows the final checkpoint.
-Current run: Chapter 2 complete; continue with Chapter 3 under the user's Chapters 2–8 authorization.
-Chapters 1–2 are implemented. Chapters 3–8 are authorized next; Chapters 9–17 remain planned. D14 readiness has not been announced.
+Chapters 0–3 are implemented. Chapters 1–2 are published as stacked PRs with passing GitHub checks; Chapter 3 publication follows its final verified checkpoint. Chapters 4–8 continue under the current authorization. Chapters 9–17 remain planned, and D14 readiness has not been announced.
 
 The user now authorizes continuous implementation through Chapters 2–8. Stop at the first D14 requirement in Chapter 9 and report the exact dependency. D14 availability must still be announced.
 
@@ -120,3 +118,13 @@ Task 4 connects search, explicit resolution, saved instruments, eligibility and 
 Task 5 adds focused concurrent-command verification, immutable instrument history, browser regression and a real opt-in Yahoo smoke. Live AAPL search/quote succeeded at 2026-09-22T10:52:40–42Z; legal tick remains null and permanent identity remains unverified. See the Chapter 2 guide for exact observations.
 
 Final Chapter 2 gates: 32 unit/API checks and eight browser journeys passed; strict types, formatting, Markdown lint, production build and browser dependency guard passed. Desktop and 390px mobile evidence inspected.
+
+## Chapter 3 evidence
+
+Task 1 (1e03352) froze nullable rows, UTC windows, adjustment basis and evidenced finality. Task 2 (05e64bd) added chart retrieval, shared request/cache policy and SHA-256 evidence archives. Task 3 (43f24c1) combined contract-tier OHLC/gap exports with independent dataset rules. Task 4 (b8236fe) connected API, immutable revisions and the React candle desk.
+
+Synthetic independent example: 12 rows, accepted indexes [0, 3, 5, 11], eight quarantined, one known missing session with unknown cause. Clean fixture: all 12 accepted. Type checks, 39 unit/API cases and the connected candle browser journey passed before final evidence additions. Desktop and 390px mobile screenshots inspected; no page-width overflow.
+
+Task 5 adds exact-byte filesystem evidence checks, archive-failure retry and live chart observation. See the [learning guide](chapters/03-learning-guide.md). Chapter 4 follows under the continuous authorization.
+
+Final Chapter 3 gates: all 41 unit/API checks and nine connected Chromium journeys passed. Formatting, Markdown lint (69 files), strict types, production build and browser dependency guard passed. Live AAPL chart returned 12 rows at 2026-09-22T11:13:58.412Z; all retained and explicitly quarantined for unknown tick, identity and finality evidence.

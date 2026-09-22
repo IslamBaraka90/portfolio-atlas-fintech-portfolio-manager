@@ -1,0 +1,216 @@
+.chapter-page {
+  padding: 48px 48px 80px;
+  max-width: 1500px;
+  margin: auto;
+}
+.chapter-page h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  margin: 18px 0;
+}
+.chapter-intro {
+  max-width: 680px;
+  line-height: 1.7;
+  color: #60716c;
+  margin-bottom: 28px;
+}
+.chapter-panel {
+  background: #fffefa;
+  border: 1px solid #dfe4dc;
+  border-radius: 18px;
+  padding: 28px;
+  margin: 22px 0;
+  min-width: 0;
+}
+.chapter-panel h2 {
+  font-size: 1.05rem;
+  margin: 0 0 24px;
+  font-weight: 650;
+}
+.chapter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+}
+.chapter-page label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #52675e;
+  flex: 1;
+  min-width: 145px;
+}
+.chapter-page select,
+.chapter-page input {
+  border: 1px solid #cdd6cd;
+  border-radius: 8px;
+  background: white;
+  padding: 12px;
+  color: #23483e;
+  max-width: 100%;
+  font: inherit;
+}
+.chapter-page button {
+  min-height: 42px;
+}
+.chapter-notice {
+  padding: 12px 18px;
+  background: #edf2e8;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.chapter-muted {
+  font-size: 0.82rem;
+  color: #64756d;
+  line-height: 1.65;
+}
+.chapter-warning {
+  padding: 12px;
+  background: #fff0df;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+.chapter-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin: 16px 0 24px;
+}
+.chapter-metrics > div {
+  padding: 18px;
+  background: #f3f5ee;
+  border-radius: 12px;
+}
+.chapter-metrics strong {
+  font:
+    2.3rem Georgia,
+    serif;
+  display: block;
+  color: #205750;
+}
+.chapter-metrics span {
+  display: block;
+  font-size: 0.76rem;
+  color: #62736b;
+  margin-top: 8px;
+}
+.quality-chart {
+  margin: 20px 0;
+  background: #f7f8f2;
+  border-radius: 12px;
+  padding: 12px;
+}
+.quality-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: #365a4d;
+}
+.quality-chart figcaption {
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: #68786c;
+}
+.chapter-table-wrap {
+  overflow: auto;
+  max-height: 560px;
+  margin-top: 20px;
+}
+.chapter-table-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  min-width: 720px;
+}
+.chapter-table-wrap caption {
+  text-align: left;
+  padding: 10px 0;
+  color: #617068;
+}
+.chapter-table-wrap th {
+  text-align: left;
+  background: #f0f3e9;
+  position: sticky;
+  top: 0;
+}
+.chapter-table-wrap th,
+.chapter-table-wrap td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #e4e8df;
+  vertical-align: top;
+}
+.chapter-table-wrap small {
+  display: block;
+  color: #6b746c;
+  max-width: 360px;
+  margin-top: 5px;
+}
+.quality-pass {
+  color: #205750;
+}
+.quality-fail {
+  color: #a6423e;
+}
+.chapter-provenance {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.chapter-provenance dt {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #6b796b;
+  margin-bottom: 7px;
+  letter-spacing: 0.05em;
+}
+.chapter-provenance dd {
+  margin: 0;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .chapter-page {
+    padding: 30px 20px 60px;
+  }
+  .chapter-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .chapter-panel {
+    padding: 20px;
+  }
+  .chapter-provenance {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .chapter-page {
+    padding: 24px 14px 50px;
+  }
+  .chapter-panel {
+    padding: 16px;
+  }
+  .chapter-form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .chapter-form label {
+    min-width: 0;
+  }
+  .chapter-metrics {
+    gap: 8px;
+  }
+  .chapter-metrics > div {
+    padding: 12px;
+  }
+  .chapter-page h1 {
+    font-size: 2.65rem;
+  }
+}

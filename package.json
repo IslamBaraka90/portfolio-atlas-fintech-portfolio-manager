@@ -50,7 +50,8 @@
     "test:unit": "npm run build:server && npm run test --workspaces --if-present",
     "test:browser": "npm run build:server && playwright test",
     "test": "npm run test:unit && npm run test:browser",
-    "yahoo:smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-smoke.ts"
+    "yahoo:smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-smoke.ts",
+    "yahoo:chart-smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-chart-smoke.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
