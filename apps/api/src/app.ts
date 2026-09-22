@@ -1,3 +1,7 @@
+import { ValidationService } from "@portfolio-atlas/core";
+import { FintechDrawdownEngine } from "@portfolio-atlas/adapters";
+import { historicalFixture } from "@portfolio-atlas/testing";
+import { registerValidationRoutes } from "./http/validation.js";
 import { ConstructionService } from "@portfolio-atlas/core";
 import { FintechConstructionEngine } from "@portfolio-atlas/adapters";
 import { registerConstructionRoutes } from "./http/construction.js";
@@ -321,5 +325,15 @@ export function buildApp(
     commands,
   );
   registerConstructionRoutes(app, construction, createHttpContext(clock, sessionId, storage));
+  const validation = new ValidationService(
+    snapshots,
+    { get: historicalFixture },
+    new FintechDrawdownEngine(),
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  registerValidationRoutes(app, validation, createHttpContext(clock, sessionId, storage));
   return app;
 }
