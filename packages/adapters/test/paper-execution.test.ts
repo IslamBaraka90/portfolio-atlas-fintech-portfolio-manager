@@ -18,6 +18,8 @@ test("integer tick atoms and actual package residual fields reject off-grid and 
     ledgerEventId: id,
     source: "authored_paper_opening_event",
     settlementPolicy: "immediate_teaching",
+    settlementId: null,
+    dueDate: null,
   });
   assert.deepEqual(a.residual("10", [fill("one", "4", "100"), fill("two", "6", "101")]), {
     filled: 10,

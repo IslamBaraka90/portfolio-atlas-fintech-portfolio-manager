@@ -1,3 +1,5 @@
+import { SettlementService } from "@portfolio-atlas/core";
+import { registerSettlementRoutes } from "./http/settlement.js";
 import { PaperExecutionService } from "@portfolio-atlas/core";
 import { FintechPaperExecutionAnalytics } from "@portfolio-atlas/adapters";
 import { registerOrderRoutes } from "./http/orders.js";
@@ -354,6 +356,8 @@ export function buildApp(
     commands,
   );
   registerRebalanceRoutes(app, rebalances, createHttpContext(clock, sessionId, storage));
+  const settlements = new SettlementService(snapshots, ledger, service, clock, ids, commands);
+  registerSettlementRoutes(app, settlements, createHttpContext(clock, sessionId, storage));
   const paper = new PaperExecutionService(
     snapshots,
     rebalances,
@@ -361,11 +365,15 @@ export function buildApp(
     service,
     instruments,
     new FintechPaperExecutionAnalytics(),
+    settlements,
     clock,
     ids,
     commands,
   );
-  ledger.setManualWriteGuard((id) => paper.assertManualWriteAllowed(id));
+  ledger.setManualWriteGuard((id) => {
+    paper.assertManualWriteAllowed(id);
+    settlements.assertManualWriteAllowed(id);
+  });
   registerOrderRoutes(app, paper, createHttpContext(clock, sessionId, storage));
   return app;
 }

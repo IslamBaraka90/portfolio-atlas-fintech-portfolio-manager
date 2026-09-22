@@ -72,6 +72,11 @@ export class RebalanceService {
         "REVISION_CONFLICT",
         "Book, price valuation, mandate or instrument revision changed; rebuild the proposal.",
       );
+    if (book.book.settlements.some((o) => o.status !== "settled"))
+      throw new ApplicationError(
+        "INVALID_SNAPSHOT",
+        "Settle deferred obligations before a new rebalance.",
+      );
     if (!book.book.reconciled)
       throw new ApplicationError("BOOK_INVARIANT", "Book must reconcile before approval.");
     return book;

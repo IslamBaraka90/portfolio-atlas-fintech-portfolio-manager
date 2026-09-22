@@ -119,6 +119,8 @@ export class LedgerService {
   }
   post(value: PostingInput, context: CommandContext): BookState {
     const input = normalizePosting(value);
+    if (["pending_buy", "pending_sell", "settlement", "settlement_failure"].includes(input.kind))
+      invalid("Use the paper or operations workflow for deferred events.");
     return this.commands.executeSync("ledger.post", input, context, () => {
       this.manualWriteGuard(input.portfolioId);
       this.append(input, this.clock.now());
@@ -133,6 +135,15 @@ export class LedgerService {
     };
     return this.commands.executeSync("ledger.correct", input, context, () => {
       this.manualWriteGuard(input.portfolioId);
+      const special = ["pending_buy", "pending_sell", "settlement", "settlement_failure"];
+      const referencedEvent = this.get(input.portfolioId).events.find(
+        (e) => e.id === input.originalEventId,
+      );
+      if (
+        (input.replacement && special.includes(input.replacement.kind)) ||
+        (referencedEvent && special.includes(referencedEvent.input.kind))
+      )
+        invalid("Use the operations correction workflow for deferred events.");
       const state = this.requireReconciled(input.portfolioId),
         active = activeEvents(state.events);
       const original = active.find((event) => event.id === input.originalEventId);

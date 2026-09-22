@@ -10,7 +10,7 @@ Economic cash = settled cash + receivables − payables. Available cash = settle
 
 Settlement consumes a positive quantity no larger than the remaining obligation, on/after its configured due date. Allocate remaining cash proportionally with half-even cents; final settlement consumes every residual cent. Failure is an immutable memo with a reason; retry can later settle. Duplicate source references cannot post cash twice. Pending buys cannot be resold; splits wait until affected obligations settle.
 
-Manual book edits and new rebalances wait while deferred obligations remain. Operations can process them after the active paper batch is complete, preserving its expected-checkpoint protocol. This is a bounded single-writer workflow, not a concurrent institutional settlement engine.
+Manual book edits and new rebalances wait while deferred obligations remain. An operations acknowledgment updates its owning active paper batch checkpoint and revision in the same transaction. This allows a settled funding sale to finance the batch's remaining buys. Stale order commands must reload. This is a bounded single-writer workflow, not a concurrent institutional settlement engine.
 
 ## Statements and breaks
 
