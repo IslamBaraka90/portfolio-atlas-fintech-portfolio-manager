@@ -1,8 +1,8 @@
 # PRP 09 — Portfolio construction and practical constraints
 
-Status: planned; implementation has not started.
+Status: implemented; see docs/chapters/09-learning-guide.md and docs/progress.md.
 Chapter: 9. Editorial duration estimate: 30 minutes.
-Implementation starts when the maintainer explicitly requests this chapter.
+Implementation completed under the full-build authorization.
 
 ## Learner promise
 
@@ -64,16 +64,16 @@ These paths describe future files/modules. The current repository contains owner
 
 ## Acceptance and adversarial cases
 
-- [ ] Symmetric uncorrelated equal-variance assets with a fully invested long-only minimum-variance objective yield 50/50 within the stated tolerance.
-- [ ] Conflicting cash/position bounds produce infeasible status and no trade proposal.
-- [ ] Asset permutation changes only output order, not the economic solution after mapping back.
-- [ ] A solver's iteration limit cannot be reported as an optimal solution.
-- [ ] Current-to-target turnover uses a frozen one-way/two-way definition.
-- [ ] A target built with one model revision cannot silently reference another in the UI.
-- [ ] Backend behavior is demonstrated through the actual API and React view.
-- [ ] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
-- [ ] Financial result provenance and limitations are visible in API output and the relevant screen.
-- [ ] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
+- [x] Symmetric uncorrelated equal-variance assets with a fully invested long-only minimum-variance objective yield 50/50 within the stated tolerance.
+- [x] Conflicting cash/position bounds produce infeasible status and no trade proposal.
+- [x] Asset permutation changes only output order, not the economic solution after mapping back.
+- [x] A solver's iteration limit cannot be reported as an optimal solution.
+- [x] Current-to-target turnover uses a frozen one-way/two-way definition.
+- [x] A target built with one model revision cannot silently reference another in the UI.
+- [x] Backend behavior is demonstrated through the actual API and React view.
+- [x] Synthetic tests are deterministic; live-provider checks are separately labeled and opt-in.
+- [x] Financial result provenance and limitations are visible in API output and the relevant screen.
+- [x] Chapter changes pass the applicable typecheck, targeted tests, UI checks and documentation checks.
 
 ## Validation execution plan
 
@@ -96,7 +96,7 @@ Use topic names in narration; catalog IDs remain in production notes. Mark any p
 
 A proposed target portfolio, not orders. Chapter 10 validates the policy over time before an executable rebalance.
 
-Update progress with completed tasks and commit references. Stop after this chapter and report its result. The next chapter starts only when the maintainer asks.
+Update progress with completed tasks and commit references. Continue through Chapter 17 under the current full-build authorization.
 
 ## Evidence to fill during implementation
 
