@@ -63,6 +63,10 @@ test("rebalance review shows post-cost quantities, no-trade trigger, approval an
   await page.getByRole("button", { name: "Approve paper-trade proposal", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("revision changed");
   await mkdir("artifacts", { recursive: true });
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo(0, 0);
+  });
   await page.screenshot({ path: "artifacts/chapter-11-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

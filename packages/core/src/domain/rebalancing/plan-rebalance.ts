@@ -154,7 +154,20 @@ export function planRebalance(
     trades: ProposedTrade[] = [];
   const snapshot = () => reconcileBook(source.book.portfolioId, events, journal, now);
   const desired = new Map<string, InstanceType<typeof D>>();
-  const buffered = nav.mul(new D(1).minus(rate.mul(2)));
+  const alreadyAtRoundedTarget = target.assetIds.every((id, i) => {
+    const lot = instruments.find((a) => a.instrumentId === id)!.lotSize!;
+    const desiredShares = nav
+      .mul(target.weights![i]!)
+      .div(prices.get(id)!)
+      .div(lot)
+      .floor()
+      .mul(lot);
+    return desiredShares.eq(
+      source.book.positions.find((p) => p.instrumentId === id)?.quantity ?? 0,
+    );
+  });
+  // No fee is incurred when the raw target needs no trade. Do not manufacture turnover.
+  const buffered = alreadyAtRoundedTarget ? nav : nav.mul(new D(1).minus(rate.mul(2)));
   for (const [i, id] of target.assetIds.entries()) {
     const lot = instruments.find((a) => a.instrumentId === id)!.lotSize!;
     desired.set(

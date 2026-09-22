@@ -13,7 +13,7 @@ import { postingEntry } from "../src/domain/accounting/project-book.js";
 import { reconcileBook } from "../src/domain/accounting/reconcile-book.js";
 import { valueBook } from "../src/domain/valuation/value-book.js";
 import { planRebalance, fifoSale } from "../src/domain/rebalancing/plan-rebalance.js";
-function setup(shares = 0, capital = 10000) {
+function setup(shares = 0, capital = 10000, harbor = 0, reserve = 0) {
   const instruments = [syntheticInstruments[0]!, syntheticInstruments[2]!],
     events: LedgerEvent[] = [],
     journal: JournalEntry[] = [];
@@ -47,6 +47,22 @@ function setup(shares = 0, capital = 10000) {
       instrumentRevision: 1,
       quantity: String(shares),
       unitPrice: "100",
+    });
+  if (harbor)
+    post({
+      kind: "buy",
+      currency: "USD",
+      instrumentId: instruments[1]!.instrumentId,
+      instrumentRevision: 1,
+      quantity: String(harbor),
+      unitPrice: "100",
+    });
+  if (reserve)
+    post({
+      kind: "reserve",
+      currency: "USD",
+      amount: String(reserve),
+      reservationId: "other-order",
     });
   const source = { events, journal, book: reconcileBook("p", events, journal, fixtureTime) };
   const request = {
@@ -259,4 +275,51 @@ test("FIFO lot selection conserves final cents and same-time insertion order", (
     ],
   );
   assert.throws(() => fifoSale(lots, "a", "6", "50"), /exceeds remaining/);
+});
+
+test("an already balanced book creates no trades or fees even with a positive fee assumption", () => {
+  const f = setup(40, 10000, 40);
+  const result = planRebalance(f.rebalance, f.target, f.valuation, f.source, fixtureTime);
+  assert.equal(result.status, "no_trade");
+  assert.equal(result.trades.length, 0);
+  assert.equal(result.cashBridge.fees, "0.00");
+  assert.equal(result.projectedNav, "10000.00");
+  assert.ok(result.constraints.every((c) => c.status === "pass"));
+});
+
+test("reserved funds cannot finance a rebalance and off-tick or stale marks fail", () => {
+  const f = setup(0, 10000, 0, 9500);
+  const result = planRebalance(f.rebalance, f.target, f.valuation, f.source, fixtureTime);
+  assert.equal(result.trades.length, 0);
+  assert.equal(result.cashBridge.available, "500.00");
+  assert.ok(result.constraints.some((c) => c.rule === "CASH_MINIMUM" && c.status === "fail"));
+  const g = setup();
+  assert.throws(
+    () =>
+      planRebalance(
+        {
+          ...g.rebalance,
+          newPrices: g.rebalance.newPrices.map((p) => ({ ...p, price: "100.001" })),
+        },
+        g.target,
+        g.valuation,
+        g.source,
+        fixtureTime,
+      ),
+    /tick/,
+  );
+  assert.throws(
+    () =>
+      planRebalance(
+        {
+          ...g.rebalance,
+          newPrices: g.rebalance.newPrices.map((p) => ({ ...p, quotedAt: "2026-09-01T00:00:00Z" })),
+        },
+        g.target,
+        g.valuation,
+        g.source,
+        fixtureTime,
+      ),
+    /one hour/,
+  );
 });
