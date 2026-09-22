@@ -1,3 +1,6 @@
+import { RiskService } from "@portfolio-atlas/core";
+import { FintechRiskEngine } from "@portfolio-atlas/adapters";
+import { registerRiskRoutes } from "./http/risk.js";
 import { CompanyService, ResearchService } from "@portfolio-atlas/core";
 import {
   SyntheticCompanyProvider,
@@ -293,5 +296,15 @@ export function buildApp(
     commands,
   );
   registerResearchRoutes(app, companies, research, createHttpContext(clock, sessionId, storage));
+  const risk = new RiskService(
+    snapshots,
+    new FintechRiskEngine(),
+    adjustments,
+    marketData,
+    clock,
+    ids,
+    commands,
+  );
+  registerRiskRoutes(app, risk, createHttpContext(clock, sessionId, storage));
   return app;
 }
