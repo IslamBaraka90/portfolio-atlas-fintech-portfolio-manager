@@ -1,3 +1,4 @@
+import { RebalanceDesk } from "../features/rebalancing/RebalanceDesk";
 import { ValidationDesk } from "../features/validation/ValidationDesk";
 import { ConstructionDesk } from "../features/construction/ConstructionDesk";
 import { RiskDesk } from "../features/risk/RiskDesk";
@@ -22,7 +23,9 @@ export function WorkspaceRouter() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  return hash.split("?")[0] === "#validation" ? (
+  return hash.split("?")[0] === "#rebalancing" ? (
+    <RebalanceDesk />
+  ) : hash.split("?")[0] === "#validation" ? (
     <ValidationDesk />
   ) : hash.split("?")[0] === "#construction" ? (
     <ConstructionDesk />
