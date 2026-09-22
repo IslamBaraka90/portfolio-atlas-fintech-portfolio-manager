@@ -1,3 +1,4 @@
+import type { YahooCompanyTransport } from "./company-provider.js";
 import { ProviderCalls } from "../provider-calls.js";
 import type { YahooChartTransport } from "./chart-provider.js";
 import YahooFinance from "yahoo-finance2";
@@ -16,24 +17,50 @@ export interface YahooTransport {
   search(query: string, signal: AbortSignal): Promise<unknown>;
   quote(symbol: string, signal: AbortSignal): Promise<unknown>;
 }
-export function createYahooTransport(): YahooTransport & YahooChartTransport {
+export function createYahooTransport(): YahooTransport &
+  YahooChartTransport &
+  YahooCompanyTransport {
   const context = new AsyncLocalStorage<AbortSignal>();
+  const captured = new AsyncLocalStorage<{ source: unknown }>();
   // The constructor fetch hook covers Yahoo cookie/crumb requests too.
   const client = new YahooFinance({
     queue: { concurrency: 2, interval: 250 },
     versionCheck: false,
     suppressNotices: ["yahooSurvey"],
-    fetch: (input, init) => {
+    fetch: async (input, init) => {
       const signal = context.getStore();
-      return fetch(input, {
+      const response = await fetch(input, {
         ...init,
         ...(signal
           ? { signal: init?.signal ? AbortSignal.any([signal, init.signal]) : signal }
           : {}),
       });
+      const archive = captured.getStore();
+      if (archive && String(input).includes("/fundamentals-timeseries/")) {
+        archive.source = await response.clone().json();
+      }
+      return response;
     },
   });
   return {
+    financials: (symbol, request, signal) => {
+      const archive = { source: null as unknown };
+      return captured.run(archive, () =>
+        context.run(signal, async () => {
+          const rows = await client.fundamentalsTimeSeries(
+            symbol,
+            {
+              period1: request.from,
+              period2: request.to,
+              type: request.frequency,
+              module: "financials",
+            },
+            { fetchOptions: { signal } },
+          );
+          return { rows, source: archive.source };
+        }),
+      );
+    },
     chart: (symbol, window, signal) =>
       context.run(signal, () =>
         client.chart(
