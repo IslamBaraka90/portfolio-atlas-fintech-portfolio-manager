@@ -52,7 +52,8 @@
     "test": "npm run test:unit && npm run test:browser",
     "yahoo:smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-smoke.ts",
     "yahoo:chart-smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-chart-smoke.ts",
-    "yahoo:company-smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-company-smoke.ts"
+    "yahoo:company-smoke": "npm run build:server && tsx apps/api/src/scripts/yahoo-company-smoke.ts",
+    "auth:provision": "npm run build:server && tsx apps/api/src/scripts/provision-access.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

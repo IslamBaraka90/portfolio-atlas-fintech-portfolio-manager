@@ -12,7 +12,6 @@ import {
 } from "@portfolio-atlas/contracts";
 import { LearningShell } from "../../app/LearningShell";
 import { read, write } from "../../shared/api";
-import "../data-quality/data-quality.css";
 import "./portfolio.css";
 
 export function PortfolioBook() {

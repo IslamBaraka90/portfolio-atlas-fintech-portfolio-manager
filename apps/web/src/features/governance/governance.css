@@ -1,0 +1,74 @@
+.governance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.governance-session code,
+.governance-attempt code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.governance-review {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+.governance-review pre,
+.governance-review details pre {
+  max-height: 320px;
+  overflow: auto;
+}
+.governance-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.governance-checkbox input {
+  width: 18px !important;
+  flex: 0 0 18px;
+}
+.governance-attempt {
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.session-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.governance-page button {
+  border: 1px solid #cdd6cd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: #205750;
+  color: white;
+  cursor: pointer;
+}
+.governance-page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.governance-page label {
+  margin: 16px 0;
+}
+.governance-page pre {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  max-width: 100%;
+  overflow: auto;
+}
+.governance-page .chapter-panel td {
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+.governance-page .chapter-panel td code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.governance-page .governance-heading {
+  display: block;
+}

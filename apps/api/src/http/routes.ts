@@ -1,3 +1,4 @@
+import { createHttpContext } from "./context.js";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { z } from "zod";
 import {
@@ -12,11 +13,6 @@ import type { Clock, PortfolioService } from "@portfolio-atlas/core";
 import { balancedAllocation, concentratedAllocation, demoMandate } from "@portfolio-atlas/testing";
 
 const routeIdSchema = z.strictObject({ id: identifierSchema });
-const keySchema = z
-  .string()
-  .min(8)
-  .max(128)
-  .regex(/^[A-Za-z0-9_-]+$/);
 
 export function registerRoutes(
   app: FastifyInstance,
@@ -38,14 +34,12 @@ export function registerRoutes(
       requestId: request.id,
     };
   }
-  function command(request: FastifyRequest) {
-    return { key: keySchema.parse(request.headers["idempotency-key"]), requestId: request.id };
-  }
+  const command = createHttpContext(clock, sessionId, storage).command;
   const id = (request: FastifyRequest) => routeIdSchema.parse(request.params).id;
 
   app.get("/api/v1/health", async () => ({
     name: "Portfolio Atlas",
-    chapter: 6,
+    chapter: 17,
     mode: "synthetic",
     storage,
     sessionId,

@@ -1,6 +1,7 @@
 export class ApplicationError extends Error {
   constructor(
     public readonly code:
+      | "ACCESS_DENIED"
       | "NOT_FOUND"
       | "REVISION_CONFLICT"
       | "IDEMPOTENCY_CONFLICT"
