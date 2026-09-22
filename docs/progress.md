@@ -75,3 +75,5 @@ Stop at the chapter handoff.
 - Task 3: pure basis-point rules, versioned use cases and isolated memory storage are implemented. All 14 contract/domain/service tests and strict type checks passed. Coverage includes exact boundaries, duplicate commands, stale revisions, immutable history, missing sectors and empty state after restart.
 
 - Task 4: mandate, portfolio, evaluation, lesson and audit endpoints are connected. All 18 tests passed, including the HTTP journey, 400/409 distinctions, session isolation and request-linked audit metadata. Strict type checks passed.
+
+- Task 5: React now creates portfolios, edits mandate revisions, evaluates five synthetic scenarios and displays server findings/provenance. The first four connected Chromium checks passed, including failed-request recovery, keyboard focus and a 390px mobile layout. Build and browser dependency guard passed.
