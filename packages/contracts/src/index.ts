@@ -8,3 +8,4 @@ export * from "./basis-drift.js";
 export * from "./accounting.js";
 export * from "./valuation.js";
 export * from "./benchmarks.js";
+export * from "./research.js";
