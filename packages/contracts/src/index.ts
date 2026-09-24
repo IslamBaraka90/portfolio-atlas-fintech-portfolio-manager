@@ -19,3 +19,4 @@ export * from "./monitoring.js";
 export * from "./performance.js";
 export * from "./reporting.js";
 export * from "./governance.js";
+export * from "./live.js";
