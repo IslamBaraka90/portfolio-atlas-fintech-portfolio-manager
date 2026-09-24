@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { instantSchema, providerFailureSchema, providerSymbolSchema } from "./instruments.js";
+import { identifierSchema } from "./mandates.js";
+import {
+  dataModeSchema,
+  instantSchema,
+  providerFailureSchema,
+  providerSymbolSchema,
+  quoteUnitSchema,
+} from "./instruments.js";
 
 // Part V live desk (ADR 0005). Demo serves synthetic fixtures; live polls Yahoo.
 export const marketDataModeSchema = z.enum(["demo", "live"]);
@@ -91,7 +98,77 @@ export const liveStatusSchema = z.strictObject({
   tasks: z.array(z.string()),
 });
 
+// Chapter 19: live quotes. Prices are in currency units after the recorded quote-unit
+// scale (GBp 2,510 → 25.10 GBP); `reportedLast` keeps the provider's own figure.
+// A missing field is null with a reason, never zero.
+export const quoteFreshnessSchema = z.enum([
+  "live",
+  "delayed",
+  "stale",
+  "closed_market",
+  "unavailable",
+]);
+export const quoteBookStateSchema = z.enum(["normal", "locked", "crossed", "one_sided", "absent"]);
+const price = z.number().finite().nullable();
+export const quoteObservationSchema = z.strictObject({
+  id: z.string(),
+  cycleId: z.string().nullable(),
+  symbol: providerSymbolSchema,
+  instrumentId: identifierSchema.nullable(),
+  source: dataModeSchema,
+  observedAt: instantSchema,
+  providerTime: instantSchema.nullable(),
+  marketState: z.string().nullable(),
+  delaySeconds: z.number().int().nonnegative().nullable(),
+  quoteUnit: quoteUnitSchema,
+  reportedLast: price,
+  last: price,
+  bid: price,
+  ask: price,
+  bidSize: price,
+  askSize: price,
+  open: price,
+  high: price,
+  low: price,
+  previousClose: price,
+  volume: price,
+  change: price,
+  changePercent: price,
+  book: z.strictObject({
+    state: quoteBookStateSchema,
+    spread: price,
+    spreadBps: price,
+    midpoint: price,
+  }),
+  freshness: quoteFreshnessSchema,
+  ageSeconds: z.number().nullable(),
+  reasons: z.array(z.string()),
+  sourceHash: z.string().nullable(),
+  policy: z.string(),
+});
+export const quoteBoardSchema = z.strictObject({
+  revision: z.number().int().nonnegative(),
+  cycleId: z.string().nullable(),
+  updatedAt: instantSchema.nullable(),
+  quotes: z.array(quoteObservationSchema),
+});
+export const watchlistSchema = z.strictObject({
+  revision: z.number().int().positive(),
+  symbols: z.array(providerSymbolSchema).max(50),
+  updatedAt: instantSchema,
+});
+export const watchlistChangeSchema = z.strictObject({
+  expectedRevision: z.number().int().positive(),
+  action: z.enum(["add", "remove"]),
+  symbol: z
+    .string()
+    .trim()
+    .transform((v) => v.toUpperCase())
+    .pipe(providerSymbolSchema),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
+  z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);
@@ -106,3 +183,8 @@ export type RefreshCycle = z.infer<typeof refreshCycleSchema>;
 export type LiveDecision = z.infer<typeof liveDecisionSchema>;
 export type LiveStatus = z.infer<typeof liveStatusSchema>;
 export type LiveEvent = z.infer<typeof liveEventSchema>;
+export type QuoteFreshness = z.infer<typeof quoteFreshnessSchema>;
+export type QuoteObservation = z.infer<typeof quoteObservationSchema>;
+export type QuoteBoard = z.infer<typeof quoteBoardSchema>;
+export type Watchlist = z.infer<typeof watchlistSchema>;
+export type WatchlistChange = z.infer<typeof watchlistChangeSchema>;
