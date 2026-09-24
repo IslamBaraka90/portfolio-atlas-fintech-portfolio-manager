@@ -84,7 +84,8 @@ export const liveStatusSchema = z.strictObject({
   health: providerHealthSchema,
   scheduler: z.enum(["stopped", "running"]),
   cycleInProgress: z.boolean(),
-  lastDecision: liveDecisionSchema.nullable(),
+  // Recent scheduler decisions, newest first; skipped ticks stay visible here.
+  decisions: z.array(liveDecisionSchema).max(20),
   nextTickAt: instantSchema.nullable(),
   lastCycle: refreshCycleSchema.nullable(),
   tasks: z.array(z.string()),

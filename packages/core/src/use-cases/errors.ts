@@ -9,7 +9,8 @@ export class ApplicationError extends Error {
       | "INVALID_EVENT"
       | "INVALID_SNAPSHOT"
       | "BOOK_INVARIANT"
-      | "CORRECTION_CONFLICT",
+      | "CORRECTION_CONFLICT"
+      | "CYCLE_IN_PROGRESS",
     message: string,
   ) {
     super(message);
