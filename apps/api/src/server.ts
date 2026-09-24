@@ -1,6 +1,7 @@
 import { accessConfigSchema } from "@portfolio-atlas/contracts";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { LiveConfigError, parseLiveRuntime } from "@portfolio-atlas/core";
 import { buildApp } from "./app.js";
 
 const environmentFile = fileURLToPath(new URL("../../../.env", import.meta.url));
@@ -16,7 +17,21 @@ if (process.env.DATA_MODE && process.env.DATA_MODE !== "synthetic") {
   throw new Error("Default data mode is synthetic; enable Yahoo explicitly with YAHOO_ENABLED.");
 }
 
+// Part V runtime (ADR 0005). An invalid value stops startup and names the variable.
+let live;
+try {
+  live = parseLiveRuntime(process.env);
+} catch (error) {
+  if (error instanceof LiveConfigError) {
+    console.error("Invalid live-desk configuration. " + error.message);
+    process.exit(1);
+  }
+  throw error;
+}
+
 const app = buildApp({
+  live,
+  liveAutostart: true,
   logger: true,
   databasePath:
     process.env.DATABASE_PATH ??

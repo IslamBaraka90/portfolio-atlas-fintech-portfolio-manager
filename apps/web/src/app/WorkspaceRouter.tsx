@@ -49,6 +49,9 @@ import { useSession, refreshSession } from "../shared/session";
 const GovernanceDesk = lazy(() =>
   import("../features/governance/GovernanceDesk").then((m) => ({ default: m.GovernanceDesk })),
 );
+const LiveRuntimeDesk = lazy(() =>
+  import("../features/live/LiveRuntimeDesk").then((m) => ({ default: m.LiveRuntimeDesk })),
+);
 const App = lazy(() => import("./App").then((m) => ({ default: m.App })));
 const InstrumentExplorer = lazy(() =>
   import("../features/instruments/InstrumentExplorer").then((m) => ({
@@ -93,6 +96,8 @@ export function WorkspaceRouter() {
   const page =
     hash === "#governance" || (session.mode === "configured_sessions" && !session.actor) ? (
       <GovernanceDesk />
+    ) : hash.split("?")[0] === "#live" ? (
+      <LiveRuntimeDesk />
     ) : hash.split("?")[0] === "#reports" ? (
       <ReportDesk />
     ) : hash.split("?")[0] === "#performance" ? (

@@ -1,6 +1,6 @@
 # PRP 18 — Live market-data runtime and refresh policy
 
-Status: planned. Part V, the live desk. Chapter: 18. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/18-learning-guide.md and docs/progress.md. Part V, the live desk. Chapter: 18. Editorial duration estimate: 15 minutes.
 
 ## Learner promise
 
@@ -17,7 +17,7 @@ Catalog connections: D01 market-data engineering (freshness and gap concepts). N
 ## Scope and decisions
 
 - `MARKET_DATA_MODE=demo|live`, `LIVE_REFRESH=eod|15m|5m|1m`, `LIVE_WATCHLIST`, `LIVE_BENCHMARK` and `LIVE_MAX_REQUESTS_PER_MINUTE` parsed once into a frozen, versioned runtime policy with validation errors that name the variable.
-- A regular-hours exchange session calendar per IANA timezone (XNYS/XNAS 09:30–16:00 America/New_York, XLON 08:00–16:30 Europe/London; weekends closed). Holidays and half days are `unknown`, never asserted.
+- A regular-hours exchange session calendar per IANA timezone (XNYS/XNAS 09:30–16:00 America/New_York, XLON 08:00–16:30 Europe/London; weekends closed). Holidays and half days are recorded as `not_modeled`, never asserted.
 - A refresh scheduler that runs cycles on the cadence, skips closed sessions for intraday cadences, runs one end-of-day cycle after each close, and never overlaps cycles.
 - A queued request budget (bounded concurrency, minimum spacing, per-minute cap) replacing fail-fast rejection for scheduled work; interactive calls keep their timeout.
 - Provider health: last success, consecutive failures, exponential back-off with a ceiling, and a recovery event.
@@ -27,9 +27,9 @@ Catalog connections: D01 market-data engineering (freshness and gap concepts). N
 
 `LiveRuntimePolicy { version, mode, cadence, periodMs, cacheTtlMs, freshnessSeconds, watchlist, benchmark, requestsPerMinute }`.
 
-`RefreshCycle { id, sequence, scheduledAt, startedAt, completedAt, trigger: schedule|manual|recovery, sessionState, requested, succeeded, failed, skippedReason, providerHealth }` stored append-only.
+`RefreshCycle { id, sequence, policyVersion, mode, cadence, trigger: schedule|manual, scheduledAt, startedAt, completedAt, session, coversSession, status: completed|partial|failed, tasks[], health }` stored append-only. Skipped ticks are kept in the status decision log rather than stored as cycles.
 
-API: `GET /live/status`, `GET /live/cycles`, `POST /live/cycles` (manual refresh, idempotent), `GET /live/stream` (server-sent events: `cycle`, `health`, later `quotes`, `nav`, `alert`).
+API: `GET /live/status`, `GET /live/cycles`, `POST /live/cycles` (manual refresh, idempotent), `GET /live/stream` (server-sent events: `status` and `cycle`; later chapters add their own event types).
 
 React: a live status chip in the top bar and a **Live runtime** desk showing policy, session state, cycle history and provider health.
 
@@ -57,13 +57,13 @@ React: a live status chip in the top bar and a **Live runtime** desk showing pol
 
 ## Acceptance and adversarial cases
 
-- [ ] `LIVE_REFRESH=1m` yields a 60 s period and a cache TTL below the period; an unknown cadence fails startup naming the variable.
-- [ ] 2026-03-09 14:00Z is inside XNYS regular hours (after the US DST change); 2026-03-06 14:00Z is before the open.
-- [ ] Saturday is `closed`; a weekday holiday is reported `open_unverified_holiday_calendar`, never asserted closed or open.
-- [ ] A cycle that exceeds its period does not overlap the next; the skipped tick is recorded.
-- [ ] Three consecutive failures back off 1×, 2×, 4× the period up to the ceiling; one success resets health.
-- [ ] Demo mode never constructs a Yahoo transport.
-- [ ] Synthetic tests are deterministic; the live smoke check is separately labeled and opt-in.
+- [x] `LIVE_REFRESH=1m` yields a 60 s period and a cache TTL below the period; an unknown cadence fails startup naming the variable.
+- [x] 2026-03-09 14:00Z is inside XNYS regular hours (after the US DST change); 2026-03-06 14:00Z is before the open.
+- [x] Saturday is `closed` (basis `weekend`); a weekday holiday reports regular hours with `holidays: not_modeled`, never asserted as a verified session.
+- [x] A cycle that exceeds its period does not overlap the next; the skipped tick is recorded.
+- [x] Three consecutive failures back off 1×, 2×, 4× the period up to the ceiling; one success resets health.
+- [x] Demo mode never constructs a Yahoo transport.
+- [x] Synthetic tests are deterministic; the live smoke check is separately labeled and opt-in.
 
 ## Validation execution plan
 
@@ -82,7 +82,7 @@ A scheduled, observable refresh loop. Chapter 19 fills each cycle with validated
 
 ## Evidence to fill during implementation
 
-- Policy and calendar sources:
-- Commands and observed results:
-- UI walkthrough/screenshots:
-- Remaining limitations:
+- Policy and calendar sources: NYSE/Nasdaq 09:30–16:00 ET and LSE 08:00–16:30 UK continuous trading; offsets resolved by `Intl` from IANA zones.
+- Commands and observed results: recorded in docs/progress.md (Chapter 18 evidence).
+- UI walkthrough/screenshots: Live runtime desk inspected at 1440 px and 390 px.
+- Remaining limitations: holidays, half days and auctions unmodeled; one primary venue drives scheduling; server-sent events only (no websocket).

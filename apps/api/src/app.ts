@@ -1,4 +1,12 @@
-import { SqliteRecovery } from "@portfolio-atlas/adapters";
+import { SqliteRecovery, ProviderProbeTask } from "@portfolio-atlas/adapters";
+import {
+  LiveRefreshService,
+  parseLiveRuntime,
+  systemTimer,
+  type Timer,
+} from "@portfolio-atlas/core";
+import type { LiveRuntimePolicy } from "@portfolio-atlas/contracts";
+import { registerLiveRoutes } from "./http/live.js";
 import { registerRecoveryRoutes } from "./http/recovery.js";
 import { AccessControl } from "./security/access.js";
 import type { AccessConfig } from "@portfolio-atlas/contracts";
@@ -105,6 +113,12 @@ export function buildApp(
     yahooTimeoutMs?: number;
     yahooConcurrency?: number;
     instrumentProviders?: Partial<Record<DataMode, InstrumentProvider>>;
+    // Part V: the runtime policy (default demo), whether the scheduler starts, and
+    // test seams for the probe quote and timers.
+    live?: LiveRuntimePolicy;
+    liveAutostart?: boolean;
+    liveQuote?: (symbol: string, signal: AbortSignal) => Promise<unknown>;
+    timer?: Timer;
   } = {},
 ) {
   const app = Fastify({
@@ -135,7 +149,10 @@ export function buildApp(
   }
   const commands = new Commands(repository, database, access);
   const service = new PortfolioService(repository, clock, ids, commands);
-  const yahooTransport = options.yahooEnabled ? createYahooTransport() : null;
+  const livePolicy = options.live ?? parseLiveRuntime({});
+  // Live mode implies the Yahoo providers; demo mode never constructs a transport.
+  const yahooTransport =
+    options.yahooEnabled || livePolicy.mode === "live" ? createYahooTransport() : null;
   const budget = new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000);
   const providers: Partial<Record<DataMode, InstrumentProvider>> = options.instrumentProviders ?? {
     synthetic: new SyntheticInstrumentProvider(syntheticInstruments, clock),
@@ -466,5 +483,35 @@ export function buildApp(
     clock,
     createHttpContext(clock, sessionId, storage),
   );
+  // Chapter 18: scheduled refresh cycles under a queued, paced request budget.
+  const liveBudget = new RequestBudget(
+    options.yahooConcurrency ?? 2,
+    options.yahooTimeoutMs ?? 10000,
+    {
+      queue: true,
+      minIntervalMs: 250,
+      perMinute: livePolicy.requestsPerMinute,
+    },
+  );
+  const live = new LiveRefreshService(
+    livePolicy,
+    snapshots,
+    database,
+    clock,
+    ids,
+    commands,
+    options.timer ?? systemTimer,
+  );
+  live.register(
+    new ProviderProbeTask(
+      livePolicy.mode === "live"
+        ? (options.liveQuote ?? ((symbol, signal) => yahooTransport!.quote(symbol, signal)))
+        : null,
+      liveBudget,
+    ),
+  );
+  registerLiveRoutes(app, live, createHttpContext(clock, sessionId, storage));
+  app.addHook("onClose", async () => live.stop());
+  if (options.liveAutostart) app.addHook("onReady", async () => live.start());
   return app;
 }

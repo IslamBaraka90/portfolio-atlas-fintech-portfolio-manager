@@ -1,7 +1,29 @@
 import { z } from "zod";
-import type { DataMode } from "@portfolio-atlas/contracts";
+import type { DataMode, ProviderFailure } from "@portfolio-atlas/contracts";
 import type { Clock, ProviderReply } from "@portfolio-atlas/core";
 import { ProviderError, RequestBudget } from "./request-budget.js";
+// One mapping from thrown provider errors to recorded failure evidence.
+export function toProviderFailure(error: unknown): ProviderFailure {
+  const message = error instanceof Error ? error.message : "";
+  if (error instanceof ProviderError) return error.failure;
+  if (
+    error instanceof z.ZodError ||
+    (error instanceof Error && error.name === "FailedYahooValidationError")
+  )
+    return {
+      code: "SCHEMA_MISMATCH",
+      message: "Provider evidence did not match the verified response contract.",
+      retryable: false,
+    };
+  if (/429|too many|rate limit/i.test(message))
+    return { code: "THROTTLED", message: "The provider is throttling requests.", retryable: true };
+  return {
+    code: "NETWORK",
+    message: "The provider request failed. No synthetic data was substituted.",
+    retryable: true,
+  };
+}
+
 export class ProviderCalls {
   private readonly cache = new Map<string, { time: number; value: ProviderReply<unknown> }>();
   constructor(
@@ -35,28 +57,7 @@ export class ProviderCalls {
       this.cache.set(key, { time: Date.parse(value.observedAt), value: structuredClone(value) });
       return value;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      const failure =
-        error instanceof ProviderError
-          ? error.failure
-          : error instanceof z.ZodError ||
-              (error instanceof Error && error.name === "FailedYahooValidationError")
-            ? {
-                code: "SCHEMA_MISMATCH" as const,
-                message: "Provider evidence did not match the verified response contract.",
-                retryable: false,
-              }
-            : /429|too many|rate limit/i.test(message)
-              ? {
-                  code: "THROTTLED" as const,
-                  message: "The provider is throttling requests.",
-                  retryable: true,
-                }
-              : {
-                  code: "NETWORK" as const,
-                  message: "The provider request failed. No synthetic data was substituted.",
-                  retryable: true,
-                };
+      const failure = toProviderFailure(error);
       return {
         status: "unavailable",
         source: this.sourceMode,

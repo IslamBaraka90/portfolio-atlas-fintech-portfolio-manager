@@ -63,6 +63,7 @@ const operatorRoutes = new Set([
   "/statements",
   "/reconciliations",
   "/resolutions",
+  "/live/cycles",
 ]);
 const approverRoutes = new Set([
   "/rebalances/:id/approval",

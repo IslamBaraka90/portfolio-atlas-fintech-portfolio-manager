@@ -338,6 +338,48 @@ main:focus {
   background: var(--warning-bg);
   color: var(--warning);
 }
+.badge.good {
+  background: var(--positive-bg);
+  color: var(--positive);
+}
+.badge.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+.badge.danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--type-target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--type-meta);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.live-chip:hover {
+  border-color: var(--control);
+}
+.live-chip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--warning);
+}
+.live-chip.is-live .dot {
+  background: var(--positive);
+}
+.live-chip.is-failing .dot {
+  background: var(--danger);
+}
 .progress {
   height: 8px;
   overflow: hidden;

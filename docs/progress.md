@@ -11,6 +11,16 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 | D    | TFB Open Core 03.1 design system and usability pass across all 17 desks | Complete — 86de807                      |
 | P    | ADR 0005 and PRPs 18–25                                                 | Complete — see chapter-18 task-0 commit |
 
+| 18 | Live runtime, queued budget, scheduler, routes, event stream and desk | Complete — 76ab338, 2fe698e, fd09163, see chapter-18 task-4 commit |
+
+## Chapter 18 evidence
+
+Tasks 1–4. `parseLiveRuntime` freezes mode, cadence, cache lifetime, freshness, watchlist, benchmark and request cap; invalid values stop startup naming the variable. `sessionState` classifies New York and London regular hours through `Intl` (DST-safe) and records holidays as not modeled. `RequestBudget` gains an optional bounded queue, 250 ms spacing and a rolling per-minute cap; interactive calls still fail fast. `LiveRefreshService` records append-only cycles, logs skipped ticks, captures each completed session once, backs off 1×, 2×, 4× the period and resets after one success. Routes: `GET /live/status`, `GET /live/cycles`, `GET /live/cycles/:id`, `POST /live/cycles` (operator, idempotent) and `GET /live/stream` (server-sent events). The React Live runtime desk and top-bar chip read the stream.
+
+Independent cases: `1m` → 60 s period, 50 s cache, 180 s freshness. 2026-03-09 14:00Z is open (10:00 EDT); 2026-03-06 14:00Z is before the open. At 16:10 EDT with 15-minute grace the latest completed session is the prior day; at 16:16 it is today. Starting mid-session in EOD mode captures the previous session once, then waits for the close.
+
+Observed gates (2026-09-24, Node 22.22.0): 150 unit/API checks (38 API, 59 adapters, 11 contracts, 42 core), 24 Chromium journeys including the live runtime journey, strict typecheck, production build and `npm run check`. Opt-in `MARKET_DATA_MODE=live npm run live:smoke` observed a completed cycle against Yahoo: session `after_close`, covers 2026-09-24, provider probe answered for SPY, health `healthy`. Limitations: holidays, half days and auctions are unmodeled; one primary venue schedules the loop; the probe proves reachability only.
+
 Design-system evidence (2026-09-24, Node 22.22.0): `npm run check` (including generated-token verification), strict typecheck, 131 unit/API checks, production build and 23 Chromium journeys passed. An audit of all 17 routes at 1440, 1024 and 390 px in light and dark themes reported no page overflow, no visible text below 14 px, no control below 44 px and no unlabeled field. Populated journey end states were inspected at desktop and 390 px, in dark mode and in print emulation. Assistive-technology testing was not performed.
 
 ## Foundation tasks

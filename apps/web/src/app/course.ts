@@ -48,6 +48,10 @@ export const courseParts: CoursePart[] = [
       { id: 17, title: "Governance & recovery", hash: "#governance" },
     ],
   },
+  {
+    title: "Live desk",
+    chapters: [{ id: 18, title: "Live runtime", hash: "#live" }],
+  },
 ];
 
 export const courseChapters = courseParts.flatMap((part) => part.chapters);

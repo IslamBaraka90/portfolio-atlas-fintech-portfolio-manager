@@ -30,3 +30,4 @@ export * from "./analytics/fintech-paper-execution.js";
 export * from "./analytics/fintech-monitor.js";
 
 export * from "./persistence/sqlite/recovery.js";
+export * from "./live/provider-probe.js";

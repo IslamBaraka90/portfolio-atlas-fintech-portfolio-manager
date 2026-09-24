@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useSession } from "../shared/session";
+import { useLive } from "../shared/live";
 import { BrandMark } from "../design-system/BrandMark";
 import { useThemePreference, type ThemePreference } from "../design-system/theme";
 import { courseChapters, courseParts, locateChapter } from "./course";
@@ -144,6 +145,7 @@ export function LearningShell({ active, children }: { active: number; children: 
             </ol>
           </nav>
           <div className="topbar-actions">
+            <LiveChip />
             <ThemeSwitch />
             <a className="session-link" href="#governance">
               <span className="connection-dot" aria-hidden="true" />
@@ -162,6 +164,32 @@ export function LearningShell({ active, children }: { active: number; children: 
         </footer>
       </div>
     </div>
+  );
+}
+
+const cadenceShort = { eod: "end of day", "15m": "15 min", "5m": "5 min", "1m": "1 min" };
+function LiveChip() {
+  const { status } = useLive();
+  if (!status) return null;
+  const live = status.policy.mode === "live";
+  const failing = status.health.status === "backing_off";
+  return (
+    <a
+      className={"live-chip" + (live ? " is-live" : "") + (failing ? " is-failing" : "")}
+      href="#live"
+      aria-label={
+        "Market data: " +
+        (live ? "live" : "demo") +
+        ", refresh " +
+        cadenceShort[status.policy.cadence] +
+        (failing ? ", provider backing off" : "")
+      }
+    >
+      <span className="dot" aria-hidden="true" />
+      <span>
+        {live ? "Live" : "Demo"} · {cadenceShort[status.policy.cadence]}
+      </span>
+    </a>
   );
 }
 
