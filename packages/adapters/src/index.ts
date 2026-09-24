@@ -33,3 +33,4 @@ export * from "./persistence/sqlite/recovery.js";
 export * from "./live/provider-probe.js";
 export * from "./market-data/yahoo-finance/quote-provider.js";
 export * from "./market-data/synthetic-quote-provider.js";
+export * from "./analytics/fintech-algorithms/quote-analytics.js";

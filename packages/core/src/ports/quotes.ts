@@ -44,8 +44,9 @@ export interface QuoteAnalytics {
     observedAt: string;
     active: boolean;
     maxAgeMs: number;
-    bid: number | null;
-    ask: number | null;
+    // The detector requires a two-sided book; callers apply their own rule otherwise.
+    bid: number;
+    ask: number;
   }): { stale: boolean; reasons: string[] };
   book(input: {
     symbol: string;

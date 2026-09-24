@@ -64,3 +64,4 @@ export * from "./domain/live/session-calendar.js";
 export * from "./ports/live.js";
 export * from "./ports/quotes.js";
 export * from "./use-cases/live-refresh-service.js";
+export * from "./domain/live/classify-quote.js";
