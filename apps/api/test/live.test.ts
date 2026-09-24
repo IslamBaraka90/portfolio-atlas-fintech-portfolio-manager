@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseLiveRuntime } from "@portfolio-atlas/core";
+import { parseLiveRuntime, type QuoteProvider } from "@portfolio-atlas/core";
 import { buildApp } from "../src/app.js";
 
 // Saturday 26 Sep 2026: the latest completed New York session is Friday 25 Sep.
@@ -21,7 +21,7 @@ test("demo mode reports its policy and records idempotent manual cycles", async 
   assert.equal(status.policy.cadence, "eod");
   assert.equal(status.scheduler, "stopped");
   assert.equal(status.session.basis, "weekend");
-  assert.deepEqual(status.tasks, ["provider-probe"]);
+  assert.deepEqual(status.tasks, ["quotes"]);
 
   const first = await api.post("/live/cycles", "live-manual-1");
   assert.equal(first.statusCode, 201, first.body);
@@ -29,7 +29,7 @@ test("demo mode reports its policy and records idempotent manual cycles", async 
   assert.equal(cycle.trigger, "manual");
   assert.equal(cycle.status, "completed");
   assert.equal(cycle.coversSession, "2026-09-25");
-  assert.match(cycle.tasks[0].detail, /Demo mode/);
+  assert.match(cycle.tasks[0].detail, /^4 quotes: 4 closed\.$/);
   assert.equal(first.json().metadata.mode, "synthetic");
 
   const replay = await api.post("/live/cycles", "live-manual-1");
@@ -41,13 +41,30 @@ test("demo mode reports its policy and records idempotent manual cycles", async 
 
 test("live provider failures are recorded with back-off and recover", async (t) => {
   let online = false;
+  const provider: QuoteProvider = {
+    mode: "yahoo",
+    async quotes(symbols) {
+      if (!online)
+        return {
+          status: "unavailable",
+          source: "yahoo",
+          observedAt: saturday,
+          cache: "none",
+          failure: { code: "NETWORK", message: "offline", retryable: true },
+        };
+      return {
+        status: "available",
+        source: "yahoo",
+        observedAt: saturday,
+        cache: "fresh",
+        data: { rows: [], missing: symbols.map((symbol) => ({ symbol, reason: "none" })), raw: [] },
+      };
+    },
+  };
   const app = buildApp({
     clock: { now: () => saturday },
     live: parseLiveRuntime({ MARKET_DATA_MODE: "live", LIVE_REFRESH: "1m" }),
-    liveQuote: async () => {
-      if (!online) throw new Error("fetch failed");
-      return { symbol: "SPY" };
-    },
+    liveQuoteProvider: provider,
   });
   t.after(() => app.close());
   const api = client(app);
@@ -61,7 +78,8 @@ test("live provider failures are recorded with back-off and recover", async (t) 
   const recovered = (await api.post("/live/cycles", "live-ok-1")).json().data;
   assert.equal(recovered.status, "completed");
   assert.equal(recovered.health.status, "healthy");
-  assert.match(recovered.tasks[0].detail, /answered a quote request for SPY/);
+  assert.equal(recovered.tasks[0].requested, 3);
+  assert.match(recovered.tasks[0].detail, /3 unavailable/);
 });
 
 test("the event stream sends status first and then each completed cycle", async (t) => {

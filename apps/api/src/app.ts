@@ -1,8 +1,15 @@
-import { SqliteRecovery, ProviderProbeTask } from "@portfolio-atlas/adapters";
+import {
+  SqliteRecovery,
+  SyntheticQuoteProvider,
+  YahooQuoteProvider,
+  FintechQuoteAnalytics,
+} from "@portfolio-atlas/adapters";
 import {
   LiveRefreshService,
+  QuoteService,
   parseLiveRuntime,
   systemTimer,
+  type QuoteProvider,
   type Timer,
 } from "@portfolio-atlas/core";
 import type { LiveRuntimePolicy } from "@portfolio-atlas/contracts";
@@ -117,7 +124,7 @@ export function buildApp(
     // test seams for the probe quote and timers.
     live?: LiveRuntimePolicy;
     liveAutostart?: boolean;
-    liveQuote?: (symbol: string, signal: AbortSignal) => Promise<unknown>;
+    liveQuoteProvider?: QuoteProvider;
     timer?: Timer;
   } = {},
 ) {
@@ -502,15 +509,25 @@ export function buildApp(
     commands,
     options.timer ?? systemTimer,
   );
-  live.register(
-    new ProviderProbeTask(
-      livePolicy.mode === "live"
-        ? (options.liveQuote ?? ((symbol, signal) => yahooTransport!.quote(symbol, signal)))
-        : null,
-      liveBudget,
-    ),
+  // Chapter 19: the quote task replaces the Chapter 18 provider probe.
+  const quotes = new QuoteService(
+    livePolicy,
+    options.liveQuoteProvider ??
+      (livePolicy.mode === "live"
+        ? new YahooQuoteProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
+        : new SyntheticQuoteProvider(syntheticInstruments, clock)),
+    new FintechQuoteAnalytics(),
+    instruments,
+    rawArchive,
+    snapshots,
+    database,
+    clock,
+    ids,
+    commands,
+    (event) => live.publish(event),
   );
-  registerLiveRoutes(app, live, createHttpContext(clock, sessionId, storage));
+  live.register(quotes.task());
+  registerLiveRoutes(app, live, quotes, createHttpContext(clock, sessionId, storage));
   app.addHook("onClose", async () => live.stop());
   if (options.liveAutostart) app.addHook("onReady", async () => live.start());
   return app;

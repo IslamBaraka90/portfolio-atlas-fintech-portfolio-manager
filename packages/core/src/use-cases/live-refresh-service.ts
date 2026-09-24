@@ -66,6 +66,10 @@ export class LiveRefreshService {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   }
+  // Tasks publish their own committed results (quotes, NAV, alerts) on the stream.
+  publish(event: LiveEvent) {
+    this.emit(event);
+  }
   private emit(event: LiveEvent) {
     for (const listener of this.listeners) {
       try {

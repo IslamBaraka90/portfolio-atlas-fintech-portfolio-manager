@@ -1,13 +1,18 @@
 import type { FastifyInstance } from "fastify";
 import type { ServerResponse } from "node:http";
 import { z } from "zod";
-import type { LiveEvent } from "@portfolio-atlas/contracts";
-import type { LiveRefreshService } from "@portfolio-atlas/core";
+import {
+  providerSymbolSchema,
+  watchlistChangeSchema,
+  type LiveEvent,
+} from "@portfolio-atlas/contracts";
+import type { LiveRefreshService, QuoteService } from "@portfolio-atlas/core";
 import type { HttpContext } from "./context.js";
 
 export function registerLiveRoutes(
   app: FastifyInstance,
   service: LiveRefreshService,
+  quotes: QuoteService,
   http: HttpContext,
 ) {
   const mode = service.policy.mode === "live" ? ("yahoo" as const) : ("synthetic" as const);
@@ -19,6 +24,27 @@ export function registerLiveRoutes(
   );
   app.post("/api/v1/live/cycles", async (r, reply) =>
     reply.code(201).send(http.response(await service.refreshNow(http.command(r)), r, mode)),
+  );
+
+  app.get("/api/v1/live/quotes", async (r) => http.response(quotes.board(), r, mode));
+  app.get("/api/v1/live/quotes/:symbol", async (r) =>
+    http.response(
+      quotes.tape(providerSymbolSchema.parse((r.params as { symbol: string }).symbol)),
+      r,
+      mode,
+    ),
+  );
+  app.get("/api/v1/live/watchlist", async (r) => http.response(quotes.watchlist(), r, mode));
+  app.post("/api/v1/live/watchlist", async (r, reply) =>
+    reply
+      .code(201)
+      .send(
+        http.response(
+          quotes.changeWatchlist(watchlistChangeSchema.parse(r.body), http.command(r)),
+          r,
+          mode,
+        ),
+      ),
   );
 
   // Server-sent events: the browser never polls Yahoo; it hears completed cycles.
