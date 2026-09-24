@@ -1,0 +1,391 @@
+/*
+ * Open Core 03.1 base layer. Every colour, space, type size and duration comes from
+ * tokens.css. Type floors: 16px body and inputs, 14px short metadata, 44px targets.
+ * Density changes gaps and padding, never font sizes.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(72px + var(--space-4));
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: var(--type-body);
+  line-height: 1.55;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  overflow-wrap: break-word;
+}
+h1 {
+  font-size: var(--type-h1);
+  font-weight: 730;
+}
+h2 {
+  font-size: var(--type-h3);
+  font-weight: 700;
+}
+h3 {
+  font-size: 20px;
+  font-weight: 680;
+  letter-spacing: -0.02em;
+}
+h4 {
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+p {
+  max-width: 74ch;
+}
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+img,
+svg {
+  max-width: 100%;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-5) 0;
+}
+small {
+  font-size: var(--type-meta);
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+code {
+  font-size: var(--type-meta);
+  overflow-wrap: anywhere;
+}
+pre {
+  max-width: 100%;
+  overflow: auto;
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: var(--type-meta);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+::selection {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* Focus is always visible and never colour-only. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+button,
+a,
+input,
+select,
+textarea,
+summary {
+  touch-action: manipulation;
+}
+
+/* Controls: visible labels, 16px text and a 44px minimum target. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+label {
+  font-size: var(--type-body);
+  font-weight: 600;
+  color: var(--text);
+}
+input,
+select,
+textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--type-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--control);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--type-input);
+  font-weight: 400;
+  line-height: 1.45;
+  transition:
+    border-color var(--motion-micro) ease,
+    box-shadow var(--motion-micro) ease;
+}
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: var(--text);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  flex: 0 0 24px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--primary);
+}
+input[type="range"] {
+  padding: 0;
+  accent-color: var(--primary);
+}
+input[type="number"],
+.num {
+  font-variant-numeric: tabular-nums;
+}
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+legend {
+  padding: 0;
+  font-weight: 650;
+}
+details > summary {
+  cursor: pointer;
+  font-weight: 650;
+  min-height: var(--type-target);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Buttons (WEB-ACT-01 to 04). Verb-first labels; labels grow vertically, never shrink. */
+button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--type-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--control);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--type-body);
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: center;
+  transition:
+    background-color var(--motion-micro) ease,
+    border-color var(--motion-micro) ease,
+    color var(--motion-micro) ease;
+}
+button:hover:not(:disabled) {
+  background: var(--surface2);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+button.primary,
+.button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+button.primary:hover:not(:disabled),
+.button.primary:hover {
+  background: color-mix(in srgb, var(--primary) 86%, #000);
+  border-color: color-mix(in srgb, var(--primary) 86%, #000);
+}
+button.secondary,
+.button.secondary {
+  background: var(--surface);
+  border-color: var(--control);
+  color: var(--text);
+}
+button.danger,
+.button.danger {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--type-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--control);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--type-body);
+  font-weight: 650;
+  line-height: 1.35;
+  text-decoration: none;
+}
+.text-button {
+  min-height: var(--type-target);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.text-button:hover:not(:disabled) {
+  background: none;
+  text-decoration-thickness: 2px;
+}
+
+/* Tables (WEB-TBL-01/02): 14px headers, 16px values, right-aligned tabular numbers. */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-body);
+  text-align: left;
+}
+caption {
+  caption-side: top;
+  padding: 0 0 var(--space-3);
+  text-align: left;
+  color: var(--muted);
+  font-size: var(--type-meta);
+}
+th,
+td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+thead th {
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: var(--type-meta);
+  font-weight: 650;
+  white-space: nowrap;
+}
+tbody th {
+  font-weight: 650;
+}
+tbody tr:last-child > * {
+  border-bottom: 0;
+}
+tbody tr:hover > * {
+  background: color-mix(in srgb, var(--surface2) 55%, transparent);
+}
+td small,
+th small {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-weight: 400;
+}
+dl {
+  margin: 0;
+}
+dt {
+  color: var(--muted);
+  font-size: var(--type-meta);
+  font-weight: 600;
+}
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 767px) {
+  h1 {
+    font-size: 36px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -457,7 +457,7 @@ export function ConstructionDesk() {
                   </p>
                   <details>
                     <summary>Full solver diagnostics</summary>
-                    <pre style={{ overflow: "auto", maxHeight: 320 }}>
+                    <pre className="scroll-pre">
                       {JSON.stringify(target.solver.details, null, 2)}
                     </pre>
                   </details>

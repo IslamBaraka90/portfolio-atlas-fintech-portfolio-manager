@@ -1,14 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-density="standard">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#152d2a" />
+    <meta name="theme-color" content="#0B1330" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Learn portfolio management by building and inspecting a clear, evidence-led investment mandate."
+      content="Portfolio Atlas by The Fintech Builder: learn portfolio management by building an evidence-led portfolio desk."
     />
-    <title>Portfolio Atlas · Mandate Lab</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Portfolio Atlas</title>
+    <script>
+      // Apply a saved theme before first paint to avoid a light/dark flash.
+      try {
+        var theme = localStorage.getItem("portfolio-atlas.theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch (error) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

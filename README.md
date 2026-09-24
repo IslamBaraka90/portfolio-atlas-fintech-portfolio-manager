@@ -48,6 +48,10 @@ CI runs the same checks on Node 22.22.0. Browser tests use ports 3101 and 5174; 
 
 See the [Chapter 2 guide](docs/chapters/02-learning-guide.md) for instrument discovery, live Yahoo setup and the recorded provider smoke check.
 
+## Design system
+
+The desk uses **The Fintech Builder Open Core 03.1** design system: registry tokens generated into CSS variables, the official Open Core mark, light and dark themes, 16 px body and 44 px targets. See [apps/web/src/design-system](apps/web/src/design-system/README.md). `npm run check` verifies the generated tokens.
+
 ## Governance and recovery
 
 The default loopback app uses a clearly labeled local OS owner for solo lessons. Run \`npm run auth:provision\`, configure private AUTH_CONFIG_PATH and restart to use reader, analyst, operator and approver sessions with separation of duties. See the [access runbook](docs/runbooks/access-and-incidents.md).

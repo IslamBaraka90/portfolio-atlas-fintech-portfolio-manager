@@ -1,216 +1,341 @@
+/*
+ * Shared chapter desk patterns (Open Core 03.1). Every chapter page uses these
+ * classes, so a visual decision is made once here rather than per feature.
+ */
 .chapter-page {
-  padding: 48px 48px 80px;
-  max-width: 1500px;
-  margin: auto;
-}
-.chapter-page h1 {
-  font-family: Georgia, serif;
-  font-weight: 400;
-  font-size: clamp(2.5rem, 4vw, 4rem);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
-  margin: 18px 0;
-}
-.chapter-intro {
-  max-width: 680px;
-  line-height: 1.7;
-  color: #60716c;
-  margin-bottom: 28px;
-}
-.chapter-panel {
-  background: #fffefa;
-  border: 1px solid #dfe4dc;
-  border-radius: 18px;
-  padding: 28px;
-  margin: 22px 0;
+  width: 100%;
   min-width: 0;
 }
-.chapter-panel h2 {
-  font-size: 1.05rem;
-  margin: 0 0 24px;
-  font-weight: 650;
+.chapter-page > h1 {
+  max-width: 22ch;
+  margin: 0 0 var(--space-4);
+  font-size: clamp(36px, 3.4vw, var(--type-h1));
+  line-height: 1.1;
 }
+.chapter-page > .eyebrow {
+  margin-bottom: var(--space-3);
+}
+.chapter-intro {
+  max-width: 70ch;
+  margin-bottom: var(--space-5);
+  font-size: var(--type-reading);
+  line-height: 1.6;
+  color: var(--muted);
+}
+.chapter-kicker {
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+
+/* Panels: one primary decision per region. */
+.chapter-panel {
+  min-width: 0;
+  margin: 0 0 var(--density-gap);
+  padding: var(--density-padding);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.chapter-panel > h2,
+.chapter-panel > header h2 {
+  margin: 0 0 var(--space-4);
+  font-size: 22px;
+}
+.chapter-panel h3 {
+  margin: var(--space-5) 0 var(--space-3);
+}
+.chapter-panel * + h2,
+.chapter-panel * + h3 {
+  margin-top: var(--space-5);
+}
+.chapter-panel h2 + *,
+.chapter-panel h3 + * {
+  margin-top: 0;
+}
+.chapter-panel > p + p,
+.chapter-panel > p + .chapter-form,
+.chapter-panel > .chapter-form + p {
+  margin-top: var(--space-3);
+}
+.chapter-panel > :last-child {
+  margin-bottom: 0;
+}
+
+/* Stacked controls directly inside a panel keep one rhythm. */
+.chapter-panel > button + *,
+.chapter-panel > * + button,
+.chapter-panel > label + label,
+.chapter-panel > label + fieldset,
+.chapter-panel > fieldset + label {
+  margin-top: var(--space-4);
+}
+
+/* Forms: visible labels above fields; one error per field. */
 .chapter-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  align-items: end;
+  gap: var(--space-4);
+  align-items: flex-end;
 }
 .chapter-page label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 0.8rem;
-  color: #52675e;
-  flex: 1;
-  min-width: 145px;
+  gap: var(--space-2);
+  flex: 1 1 200px;
+  min-width: 0;
 }
-.chapter-page select,
-.chapter-page input {
-  border: 1px solid #cdd6cd;
-  border-radius: 8px;
-  background: white;
-  padding: 12px;
-  color: #23483e;
-  max-width: 100%;
-  font: inherit;
+.chapter-page label:has(> input[type="checkbox"]),
+.chapter-page label:has(> input[type="radio"]) {
+  flex-direction: row;
+  align-items: center;
+  flex: 0 1 auto;
+  min-height: var(--type-target);
+  font-weight: 450;
 }
-.chapter-page button {
-  min-height: 42px;
+.chapter-form > button {
+  flex: none;
+}
+.chapter-page fieldset + fieldset {
+  margin-top: var(--space-4);
+}
+
+/* Alerts (WEB-ALT-01/07/08): one severity, one message, one recovery path. */
+.chapter-notice,
+.chapter-warning,
+.chapter-muted.notice {
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--control);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface2);
+  color: var(--text);
 }
 .chapter-notice {
-  padding: 12px 18px;
-  background: #edf2e8;
-  border-radius: 9px;
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-.chapter-muted {
-  font-size: 0.82rem;
-  color: #64756d;
-  line-height: 1.65;
+  border-left-color: var(--text);
 }
 .chapter-warning {
-  padding: 12px;
-  background: #fff0df;
-  border-radius: 8px;
-  line-height: 1.5;
+  border-left-color: var(--warning);
+  background: var(--warning-bg);
+  color: var(--warning);
 }
+.chapter-warning[role="alert"] {
+  border-left-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.chapter-muted {
+  font-size: var(--type-meta);
+  line-height: 1.6;
+  color: var(--muted);
+}
+p.chapter-muted {
+  margin: var(--space-2) 0;
+}
+
+/* Metrics (WEB-MET-01/10): one value, one unit, one comparison. */
 .chapter-metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin: 16px 0 24px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-5);
 }
 .chapter-metrics > div {
-  padding: 18px;
-  background: #f3f5ee;
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
   border-radius: 12px;
+  background: var(--surface);
 }
 .chapter-metrics strong {
-  font:
-    2.3rem Georgia,
-    serif;
   display: block;
-  color: #205750;
+  font-size: 32px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
 }
 .chapter-metrics span {
   display: block;
-  font-size: 0.76rem;
-  color: #62736b;
-  margin-top: 8px;
+  margin-top: var(--space-1);
+  font-size: var(--type-meta);
+  color: var(--muted);
 }
-.quality-chart {
-  margin: 20px 0;
-  background: #f7f8f2;
-  border-radius: 12px;
-  padding: 12px;
-}
-.quality-chart svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  color: #365a4d;
-}
-.quality-chart figcaption {
-  font-size: 0.74rem;
-  line-height: 1.5;
-  color: #68786c;
-}
+
+/* Data tables (WEB-TBL-02/10): contained horizontal scroll, sticky header. */
 .chapter-table-wrap {
+  max-width: 100%;
+  max-height: 600px;
   overflow: auto;
-  max-height: 560px;
-  margin-top: 20px;
+  margin: var(--space-4) 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
 }
 .chapter-table-wrap table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.78rem;
-  line-height: 1.55;
   min-width: 720px;
 }
 .chapter-table-wrap caption {
-  text-align: left;
-  padding: 10px 0;
-  color: #617068;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 650;
+  font-size: var(--type-body);
 }
-.chapter-table-wrap th {
-  text-align: left;
-  background: #f0f3e9;
+.chapter-table-wrap thead th {
   position: sticky;
   top: 0;
-}
-.chapter-table-wrap th,
-.chapter-table-wrap td {
-  padding: 13px 12px;
-  border-bottom: 1px solid #e4e8df;
-  vertical-align: top;
+  z-index: 1;
 }
 .chapter-table-wrap small {
-  display: block;
-  color: #6b746c;
-  max-width: 360px;
-  margin-top: 5px;
+  max-width: 44ch;
 }
 .quality-pass {
-  color: #205750;
+  color: var(--positive);
+  font-weight: 650;
 }
 .quality-fail {
-  color: #a6423e;
+  color: var(--danger);
+  font-weight: 650;
 }
+
+/* Provenance lists: evidence stays visible next to the result. */
 .chapter-provenance {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-5);
 }
 .chapter-provenance dt {
-  font-size: 0.72rem;
+  margin-bottom: var(--space-1);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #6b796b;
-  margin-bottom: 7px;
-  letter-spacing: 0.05em;
 }
 .chapter-provenance dd {
-  margin: 0;
-  font-size: 0.85rem;
-  overflow-wrap: anywhere;
-  line-height: 1.6;
+  font-size: var(--type-body);
 }
-@media (max-width: 900px) {
-  .chapter-page {
-    padding: 30px 20px 60px;
-  }
-  .chapter-metrics {
-    grid-template-columns: 1fr 1fr;
-  }
-  .chapter-panel {
-    padding: 20px;
-  }
+
+/* Charts (WEB-CHR): one question, at most six series, one highlighted story.
+   SVG marks use these roles so both themes stay legible. */
+.quality-chart,
+.chart-frame {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+.quality-chart svg,
+.chart-frame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.quality-chart figcaption,
+.chart-frame figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--type-meta);
+  color: var(--muted);
+}
+.chart-series {
+  stroke: var(--text);
+}
+.chart-series-fill {
+  fill: var(--text);
+}
+.chart-accent {
+  stroke: var(--brand-magenta);
+}
+.chart-accent-fill {
+  fill: var(--brand-magenta);
+}
+.chart-positive {
+  stroke: var(--positive);
+}
+.chart-positive-fill {
+  fill: var(--positive);
+}
+.chart-negative {
+  stroke: var(--danger);
+}
+.chart-negative-fill {
+  fill: var(--danger);
+}
+.chart-grid {
+  stroke: var(--border);
+}
+.chart-label {
+  fill: var(--muted);
+  font-size: var(--type-meta);
+}
+
+/* SVG text follows the theme and keeps the 14px metadata floor; narrow screens
+   scroll the chart rather than scaling its labels below the floor. */
+main svg text {
+  fill: var(--muted);
+  font-size: var(--type-meta);
+}
+.quality-chart,
+.chart-frame,
+.chapter-page figure {
+  overflow-x: auto;
+}
+.quality-chart svg,
+.chart-frame svg,
+.chapter-page figure > svg {
+  min-width: 720px;
+}
+.scroll-pre {
+  max-height: 400px;
+  overflow: auto;
+}
+.chapter-page figure {
+  margin: var(--space-4) 0;
+}
+.matrix-undefined {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+.matrix-negative {
+  background: var(--surface2);
+}
+
+@media (max-width: 1024px) {
   .chapter-provenance {
     grid-template-columns: 1fr;
   }
 }
-@media (max-width: 500px) {
-  .chapter-page {
-    padding: 24px 14px 50px;
-  }
+@media (max-width: 767px) {
   .chapter-panel {
-    padding: 16px;
+    padding: var(--space-4);
   }
   .chapter-form {
     display: grid;
     grid-template-columns: 1fr;
   }
-  .chapter-form label {
-    min-width: 0;
+  .chapter-form > button {
+    width: 100%;
   }
   .chapter-metrics {
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
   }
   .chapter-metrics > div {
-    padding: 12px;
+    padding: var(--space-3);
   }
-  .chapter-page h1 {
-    font-size: 2.65rem;
+  .chapter-metrics strong {
+    font-size: 22px;
+    overflow-wrap: normal;
+    word-break: break-all;
+  }
+}
+@media (max-width: 380px) {
+  .chapter-metrics {
+    grid-template-columns: 1fr;
   }
 }

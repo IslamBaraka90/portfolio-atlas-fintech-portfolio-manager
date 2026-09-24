@@ -410,9 +410,7 @@ export function RebalanceDesk() {
                       Contract tier; coefficient {trade.lotScore.coefficient}. No jurisdictional tax
                       outcome and no cash effect.
                     </p>
-                    <pre style={{ overflow: "auto", maxHeight: 400, fontSize: ".8rem" }}>
-                      {JSON.stringify(trade.lotScore, null, 2)}
-                    </pre>
+                    <pre className="scroll-pre">{JSON.stringify(trade.lotScore, null, 2)}</pre>
                   </details>
                 )}
               </article>

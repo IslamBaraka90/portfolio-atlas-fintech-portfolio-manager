@@ -444,7 +444,7 @@ function ReturnCurve({ run }: { run: PerformanceSnapshot }) {
             })
             .join(" ")}
           fill="none"
-          stroke="#267269"
+          className="chart-series"
           strokeWidth="3"
         />
         {values.map((v, i) => {
@@ -455,7 +455,11 @@ function ReturnCurve({ run }: { run: PerformanceSnapshot }) {
               cx={p.x}
               cy={p.y}
               r="5"
-              fill={i > 0 && Number(run.periods[i - 1]!.externalFlow) !== 0 ? "#a2462f" : "#267269"}
+              className={
+                i > 0 && Number(run.periods[i - 1]!.externalFlow) !== 0
+                  ? "chart-negative-fill"
+                  : "chart-series-fill"
+              }
             >
               <title>
                 Index {v.toFixed(4)}; external flow{" "}
@@ -472,7 +476,7 @@ function ReturnCurve({ run }: { run: PerformanceSnapshot }) {
         </text>
       </svg>
       <figcaption>
-        Linked net return index, equally spaced valuation checkpoints. Orange markers identify
+        Linked net return index, equally spaced valuation checkpoints. Highlighted markers identify
         external-flow intervals; deposits do not create index growth.
       </figcaption>
     </figure>
@@ -504,12 +508,12 @@ function AttributionWaterfall({ value }: { value: AttributionResult }) {
                 y={Math.min(y(a), y(b))}
                 width="95"
                 height={Math.max(1, Math.abs(y(a) - y(b)))}
-                fill={change < 0 ? "#a2462f" : "#267269"}
+                className={change < 0 ? "chart-negative-fill" : "chart-series-fill"}
               />
               <text x={82 + i * 145} y="145" textAnchor="middle" fontSize="13">
                 {labels[i]}
               </text>
-              <text x={82 + i * 145} y="165" textAnchor="middle" fontSize="12">
+              <text x={82 + i * 145} y="165" textAnchor="middle">
                 {pct(change)}
               </text>
             </g>

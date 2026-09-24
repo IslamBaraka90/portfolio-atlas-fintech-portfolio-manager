@@ -16,6 +16,7 @@ import {
 } from "@portfolio-atlas/contracts";
 import { read, write } from "../../shared/api";
 import { LearningShell } from "../../app/LearningShell";
+import { BrandMark } from "../../design-system/BrandMark";
 
 export function InstrumentExplorer() {
   const [storage, setStorage] = useState<"memory" | "sqlite">("memory");
@@ -152,10 +153,8 @@ export function InstrumentExplorer() {
             <br className="desktop-break" /> and check what is still unknown before admitting it.
           </p>
         </div>
-        <div className="hero-stamp" aria-hidden="true">
-          <span>PORTFOLIO ATLAS</span>
-          <strong>02</strong>
-          <span>INSTRUMENT IDENTITY</span>
+        <div className="hero-stamp">
+          <BrandMark variant="reversed" size={128} />
         </div>
       </section>
       <div className="session-strip">

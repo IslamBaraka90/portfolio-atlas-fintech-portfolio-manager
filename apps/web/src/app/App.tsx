@@ -1,4 +1,5 @@
 import { LearningShell } from "./LearningShell";
+import { BrandMark } from "../design-system/BrandMark";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
@@ -233,14 +234,8 @@ export function App() {
             reasons.
           </p>
         </div>
-        <div className="hero-stamp" aria-hidden="true">
-          <span>
-            PORTFOLIO
-            <br />
-            ATLAS
-          </span>
-          <strong>01</strong>
-          <span>MANDATE & UNIVERSE</span>
+        <div className="hero-stamp">
+          <BrandMark variant="reversed" size={128} />
         </div>
       </section>
       <div className="session-strip">

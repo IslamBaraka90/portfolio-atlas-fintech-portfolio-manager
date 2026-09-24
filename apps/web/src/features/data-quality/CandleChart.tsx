@@ -21,11 +21,11 @@ export function CandleChart({ dataset }: { dataset: MarketDataset }) {
         role="img"
         aria-label="Daily candle quality chart. Rejected and missing sessions interrupt the price series."
       >
-        <line x1="30" y1="195" x2="735" y2="195" stroke="currentColor" opacity=".2" />
+        <line className="chart-grid" x1="30" y1="195" x2="735" y2="195" />
         {dates.map((date, index) => (
           <g key={date}>
             {index % 3 === 0 && (
-              <text x={x(date)} y="225" textAnchor="middle" fontSize="11">
+              <text className="chart-label" x={x(date)} y="225" textAnchor="middle">
                 {date.slice(5)}
               </text>
             )}
@@ -39,7 +39,7 @@ export function CandleChart({ dataset }: { dataset: MarketDataset }) {
                 key={row.rowId}
                 x={x(row.sessionDate)}
                 y="194"
-                fill="#b34c48"
+                className="chart-negative-fill"
                 textAnchor="middle"
                 fontSize="20"
               >
@@ -62,18 +62,18 @@ export function CandleChart({ dataset }: { dataset: MarketDataset }) {
                   y1={y(previous.close!)}
                   x2={px}
                   y2={y(row.close!)}
-                  stroke="#205750"
+                  className="chart-series"
                   strokeDasharray="3 5"
                   opacity=".35"
                 />
               )}
-              <line x1={px} y1={y(row.high!)} x2={px} y2={y(row.low!)} stroke="#205750" />
+              <line className="chart-series" x1={px} y1={y(row.high!)} x2={px} y2={y(row.low!)} />
               <rect
                 x={px - 6}
                 y={top}
                 width="12"
                 height={Math.max(2, bottom - top)}
-                fill="#205750"
+                className="chart-series-fill"
               />
             </g>
           );
@@ -85,11 +85,11 @@ export function CandleChart({ dataset }: { dataset: MarketDataset }) {
             cy="192"
             r="5"
             fill="none"
-            stroke="#b34c48"
+            className="chart-negative"
           />
         ))}
         {!valid.length && (
-          <text x="380" y="100" textAnchor="middle" fontSize="15">
+          <text className="chart-label" x="380" y="100" textAnchor="middle">
             No accepted candles for this window
           </text>
         )}

@@ -1,30 +1,20 @@
+/* Chapter 05 book of record: posting form and immutable event journal (WEB-FIN-04). */
 .book-fields {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-4);
 }
 .book-fields button {
   align-self: flex-start;
 }
 .book-event {
-  padding: 14px 0;
-  border-bottom: 1px solid #dfe4dc;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
   overflow-wrap: anywhere;
 }
 .book-event summary {
-  cursor: pointer;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 .book-event pre {
-  overflow: auto;
-  padding: 16px;
-  background: #f3f5ee;
-  font-size: 0.8rem;
-}
-.chapter-table-wrap {
-  margin-bottom: 20px;
+  margin-top: var(--space-3);
 }

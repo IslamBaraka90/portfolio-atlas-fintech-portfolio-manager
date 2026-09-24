@@ -246,9 +246,9 @@ export function ValidationDesk() {
                   aria-label="Selected fold NAV path; exact values in the following table"
                   viewBox="0 0 600 220"
                 >
-                  <path d="M35 30 V190 H570" fill="none" stroke="#bccac5" />
-                  <polyline points={points} fill="none" stroke="#205750" strokeWidth="3" />
-                  <text x="35" y="215" fontSize="12">
+                  <path d="M35 30 V190 H570" fill="none" className="chart-grid" />
+                  <polyline points={points} fill="none" className="chart-series" strokeWidth="3" />
+                  <text x="35" y="215">
                     Initial capital → each test close (USD)
                   </text>
                 </svg>
@@ -283,9 +283,7 @@ export function ValidationDesk() {
                 </ol>
                 <details>
                   <summary>Reconciled journal and lots</summary>
-                  <pre style={{ overflow: "auto", maxHeight: 400, fontSize: "0.8rem" }}>
-                    {JSON.stringify(fold.book, null, 2)}
-                  </pre>
+                  <pre className="scroll-pre">{JSON.stringify(fold.book, null, 2)}</pre>
                 </details>
               </>
             )}
@@ -297,9 +295,7 @@ export function ValidationDesk() {
             </ul>
             <details>
               <summary>Frozen bars, membership and filing clocks</summary>
-              <pre style={{ overflow: "auto", maxHeight: 400, fontSize: "0.8rem" }}>
-                {JSON.stringify(run.fixture, null, 2)}
-              </pre>
+              <pre className="scroll-pre">{JSON.stringify(run.fixture, null, 2)}</pre>
             </details>
           </section>
         )}

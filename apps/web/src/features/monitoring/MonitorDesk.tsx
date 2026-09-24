@@ -409,9 +409,9 @@ function LossPlot({ history }: { history: MonitorSnapshot["history"] }) {
         role="img"
         aria-label="Sorted historical losses and 95 percent VaR"
       >
-        <line x1="40" x2="560" y1="55" y2="55" stroke="currentColor" />
+        <line className="chart-grid" x1="40" x2="560" y1="55" y2="55" />
         {history.losses.map((n, i) => (
-          <circle key={i} cx={x(n)} cy={42 - (i % 3) * 8} r="4" fill="#267269">
+          <circle key={i} cx={x(n)} cy={42 - (i % 3) * 8} r="4" className="chart-series-fill">
             <title>Loss {percent(n)}</title>
           </circle>
         ))}
@@ -421,7 +421,7 @@ function LossPlot({ history }: { history: MonitorSnapshot["history"] }) {
             x2={x(history.valueAtRisk)}
             y1="12"
             y2="72"
-            stroke="#a2462f"
+            className="chart-negative"
             strokeWidth="3"
           />
         )}
@@ -433,8 +433,8 @@ function LossPlot({ history }: { history: MonitorSnapshot["history"] }) {
         </text>
       </svg>
       <figcaption>
-        Dots: observed losses. Red line: interpolated 95% quantile. Negative losses are gains; these
-        few synthetic observations do not establish a reliable tail forecast.
+        Dots: observed losses. Highlighted line: interpolated 95% quantile. Negative losses are
+        gains; these few synthetic observations do not establish a reliable tail forecast.
       </figcaption>
     </figure>
   );

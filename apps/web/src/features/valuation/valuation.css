@@ -1,27 +1,27 @@
+/* Chapter 06 valuation: explicit mark selection per position (WEB-FIN-01). */
 .valuation-fields {
-  border: 0;
-  padding: 0;
-  margin: 16px 0;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
 }
 .valuation-position {
-  border: 1px solid #dfe4dc;
-  padding: 20px;
-  border-radius: 10px;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
 }
 .valuation-position legend {
-  color: #205750;
-  font-size: 0.85rem;
-  padding: 0 8px;
+  padding: 0 var(--space-2);
+  color: var(--link);
+  font-weight: 700;
 }
 .valuation-source {
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border);
+  font-size: var(--type-meta);
+  color: var(--muted);
   overflow-wrap: anywhere;
-  padding: 12px 0;
-  border-top: 1px solid #dfe4dc;
-  font-size: 0.85rem;
 }
 .valuation-fields button {
   align-self: flex-start;
@@ -29,34 +29,11 @@
 .benchmark-chart {
   display: block;
   width: 100%;
-  max-height: 230px;
-  margin: 20px 0;
+  max-height: 260px;
+  margin: var(--space-4) 0;
 }
-.chapter-page .primary,
-.chapter-page .secondary {
-  border-radius: 8px;
-  padding: 10px 16px;
-  border: 1px solid #cdd6cd;
-  cursor: pointer;
-}
-.chapter-page .primary {
-  background: #205750;
-  color: white;
-}
-.chapter-page .secondary {
-  background: #fffefa;
-  color: #205750;
-}
-.chapter-page button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   .valuation-position {
-    padding: 12px;
-  }
-  .chapter-metrics strong {
-    overflow-wrap: anywhere;
-    font-size: 1.65rem;
+    padding: var(--space-3) var(--space-4) var(--space-4);
   }
 }

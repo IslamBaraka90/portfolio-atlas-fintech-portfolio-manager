@@ -468,7 +468,9 @@ function Matrix({
               {row.map((v, j) => (
                 <td
                   key={j}
-                  style={{ background: v === null ? "#fff0df" : v < 0 ? "#f4eee2" : "#edf2e8" }}
+                  className={
+                    "num " + (v === null ? "matrix-undefined" : v < 0 ? "matrix-negative" : "")
+                  }
                 >
                   {v === null ? "Undefined" : v.toPrecision(6)}
                 </td>

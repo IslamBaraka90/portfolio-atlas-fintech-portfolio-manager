@@ -1,3 +1,4 @@
+/* Chapter 16 reports. Print floors follow Open Core publishing rules: 11pt body, 9.5pt metadata. */
 .report-actions,
 .report-navigation {
   display: flex;
@@ -21,7 +22,8 @@
   flex: none;
 }
 .report-lineage {
-  font-size: 12px;
+  font-size: var(--type-meta);
+  color: var(--muted);
   overflow-wrap: anywhere;
 }
 .report-print-root {
@@ -38,7 +40,9 @@
     margin: 15mm;
   }
   .sidebar,
+  .sidebar-backdrop,
   .topbar,
+  .app-footer,
   .skip-link,
   .report-builder,
   .report-actions,
@@ -60,7 +64,7 @@
   body {
     background: white !important;
     color: #111 !important;
-    font-size: 10pt !important;
+    font-size: 11pt !important;
   }
   .report-print-root .chapter-panel {
     border: 0;
@@ -80,7 +84,7 @@
     table-layout: fixed;
     min-width: 0 !important;
     width: 100%;
-    font-size: 8pt;
+    font-size: 9.5pt;
   }
   .report-print-root .chapter-table-wrap {
     overflow: visible;
@@ -95,6 +99,6 @@
     text-decoration: none;
   }
   .report-lineage {
-    font-size: 8pt;
+    font-size: 9.5pt;
   }
 }

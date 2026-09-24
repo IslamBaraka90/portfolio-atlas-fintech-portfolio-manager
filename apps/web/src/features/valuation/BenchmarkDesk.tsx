@@ -193,10 +193,10 @@ export function BenchmarkDesk({
                 role="img"
                 aria-label="Frozen benchmark level history"
               >
-                <line x1="20" x2="700" y1="155" y2="155" stroke="#cdd6cd" />
+                <line x1="20" x2="700" y1="155" y2="155" className="chart-grid" />
                 <polyline
                   fill="none"
-                  stroke="#205750"
+                  className="chart-series"
                   strokeWidth="3"
                   points={result.series
                     .map(
@@ -208,10 +208,10 @@ export function BenchmarkDesk({
                     )
                     .join(" ")}
                 />
-                <text x="20" y="178" fontSize="12">
+                <text x="20" y="178">
                   {result.series[0]?.date}
                 </text>
-                <text x="700" y="178" textAnchor="end" fontSize="12">
+                <text x="700" y="178" textAnchor="end">
                   {result.series.at(-1)?.date}
                 </text>
               </svg>

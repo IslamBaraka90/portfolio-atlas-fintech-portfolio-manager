@@ -428,13 +428,13 @@ function AdjustmentChart({ run, view }: { run: AdjustmentResult; view: View }) {
                   y1={y(values[index - 1]!)}
                   x2={x(index)}
                   y2={y(v)}
-                  stroke="#205750"
+                  className="chart-series"
                   strokeWidth="2"
                 />
               )}
-              <circle cx={x(index)} cy={y(v)} r="3" fill="#205750" />
+              <circle cx={x(index)} cy={y(v)} r="3" className="chart-series-fill" />
               {index % 3 === 0 && (
-                <text x={x(index)} y="225" textAnchor="middle" fontSize="11">
+                <text x={x(index)} y="225" textAnchor="middle">
                   {run.series[index]!.date.slice(5)}
                 </text>
               )}
@@ -450,10 +450,10 @@ function AdjustmentChart({ run, view }: { run: AdjustmentResult; view: View }) {
                 x2={x(index)}
                 y1="22"
                 y2="195"
-                stroke="#a77738"
+                className="chart-accent"
                 strokeDasharray="4 5"
               />
-              <text x={x(index) + 5} y="20" fontSize="10" fill="#8d632e">
+              <text x={x(index) + 5} y="20" className="chart-accent-fill">
                 {action.kind === "split" ? "Split" : "Dividend"}
               </text>
             </g>

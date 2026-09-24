@@ -1,0 +1,100 @@
+/* Generated from tokens.json by apps/web/scripts/design-tokens.mjs. Do not edit. */
+/* The Fintech Builder Open Core 03.1 Living Atlas · Open Core 03.1 · Living Atlas (2026-09-10) */
+:root {
+  --brand-navy: #0b1330;
+  --brand-magenta: #ff0050;
+  --brand-offwhite: #faf7f3;
+  --brand-paper: #e9ebf0;
+  --brand-accessible-magenta: #c90040;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --type-body: 16px;
+  --type-reading: 18px;
+  --type-meta: 14px;
+  --type-h3: 24px;
+  --type-h2: 32px;
+  --type-h1: 48px;
+  --type-input: 16px;
+  --type-target: 44px;
+  --motion-micro: 120ms;
+  --motion-standard: 180ms;
+  --motion-panel: 240ms;
+  --motion-page: 320ms;
+  --density-gap: 24px;
+  --density-padding: 24px;
+  --bg: #faf7f3;
+  --surface: #ffffff;
+  --surface2: #f0f2f6;
+  --text: #0b1330;
+  --muted: #526078;
+  --border: #ccd2de;
+  --control: #71809a;
+  --primary: #c90040;
+  --on-primary: #ffffff;
+  --link: #c90040;
+  --positive: #086753;
+  --positive-bg: #e8f5f0;
+  --warning: #7b4d00;
+  --warning-bg: #fff3d9;
+  --danger: #aa173f;
+  --danger-bg: #fdeaf0;
+  --focus: #1d59cd;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1330;
+    --surface: #121e3b;
+    --surface2: #1b2947;
+    --text: #faf7f3;
+    --muted: #bec7dc;
+    --border: #354461;
+    --control: #8293b5;
+    --primary: #c90040;
+    --on-primary: #ffffff;
+    --link: #ff91b4;
+    --positive: #86dfc6;
+    --positive-bg: #173d3a;
+    --warning: #ffd388;
+    --warning-bg: #3a3020;
+    --danger: #ffa6be;
+    --danger-bg: #412333;
+    --focus: #94baff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1330;
+  --surface: #121e3b;
+  --surface2: #1b2947;
+  --text: #faf7f3;
+  --muted: #bec7dc;
+  --border: #354461;
+  --control: #8293b5;
+  --primary: #c90040;
+  --on-primary: #ffffff;
+  --link: #ff91b4;
+  --positive: #86dfc6;
+  --positive-bg: #173d3a;
+  --warning: #ffd388;
+  --warning-bg: #3a3020;
+  --danger: #ffa6be;
+  --danger-bg: #412333;
+  --focus: #94baff;
+  color-scheme: dark;
+}
+:root[data-density="compact"] {
+  --density-gap: 12px;
+  --density-padding: 16px;
+}
+:root[data-density="feature"] {
+  --density-gap: 32px;
+  --density-padding: 32px;
+}
