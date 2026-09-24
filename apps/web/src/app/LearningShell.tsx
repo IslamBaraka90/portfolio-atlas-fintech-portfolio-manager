@@ -187,7 +187,8 @@ function LiveChip() {
     >
       <span className="dot" aria-hidden="true" />
       <span>
-        {live ? "Live" : "Demo"} · {cadenceShort[status.policy.cadence]}
+        {live ? "Live" : "Demo"}
+        <span className="live-chip-cadence"> · {cadenceShort[status.policy.cadence]}</span>
       </span>
     </a>
   );

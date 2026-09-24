@@ -1024,9 +1024,23 @@ main:focus {
   }
 }
 @media (max-width: 767px) {
+  /* Narrow topbars keep every control reachable: the chip drops its cadence text
+     (still in its accessible name) and the row wraps rather than overflowing. */
   .topbar {
+    flex-wrap: wrap;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-4);
+  }
+  .topbar-breadcrumb {
+    flex: 1 1 120px;
+  }
+  .topbar-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .live-chip-cadence {
+    display: none;
   }
   .topbar-breadcrumb .optional {
     display: none;
