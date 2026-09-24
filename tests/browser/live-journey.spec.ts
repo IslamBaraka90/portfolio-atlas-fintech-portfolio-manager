@@ -20,8 +20,8 @@ test("live runtime desk shows demo policy, session evidence and a recorded manua
   await page.getByRole("button", { name: "Refresh now" }).click();
   const manual = page.getByRole("row").filter({ hasText: "manual" }).first();
   await expect(manual).toContainText("completed");
-  await expect(manual).toContainText("provider-probe");
-  await expect(manual).toContainText("Demo mode serves synthetic fixtures");
+  await expect(manual).toContainText("quotes");
+  await expect(manual).toContainText("4 quotes");
 
   // The course rail lists Part V and marks the current chapter.
   await expect(page.getByRole("link", { name: "Live runtime", exact: true })).toHaveAttribute(

@@ -1,8 +1,10 @@
 import { useEffect, useSyncExternalStore } from "react";
 import {
   liveStatusSchema,
+  quoteBoardSchema,
   refreshCycleSchema,
   type LiveStatus,
+  type QuoteBoard,
   type RefreshCycle,
 } from "@portfolio-atlas/contracts";
 import { read } from "./api";
@@ -13,17 +15,19 @@ type Connection = "connecting" | "open" | "reconnecting";
 interface LiveSnapshot {
   status: LiveStatus | null;
   cycles: RefreshCycle[];
+  board: QuoteBoard | null;
   connection: Connection;
 }
 let status: LiveStatus | null = null;
 let cycles: RefreshCycle[] = [];
+let board: QuoteBoard | null = null;
 let connection = "connecting" as Connection;
 let source: EventSource | null = null;
 let users = 0;
 const listeners = new Set<() => void>();
-let snapshot: LiveSnapshot = { status, cycles, connection };
+let snapshot: LiveSnapshot = { status, cycles, board, connection };
 function publish() {
-  snapshot = { status, cycles, connection };
+  snapshot = { status, cycles, board, connection };
   listeners.forEach((listener) => listener());
 }
 
@@ -37,6 +41,13 @@ function connect() {
   void read("/live/cycles", refreshCycleSchema.array())
     .then((r) => {
       cycles = r.data;
+      publish();
+    })
+    .catch(() => undefined);
+  void read("/live/quotes", quoteBoardSchema)
+    .then((r) => {
+      // A stream event may already have delivered a newer board.
+      if (!board || r.data.revision > board.revision) board = r.data;
       publish();
     })
     .catch(() => undefined);
@@ -55,6 +66,13 @@ function connect() {
     const parsed = liveStatusSchema.safeParse(JSON.parse((event as MessageEvent).data));
     if (parsed.success) {
       status = parsed.data;
+      publish();
+    }
+  });
+  source.addEventListener("quotes", (event) => {
+    const parsed = quoteBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
+    if (parsed.success && (!board || parsed.data.revision >= board.revision)) {
+      board = parsed.data;
       publish();
     }
   });

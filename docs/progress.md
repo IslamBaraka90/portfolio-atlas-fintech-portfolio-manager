@@ -13,6 +13,16 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 18 | Live runtime, queued budget, scheduler, routes, event stream and desk | Complete — 76ab338, 2fe698e, fd09163, see chapter-18 task-4 commit |
 
+| 19 | Live quotes: adapters, freshness policy, tape/board/watchlist, board desk | Complete — 99a7861, edddbba, e6db4bf, see chapter-19 task-4 commit |
+
+## Chapter 19 evidence
+
+Tasks 1–4. `YahooQuoteProvider` batches one `quote()` call per cycle and validates each row, so drift in one symbol becomes an explicit unavailable observation. `classifyQuote` applies `chapter-19.quote-freshness.v1` (unavailable → clock error → closed market → stale → delayed → live) with the exchange delay extending the age budget. Book state and spread come from the fintech-algorithms crossed/locked detector and quoted spread. `QuoteService` stores every observation, archives the raw response by SHA-256, appends a revisioned board, publishes `quotes` events and keeps a revisioned watchlist. Routes: `GET /live/quotes`, `GET /live/quotes/:symbol`, `GET/POST /live/watchlist`.
+
+Independent cases: GBp 2,510 → 25.10 GBP. Under `5m` a 15-minute-delayed quote is delayed at 20 and 25 minutes and stale at 40. Bid 101/ask 100 is crossed with spread withheld; bid = ask is locked with spread 0. A 30-minute one-sided quote is stale by the labeled application rule. A provider time 5 minutes ahead is unavailable.
+
+Observed gates (2026-09-24, Node 22.22.0): 162 unit/API checks (40 API, 69 adapters, 11 contracts, 42 core), 25 Chromium journeys, strict typecheck, production build and `npm run check`. Opt-in live smoke with `LIVE_WATCHLIST=SPY,AAPL,VOD.L,NOPE-XYZ` after the close recorded 4 observations: 3 closed market, 1 unavailable. A 390 px journey found a page overflow caused by a visually hidden label inside a scrolled table; table wrappers now contain it.
+
 ## Chapter 18 evidence
 
 Tasks 1–4. `parseLiveRuntime` freezes mode, cadence, cache lifetime, freshness, watchlist, benchmark and request cap; invalid values stop startup naming the variable. `sessionState` classifies New York and London regular hours through `Intl` (DST-safe) and records holidays as not modeled. `RequestBudget` gains an optional bounded queue, 250 ms spacing and a rolling per-minute cap; interactive calls still fail fast. `LiveRefreshService` records append-only cycles, logs skipped ticks, captures each completed session once, backs off 1×, 2×, 4× the period and resets after one success. Routes: `GET /live/status`, `GET /live/cycles`, `GET /live/cycles/:id`, `POST /live/cycles` (operator, idempotent) and `GET /live/stream` (server-sent events). The React Live runtime desk and top-bar chip read the stream.

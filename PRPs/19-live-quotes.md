@@ -1,6 +1,6 @@
 # PRP 19 — Live quotes and freshness evidence
 
-Status: planned. Part V. Chapter: 19. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/19-learning-guide.md and docs/progress.md. Part V. Chapter: 19. Editorial duration estimate: 15 minutes.
 
 ## Learner promise
 
@@ -54,12 +54,12 @@ React: a dense watchlist board (WEB-TBL-02) with freshness badges, spread and ch
 
 ## Acceptance and adversarial cases
 
-- [ ] A GBp quote of 2,510 is recorded as 25.10 GBP with the scale evidence.
-- [ ] A quote 20 minutes old with a 15-minute exchange delay under a 5m cadence is `delayed`, not `stale`; 40 minutes old is `stale`.
-- [ ] `marketState: CLOSED` yields `closed_market` regardless of age.
-- [ ] bid 101 / ask 100 is recorded as crossed; bid = ask is locked.
-- [ ] A symbol missing from the batch response is `unavailable` with a reason; the other symbols still record.
-- [ ] Schema drift in one quote does not discard the cycle.
+- [x] A GBp quote of 2,510 is recorded as 25.10 GBP with the scale evidence.
+- [x] A quote 20 minutes old with a 15-minute exchange delay under a 5m cadence is `delayed`, not `stale`; 40 minutes old is `stale`.
+- [x] `marketState: CLOSED` yields `closed_market` regardless of age.
+- [x] bid 101 / ask 100 is recorded as crossed; bid = ask is locked.
+- [x] A symbol missing from the batch response is `unavailable` with a reason; the other symbols still record.
+- [x] Schema drift in one quote does not discard the cycle.
 
 ## Validation execution plan
 
@@ -75,7 +75,7 @@ Validated, freshness-classified quotes per cycle. Chapter 20 extends history to 
 
 ## Evidence to fill during implementation
 
-- Package versions and verified exports:
-- Commands and observed results:
-- UI walkthrough/screenshots:
-- Remaining limitations:
+- Package versions and verified exports: fintech-algorithms 0.13.2 `detectStaleQuotes` (contract), `classifyMarkets` (contract), `quotedSpread` (verified); yahoo-finance2 4.0.2 `quote(symbols, { return: "array" }, { validateResult: false })` with per-row zod validation.
+- Commands and observed results: recorded in docs/progress.md (Chapter 19 evidence).
+- UI walkthrough/screenshots: Live quotes desk inspected at 1440 px; the 390 px journey asserts no page overflow.
+- Remaining limitations: watchlist symbols are validated by format, not resolved through Chapter 2 identity until saved there; tape queries scan stored observations; the detector is evaluated per observation because Yahoo supplies one timestamp per poll.

@@ -337,6 +337,12 @@ thead th {
 tbody th {
   font-weight: 650;
 }
+/* Compared numbers align on the decimal side and never break inside a value. */
+th.num,
+td.num {
+  text-align: right;
+  white-space: nowrap;
+}
 tbody tr:last-child > * {
   border-bottom: 0;
 }

@@ -436,6 +436,7 @@ main:focus {
   color: var(--muted);
 }
 .table-scroll {
+  position: relative;
   overflow-x: auto;
   max-width: 100%;
 }

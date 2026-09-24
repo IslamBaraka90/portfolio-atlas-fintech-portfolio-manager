@@ -166,7 +166,10 @@ p.chapter-muted {
 }
 
 /* Data tables (WEB-TBL-02/10): contained horizontal scroll, sticky header. */
+/* position: relative contains visually hidden labels inside scrolled rows, which
+   would otherwise widen the whole page from their static position. */
 .chapter-table-wrap {
+  position: relative;
   max-width: 100%;
   max-height: 600px;
   overflow: auto;

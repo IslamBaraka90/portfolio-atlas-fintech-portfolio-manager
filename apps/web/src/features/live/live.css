@@ -73,6 +73,30 @@
 .live-decisions li:last-child {
   border-bottom: 0;
 }
+.live-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.live-panel-head h2 {
+  margin: 0;
+}
+.quote-board .positive {
+  color: var(--positive);
+}
+.quote-board .negative {
+  color: var(--danger);
+}
+.quote-board tr[aria-selected="true"] > * {
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+.quote-board th .text-button {
+  padding: 0;
+  font-size: 18px;
+}
 .live-task {
   display: block;
 }
