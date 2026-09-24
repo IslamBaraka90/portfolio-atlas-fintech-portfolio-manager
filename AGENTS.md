@@ -2,6 +2,8 @@
 
 ## Current phase and authorization
 
+Part V authorization (2026-09-24): on the `enhancements` branch, apply the TFB Open Core 03.1 design system to the React desk, then implement Chapters 18–25 (the live desk) from their PRPs with verified `chapter-N task-M` commits. The chapter work is backend-first; React changes follow `apps/web/src/design-system/README.md`. Live data stays local and paper-only (ADR 0005).
+
 Current authorization (2026-09-22): complete all Chapters 1–17 autonomously, with verified task commits and GitHub publication. The user announced fintech-algorithms 0.13.2 and revoked the D14 stopping point. Read docs/progress.md and each PRP before implementation; complete chapter gates, publish its checkpoint, and continue to the next chapter. This explicit instruction supersedes older per-chapter handoff and D14-wait text in historical plans.
 
 Do not modify the parent edufintech project or sibling repositories. Run Git inside this repository. Do not commit credentials, provider caches, generated reports containing private holdings, or unrelated changes.

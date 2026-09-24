@@ -4,6 +4,15 @@
 
 Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with green checks; Chapter 17 is at its publication checkpoint. The full-build objective uses fintech-algorithms 0.13.2, including released D14 construction. The complete branch is codex/chapter-17-governance-recovery. Public deployment and specialist extensions are separately scoped.
 
+## Part V — the live desk (enhancements branch)
+
+| Step | Deliverable                                                             | State / commit                          |
+| ---- | ----------------------------------------------------------------------- | --------------------------------------- |
+| D    | TFB Open Core 03.1 design system and usability pass across all 17 desks | Complete — 86de807                      |
+| P    | ADR 0005 and PRPs 18–25                                                 | Complete — see chapter-18 task-0 commit |
+
+Design-system evidence (2026-09-24, Node 22.22.0): `npm run check` (including generated-token verification), strict typecheck, 131 unit/API checks, production build and 23 Chromium journeys passed. An audit of all 17 routes at 1440, 1024 and 390 px in light and dark themes reported no page overflow, no visible text below 14 px, no control below 44 px and no unlabeled field. Populated journey end states were inspected at desktop and 390 px, in dark mode and in print emulation. Assistive-technology testing was not performed.
+
 ## Foundation tasks
 
 | Task | Deliverable                                                                                   | State / commit                         |

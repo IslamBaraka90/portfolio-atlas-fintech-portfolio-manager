@@ -25,6 +25,21 @@ Current stage: all 17 teaching chapters are implemented. The pinned 0.13.2 relea
 | 16      | Management insights and the reporting desk                  | [PRP 16](16-insights-and-reporting.md)        |
 | 17      | Governance, access and recovery                             | [PRP 17](17-governance-and-recovery.md)       |
 
+## Part V — the live desk
+
+Live Yahoo Finance data and fintech-algorithms across the desk, local only and paper only. See [ADR 0005](../docs/decisions/0005-live-market-data-runtime.md).
+
+| Chapter | Build outcome                                     | Plan                                            |
+| ------- | ------------------------------------------------- | ----------------------------------------------- |
+| 18      | Live runtime, refresh cadence and provider health | [PRP 18](18-live-data-runtime.md)               |
+| 19      | Live quotes and freshness evidence                | [PRP 19](19-live-quotes.md)                     |
+| 20      | Intraday intervals and incremental history        | [PRP 20](20-live-bars.md)                       |
+| 21      | Live foreign exchange                             | [PRP 21](21-live-fx.md)                         |
+| 22      | Live marks and an intraday NAV                    | [PRP 22](22-live-marks-and-nav.md)              |
+| 23      | Live risk and alerts                              | [PRP 23](23-live-risk-and-alerts.md)            |
+| 24      | Paper execution at live quotes                    | [PRP 24](24-live-paper-execution.md)            |
+| 25      | Live performance, reporting and the demo cache    | [PRP 25](25-live-performance-and-operations.md) |
+
 ## Execution rules
 
 The maintainer authorized continuous implementation through Chapter 17. Read [AGENTS.md](../AGENTS.md), [progress](../docs/progress.md) and the PRP. Implement its meaningful tasks, validate each task, commit frequently, record evidence, publish the chapter checkpoint, and continue.
