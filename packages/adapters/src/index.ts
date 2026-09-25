@@ -37,3 +37,4 @@ export * from "./market-data/synthetic-bar-provider.js";
 export * from "./market-data/yahoo-finance/bar-provider.js";
 export * from "./analytics/fintech-algorithms/quote-analytics.js";
 export * from "./analytics/fintech-algorithms/live-bar-quality.js";
+export * from "./analytics/fintech-algorithms/live-risk-analytics.js";

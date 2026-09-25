@@ -73,3 +73,4 @@ export * from "./use-cases/live-fx-service.js";
 export * from "./domain/live/derive-fx.js";
 export * from "./domain/live/select-live-mark.js";
 export * from "./use-cases/live-valuation-service.js";
+export * from "./domain/live/live-risk.js";

@@ -287,11 +287,59 @@ export const navPointSchema = z.strictObject({
   fingerprint: z.string(),
 });
 
+// Chapter 23: live risk on final daily bars and the live NAV series, plus the
+// Chapter 14 monitor run on each new live valuation.
+const measure = z.number().finite().nullable();
+export const liveRiskSchema = z.strictObject({
+  id: z.string(),
+  portfolioId: z.string(),
+  valuationId: z.string(),
+  asOf: instantSchema,
+  policy: z.literal("chapter-23.live-risk.v1"),
+  status: z.enum(["complete", "unavailable"]),
+  benchmark: providerSymbolSchema,
+  window: z.strictObject({
+    returns: z.number().int().nonnegative(),
+    from: z.string().nullable(),
+    to: z.string().nullable(),
+    droppedSessions: z.number().int().nonnegative(),
+    decay: z.number().positive().max(1),
+    annualization: z.number().int().positive(),
+  }),
+  holdings: z.array(
+    z.strictObject({
+      instrumentId: z.string(),
+      symbol: z.string().nullable(),
+      weight: z.number().finite(),
+      ewmaVolatility: measure,
+      beta: measure,
+    }),
+  ),
+  portfolio: z.strictObject({
+    volatility: measure,
+    beta: measure,
+    trackingError: measure,
+    currentDrawdown: measure,
+    maxDrawdown: measure,
+    navPoints: z.number().int().nonnegative(),
+  }),
+  monitor: z.strictObject({
+    id: z.string().nullable(),
+    breaches: z.number().int().nonnegative(),
+    unavailable: z.number().int().nonnegative(),
+    passes: z.number().int().nonnegative(),
+    reason: z.string().nullable(),
+  }),
+  reasons: z.array(z.string()),
+  tiers: z.record(z.string(), z.string()),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("series"), data: liveSeriesSchema }),
   z.strictObject({ type: z.literal("fx"), data: fxBoardSchema }),
   z.strictObject({ type: z.literal("nav"), data: navPointSchema }),
+  z.strictObject({ type: z.literal("risk"), data: liveRiskSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);
@@ -318,3 +366,4 @@ export type LiveFxRate = z.infer<typeof liveFxRateSchema>;
 export type FxBoard = z.infer<typeof fxBoardSchema>;
 export type FxConversion = z.infer<typeof fxConversionSchema>;
 export type NavPoint = z.infer<typeof navPointSchema>;
+export type LiveRisk = z.infer<typeof liveRiskSchema>;
