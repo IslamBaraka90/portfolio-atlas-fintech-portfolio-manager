@@ -21,6 +21,18 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 22 | Live marks and NAV: mark policy, live valuation snapshots, deduplicated NAV series, dashboard | Complete — d7db51e, f22f5e4, see chapter-22 task-4 commit |
 
+| 23 | Live risk: final-bar measures, monitor on each live valuation, risk desk | Complete — 77d37ec, c43f5af, see chapter-23 task-4 commit |
+
+## Chapter 23 evidence
+
+Tasks 1–4 (tasks 2 and 3 in c43f5af). `alignDailyCloses` keeps final accepted daily closes, aligns them across holdings and the benchmark and counts dropped dates. `liveRisk` (`chapter-23.live-risk.v1`) computes EWMA volatility (λ 0.94, annualized), beta and tracking error against `LIVE_BENCHMARK`, and drawdown from the live NAV series, all through verified fintech-algorithms topics; weights are current-weight replays and labeled hypothetical. `LiveRiskService` assesses each new live valuation once and runs the Chapter 14 monitor on it, keeping one finding per breach. The demo benchmark defaults to ATLS and the benchmark is always tracked. Route: `GET /portfolios/:id/live-risk`. The Live risk desk shows the measures, monitor outcome and holding table.
+
+Observed gates (2026-09-25, Node 22.22.0): 187 unit/API checks (46 API, 79 adapters, 11 contracts, 51 core), 29 Chromium journeys, strict typecheck, production build and `npm run check`.
+
+Independent cases: identical holding and benchmark → beta 1, tracking error 0; NAV 10,000 → 10,100 → 9,595 → −5% maximum drawdown; a forming bar at 180 changes nothing; one missing date is reported as dropped; three closes are too few. In the API test the demo portfolio (about 89% cash) breaches the cash ceiling, a full 60-return window is available from the daily backfill, the same valuation is not reassessed, and a later valuation does not add findings.
+
+Found during verification: the EWMA covariance topic requires at least two columns, so a single-holding portfolio failed; the benchmark column is now always included and portfolio variance uses the holdings block. Drawdown requires at least two returns.
+
 ## Chapter 22 evidence
 
 Tasks 1–4 (tasks 2 and 3 in f22f5e4). `selectLiveMark` (`chapter-22.live-mark.v1`) marks last → midpoint of a normal or locked book → close when closed → unavailable, never from a crossed book, a foreign-currency quote or a stale quote, recording basis and quote id. `LiveValuationService` builds ordinary valuation snapshots with the Chapter 6 `valueBook` arithmetic, live marks and usable Chapter 21 FX observations, so Chapters 14–16 can consume them; `MarkEvidence` gained optional `basis` and `quoteId`. A NAV point is stored only when the fingerprint (checkpoint, marks, rates, NAV) changes. Routes: `GET /portfolios/:id/live-nav`, `POST /portfolios/:id/live-valuations` (analyst). The Live portfolio desk shows the account summary, NAV line and per-holding evidence.

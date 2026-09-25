@@ -64,6 +64,9 @@ const LiveFxDesk = lazy(() =>
 const LivePortfolioDesk = lazy(() =>
   import("../features/live/LivePortfolioDesk").then((m) => ({ default: m.LivePortfolioDesk })),
 );
+const LiveRiskDesk = lazy(() =>
+  import("../features/live/LiveRiskDesk").then((m) => ({ default: m.LiveRiskDesk })),
+);
 const App = lazy(() => import("./App").then((m) => ({ default: m.App })));
 const InstrumentExplorer = lazy(() =>
   import("../features/instruments/InstrumentExplorer").then((m) => ({
@@ -108,6 +111,8 @@ export function WorkspaceRouter() {
   const page =
     hash === "#governance" || (session.mode === "configured_sessions" && !session.actor) ? (
       <GovernanceDesk />
+    ) : hash.split("?")[0] === "#live-risk" ? (
+      <LiveRiskDesk />
     ) : hash.split("?")[0] === "#live-portfolio" ? (
       <LivePortfolioDesk />
     ) : hash.split("?")[0] === "#fx" ? (

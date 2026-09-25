@@ -120,3 +120,7 @@
     margin-bottom: var(--space-2);
   }
 }
+.live-banner.is-breach {
+  border-left-color: var(--danger);
+  background: var(--danger-bg);
+}

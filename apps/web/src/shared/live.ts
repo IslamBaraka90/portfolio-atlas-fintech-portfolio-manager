@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import {
   fxBoardSchema,
+  liveRiskSchema,
   navPointSchema,
   liveSeriesSchema,
   liveStatusSchema,
@@ -26,6 +27,7 @@ interface LiveSnapshot {
   seriesRevisions: Record<string, number>;
   // Latest NAV point time per portfolio, so the dashboard refetches on change.
   navUpdates: Record<string, string>;
+  riskUpdates: Record<string, string>;
   connection: Connection;
 }
 let status: LiveStatus | null = null;
@@ -34,6 +36,7 @@ let board: QuoteBoard | null = null;
 let fx: FxBoard | null = null;
 let seriesRevisions: Record<string, number> = {};
 let navUpdates: Record<string, string> = {};
+let riskUpdates: Record<string, string> = {};
 let connection = "connecting" as Connection;
 let source: EventSource | null = null;
 let users = 0;
@@ -45,10 +48,11 @@ let snapshot: LiveSnapshot = {
   fx,
   seriesRevisions,
   navUpdates,
+  riskUpdates,
   connection,
 };
 function publish() {
-  snapshot = { status, cycles, board, fx, seriesRevisions, navUpdates, connection };
+  snapshot = { status, cycles, board, fx, seriesRevisions, navUpdates, riskUpdates, connection };
   listeners.forEach((listener) => listener());
 }
 
@@ -100,6 +104,13 @@ function connect() {
     const parsed = quoteBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
     if (parsed.success && (!board || parsed.data.revision >= board.revision)) {
       board = parsed.data;
+      publish();
+    }
+  });
+  source.addEventListener("risk", (event) => {
+    const parsed = liveRiskSchema.safeParse(JSON.parse((event as MessageEvent).data));
+    if (parsed.success) {
+      riskUpdates = { ...riskUpdates, [parsed.data.portfolioId]: parsed.data.id };
       publish();
     }
   });
