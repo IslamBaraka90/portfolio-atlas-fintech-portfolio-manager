@@ -317,7 +317,9 @@ export class PaperExecutionService {
       notional: money(notional),
       fee: money(fee),
       ledgerEventId: ledgerEvent.id,
-      source: "authored_paper_opening_event",
+      // Chapter 24: an opening built from a live quote keeps its quote evidence.
+      source: opening.live ? "live_quote_paper_fill" : "authored_paper_opening_event",
+      live: opening.live ?? null,
       settlementPolicy: batch.settlementPolicy ? "deferred_teaching" : "immediate_teaching",
       settlementId: batch.settlementPolicy ? fillId : null,
       dueDate,
@@ -334,7 +336,7 @@ export class PaperExecutionService {
       order.state = cancelPending ? "cancel_pending" : "partially_filled";
     }
     return (
-      "Authored opening filled " +
+      (opening.live ? "Live " + opening.live.basis + " fill " : "Authored opening filled ") +
       shares.toFixed() +
       "; cumulative fee " +
       order.fees +

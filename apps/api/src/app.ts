@@ -14,6 +14,7 @@ import {
   LiveFxService,
   LiveValuationService,
   LiveRiskService,
+  LivePaperService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
@@ -551,6 +552,10 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(fx.task());
+  // Chapter 24: accepted paper orders fill at live quotes before valuation runs,
+  // so the same cycle's NAV includes the fill.
+  const livePaper = new LivePaperService(paper, quotes, instruments);
+  live.register(livePaper.task());
   // Chapter 22: value every portfolio from live marks and the FX board.
   const liveValuations = new LiveValuationService(
     livePolicy,
@@ -605,6 +610,7 @@ export function buildApp(
     fx,
     liveValuations,
     liveRisk,
+    livePaper,
     createHttpContext(clock, sessionId, storage),
   );
   app.addHook("onClose", async () => live.stop());
