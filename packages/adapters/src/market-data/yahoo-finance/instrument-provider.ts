@@ -2,6 +2,7 @@ import type { YahooCompanyTransport } from "./company-provider.js";
 import { ProviderCalls } from "../provider-calls.js";
 import type { YahooChartTransport } from "./chart-provider.js";
 import type { YahooQuoteTransport } from "./quote-provider.js";
+import type { YahooBarTransport } from "./bar-provider.js";
 import YahooFinance from "yahoo-finance2";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { z } from "zod";
@@ -21,7 +22,8 @@ export interface YahooTransport {
 export function createYahooTransport(): YahooTransport &
   YahooChartTransport &
   YahooCompanyTransport &
-  YahooQuoteTransport {
+  YahooQuoteTransport &
+  YahooBarTransport {
   const context = new AsyncLocalStorage<AbortSignal>();
   const captured = new AsyncLocalStorage<{ source: unknown }>();
   // The constructor fetch hook covers Yahoo cookie/crumb requests too.
@@ -81,6 +83,20 @@ export function createYahooTransport(): YahooTransport &
     search: (query, signal) =>
       context.run(signal, () =>
         client.search(query, { quotesCount: 8, newsCount: 0 }, { fetchOptions: { signal } }),
+      ),
+    bars: (symbol, request, signal) =>
+      context.run(signal, () =>
+        client.chart(
+          symbol,
+          {
+            period1: request.from,
+            period2: request.to,
+            interval: request.interval,
+            return: "array",
+            includePrePost: false,
+          },
+          { fetchOptions: { signal } },
+        ),
       ),
     quotes: (symbols, signal) =>
       context.run(signal, () =>

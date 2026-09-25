@@ -7,10 +7,11 @@ import {
   type QuoteProvider,
   type RawQuote,
 } from "@portfolio-atlas/core";
+import { roundCents as round, syntheticBaseClose, syntheticPrice } from "./synthetic-market.js";
 
 // Deterministic demo quotes for the synthetic teaching instruments. The price for a
-// given symbol and minute is always the same, so demo screenshots and tests replay.
-// It oscillates ±0.4% around the fixture's final lesson close; it is not a market model.
+// given symbol and minute is always the same (see synthetic-market.ts), so demo
+// screenshots and tests replay and quotes agree with demo bars.
 export class SyntheticQuoteProvider implements QuoteProvider {
   readonly mode = "synthetic" as const;
   readonly defaultSymbols: string[];
@@ -18,7 +19,7 @@ export class SyntheticQuoteProvider implements QuoteProvider {
   constructor(
     instruments: Instrument[],
     private readonly clock: Clock,
-    private readonly baseClose = 112,
+    private readonly baseClose = syntheticBaseClose,
   ) {
     this.bySymbol = new Map(instruments.map((i) => [i.returnedSymbol, i]));
     this.defaultSymbols = instruments.map((i) => i.returnedSymbol);
@@ -34,11 +35,9 @@ export class SyntheticQuoteProvider implements QuoteProvider {
         missing.push({ symbol, reason: "Not a synthetic teaching symbol." });
         continue;
       }
-      const seed = [...symbol].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
       const scale = instrument.quoteUnit.scaleToCurrency ?? 1;
       const unit = 1 / scale; // pence quotes are 100× the pound price
-      const round = (v: number) => Math.round(v * 100) / 100;
-      const mid = this.baseClose * (1 + 0.004 * Math.sin(minute / 7 + seed)) * unit;
+      const mid = syntheticPrice(symbol, minute) * unit;
       const open = sessionState(instrument.timezone ?? "America/New_York", now).state === "open";
       rows.push({
         symbol,

@@ -167,6 +167,62 @@ export const watchlistChangeSchema = z.strictObject({
     .pipe(providerSymbolSchema),
 });
 
+// Chapter 20: live bars. A series is one symbol at one interval; every bar is its own
+// revisioned document, so a forming bar can be revised while final bars never change.
+export const liveIntervalSchema = z.enum(["1m", "5m", "15m", "1h", "1d"]);
+const findingSchema = z.strictObject({
+  code: z.string(),
+  reason: z.string(),
+  severity: z.enum(["error", "warning"]),
+});
+export const liveBarSchema = z.strictObject({
+  seriesId: z.string(),
+  revision: z.number().int().positive(),
+  timestamp: instantSchema,
+  end: instantSchema,
+  sessionDate: z.string().nullable(),
+  open: price,
+  high: price,
+  low: price,
+  close: price,
+  volume: price,
+  finality: z.enum(["final", "incomplete"]),
+  finalAt: instantSchema,
+  accepted: z.boolean(),
+  findings: z.array(findingSchema),
+  firstObservedAt: instantSchema,
+  observedAt: instantSchema,
+  sourceHash: z.string(),
+});
+export const liveSeriesSchema = z.strictObject({
+  id: z.string(),
+  revision: z.number().int().positive(),
+  symbol: providerSymbolSchema,
+  instrumentId: identifierSchema.nullable(),
+  source: dataModeSchema,
+  interval: liveIntervalSchema,
+  timezone: z.string().nullable(),
+  quoteUnit: quoteUnitSchema,
+  policy: z.string(),
+  refreshedAt: instantSchema,
+  window: z.strictObject({ from: instantSchema, to: instantSchema }),
+  sourceHash: z.string(),
+  counts: z.strictObject({
+    bars: z.number().int().nonnegative(),
+    final: z.number().int().nonnegative(),
+    forming: z.number().int().nonnegative(),
+    quarantined: z.number().int().nonnegative(),
+  }),
+  lastRefresh: z.strictObject({
+    appended: z.number().int().nonnegative(),
+    revised: z.number().int().nonnegative(),
+    finalized: z.number().int().nonnegative(),
+    unchanged: z.number().int().nonnegative(),
+    providerRevisedFinal: z.number().int().nonnegative(),
+  }),
+  warnings: z.array(z.string()),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
@@ -188,3 +244,6 @@ export type QuoteObservation = z.infer<typeof quoteObservationSchema>;
 export type QuoteBoard = z.infer<typeof quoteBoardSchema>;
 export type Watchlist = z.infer<typeof watchlistSchema>;
 export type WatchlistChange = z.infer<typeof watchlistChangeSchema>;
+export type LiveInterval = z.infer<typeof liveIntervalSchema>;
+export type LiveBar = z.infer<typeof liveBarSchema>;
+export type LiveSeries = z.infer<typeof liveSeriesSchema>;
