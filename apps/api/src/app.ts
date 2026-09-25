@@ -75,7 +75,7 @@ import { ValuationService, BenchmarkService } from "@portfolio-atlas/core";
 import { registerValuationRoutes } from "./http/valuation.js";
 import { dirname, resolve, join } from "node:path";
 import { SqliteLedgerRepository } from "@portfolio-atlas/adapters";
-import { LedgerService } from "@portfolio-atlas/core";
+import { LedgerService, liveIdentityPolicy, syntheticIdentityPolicy } from "@portfolio-atlas/core";
 import { registerLedgerRoutes } from "./http/ledger.js";
 import { FileRawArchive } from "@portfolio-atlas/adapters";
 import {
@@ -183,7 +183,8 @@ export function buildApp(
   const budget = new RequestBudget(options.yahooConcurrency ?? 2, options.yahooTimeoutMs ?? 10000);
   const providers: Partial<Record<DataMode, InstrumentProvider>> = options.instrumentProviders ?? {
     synthetic: new SyntheticInstrumentProvider(syntheticInstruments, clock),
-    ...(options.yahooEnabled
+    // Live mode enables the Yahoo instrument search too, so live symbols can be saved.
+    ...(yahooTransport
       ? {
           yahoo: new YahooInstrumentProvider(yahooTransport!, clock, budget),
         }
@@ -342,6 +343,7 @@ export function buildApp(
     clock,
     ids,
     commands,
+    livePolicy.mode === "live" ? liveIdentityPolicy : syntheticIdentityPolicy,
   );
   registerLedgerRoutes(app, ledger, createHttpContext(clock, sessionId, storage));
   const snapshots = new SqliteSnapshotRepository(database);

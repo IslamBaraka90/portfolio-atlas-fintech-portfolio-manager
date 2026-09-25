@@ -1,3 +1,4 @@
+import type { Instrument } from "@portfolio-atlas/contracts";
 import {
   bookStateSchema,
   ledgerEventSchema,
@@ -16,6 +17,36 @@ import { ApplicationError } from "./errors.js";
 import { normalizePosting, invalid } from "../domain/accounting/decimal.js";
 import { activeEvents, postingEntry, reversalEntry } from "../domain/accounting/project-book.js";
 import { reconcileBook } from "../domain/accounting/reconcile-book.js";
+export interface BookIdentityPolicy {
+  readonly version: string;
+  // A refusal reason, or null when the instrument may be held.
+  refuse(instrument: Instrument): string | null;
+}
+// Chapters 5–17: only synthetic-verified equities and ETFs enter the teaching book.
+export const syntheticIdentityPolicy: BookIdentityPolicy = {
+  version: "chapter-5.synthetic-identity.v1",
+  refuse: (instrument) =>
+    instrument.identityStatus !== "synthetic_verified" ||
+    !["equity", "etf"].includes(instrument.assetType)
+      ? "This teaching book requires verified equity/ETF identity evidence."
+      : null,
+};
+// Chapter 25 live desk (chapter-25.live-identity.v1): a provider-observed equity or
+// ETF may be held when its quote currency and scale are established. The book keeps
+// the instrument snapshot, so the observed (not legally verified) identity stays
+// visible; rebalancing still requires evidenced tick, lot and sector data.
+export const liveIdentityPolicy: BookIdentityPolicy = {
+  version: "chapter-25.live-identity.v1",
+  refuse: (instrument) =>
+    !["equity", "etf"].includes(instrument.assetType)
+      ? "Only equities and ETFs may be held."
+      : instrument.identityStatus === "synthetic_verified"
+        ? null
+        : !instrument.quoteUnit.currency || instrument.quoteUnit.scaleToCurrency === null
+          ? "Observed listings need an established quote currency and unit scale."
+          : null,
+};
+
 export class LedgerService {
   private manualWriteGuard: (portfolioId: string) => void = () => {};
   setManualWriteGuard(guard: (portfolioId: string) => void) {
@@ -35,6 +66,9 @@ export class LedgerService {
     private readonly clock: Clock,
     private readonly ids: IdFactory,
     private readonly commands: Commands,
+    // Which instrument identities the book may hold. The teaching default admits only
+    // synthetic-verified listings; the live desk passes the observed-listing policy.
+    private readonly identityPolicy: BookIdentityPolicy = syntheticIdentityPolicy,
   ) {}
   get(portfolioId: string): BookState {
     this.portfolios.getPortfolio(portfolioId);
@@ -99,11 +133,8 @@ export class LedgerService {
           "REVISION_CONFLICT",
           "Instrument evidence changed before posting.",
         );
-      if (
-        instrument.identityStatus !== "synthetic_verified" ||
-        !["equity", "etf"].includes(instrument.assetType)
-      )
-        invalid("This teaching book requires verified equity/ETF identity evidence.");
+      const refusal = this.identityPolicy.refuse(instrument);
+      if (refusal) invalid(refusal);
       if ("currency" in input && instrument.quoteUnit.currency !== input.currency)
         invalid("Posting currency must match the evidenced instrument currency.");
     }
