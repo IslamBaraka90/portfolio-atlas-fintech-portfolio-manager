@@ -1,7 +1,7 @@
 import type { Instrument, LiveInterval } from "@portfolio-atlas/contracts";
 import {
   intervalLimits,
-  sessionState,
+  sessionBounds,
   type BarBatch,
   type BarProvider,
   type Clock,
@@ -10,9 +10,13 @@ import {
 } from "@portfolio-atlas/core";
 import { roundCents, syntheticBaseClose, syntheticPrice } from "./synthetic-market.js";
 
-// Deterministic demo bars for the synthetic teaching instruments, built minute by
-// minute from the shared demo price path during regular New York or London hours.
-// Bars never extend past the clock, so the latest bar can be genuinely forming.
+const day = 86_400_000;
+
+// Deterministic demo bars for the synthetic teaching instruments, built from the
+// shared demo price path during regular New York or London hours. The provider walks
+// one session at a time (open and close resolved once per date), buckets minutes
+// from the session open like Yahoo does (hourly bars start at :30 in New York), and
+// never builds past the clock, so the latest bar can be genuinely forming.
 export class SyntheticBarProvider implements BarProvider {
   readonly mode = "synthetic" as const;
   private readonly bySymbol: Map<string, Instrument>;
@@ -43,35 +47,40 @@ export class SyntheticBarProvider implements BarProvider {
       };
     const timezone = instrument.timezone ?? "America/New_York";
     const unit = 1 / (instrument.quoteUnit.scaleToCurrency ?? 1);
-    const end = Math.min(Date.parse(window.to), Date.parse(now));
     const start = Math.ceil(Date.parse(window.from) / 60_000) * 60_000;
-    // Group open-market minutes into bars: fixed-duration buckets intraday, one bar
-    // per local session date for daily bars (timestamped at the first open minute).
-    const buckets = new Map<string, number[]>();
-    for (let t = start; t < end; t += 60_000) {
-      const session = sessionState(timezone, new Date(t).toISOString());
-      if (session.state !== "open") continue;
-      const duration = intervalLimits[interval].durationMs;
-      const key =
-        duration === null
-          ? session.localDate!
-          : new Date(Math.floor(t / duration) * duration).toISOString();
-      const minutes = buckets.get(key) ?? [];
-      minutes.push(t);
-      buckets.set(key, minutes);
+    const end = Math.min(Date.parse(window.to), Date.parse(now));
+    const duration = intervalLimits[interval].durationMs;
+    const rows: RawBar[] = [];
+    // Local dates overlap UTC dates by at most one day either side.
+    for (let d = start - day; d <= end + day; d += day) {
+      const date = new Date(d).toISOString().slice(0, 10);
+      const bounds = sessionBounds(timezone, date);
+      if (!bounds) continue;
+      const open = Date.parse(bounds.open),
+        close = Date.parse(bounds.close);
+      const from = Math.max(open, start),
+        to = Math.min(close, end);
+      if (from >= to) continue;
+      const bucket = duration ?? close - open;
+      for (let b = open + Math.floor((from - open) / bucket) * bucket; b < to; b += bucket) {
+        // A bar is always built from its own start, even when the window begins
+        // inside it, so overlapping refreshes see identical values for a final bar.
+        const first = b,
+          last = Math.min(b + bucket, to);
+        if (first >= last) continue;
+        const prices: number[] = [];
+        for (let t = first; t < last; t += 60_000)
+          prices.push(syntheticPrice(symbol, t / 60_000) * unit);
+        rows.push({
+          timestamp: new Date(duration === null ? open : b).toISOString(),
+          open: roundCents(prices[0]!),
+          high: roundCents(Math.max(...prices)),
+          low: roundCents(Math.min(...prices)),
+          close: roundCents(prices.at(-1)!),
+          volume: prices.length * 1_000,
+        });
+      }
     }
-    const rows: RawBar[] = [...buckets.entries()].map(([key, minutes]) => {
-      const prices = minutes.map((t) => syntheticPrice(symbol, t / 60_000) * unit);
-      return {
-        timestamp:
-          intervalLimits[interval].durationMs === null ? new Date(minutes[0]!).toISOString() : key,
-        open: roundCents(prices[0]!),
-        high: roundCents(Math.max(...prices)),
-        low: roundCents(Math.min(...prices)),
-        close: roundCents(prices.at(-1)!),
-        volume: minutes.length * 1_000,
-      };
-    });
     return {
       status: "available",
       source: "synthetic",

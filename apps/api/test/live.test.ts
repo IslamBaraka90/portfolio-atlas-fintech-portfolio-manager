@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseLiveRuntime, type QuoteProvider } from "@portfolio-atlas/core";
+import { parseLiveRuntime, type BarProvider, type QuoteProvider } from "@portfolio-atlas/core";
 import { buildApp } from "../src/app.js";
 
 // Saturday 26 Sep 2026: the latest completed New York session is Friday 25 Sep.
@@ -21,7 +21,7 @@ test("demo mode reports its policy and records idempotent manual cycles", async 
   assert.equal(status.policy.cadence, "eod");
   assert.equal(status.scheduler, "stopped");
   assert.equal(status.session.basis, "weekend");
-  assert.deepEqual(status.tasks, ["quotes"]);
+  assert.deepEqual(status.tasks, ["quotes", "bars"]);
 
   const first = await api.post("/live/cycles", "live-manual-1");
   assert.equal(first.statusCode, 201, first.body);
@@ -61,10 +61,21 @@ test("live provider failures are recorded with back-off and recover", async (t) 
       };
     },
   };
+  const bars: BarProvider = {
+    mode: "yahoo",
+    bars: async () => ({
+      status: "unavailable",
+      source: "yahoo",
+      observedAt: saturday,
+      cache: "none",
+      failure: { code: "NETWORK", message: "offline", retryable: true },
+    }),
+  };
   const app = buildApp({
     clock: { now: () => saturday },
     live: parseLiveRuntime({ MARKET_DATA_MODE: "live", LIVE_REFRESH: "1m" }),
     liveQuoteProvider: provider,
+    liveBarProvider: bars,
   });
   t.after(() => app.close());
   const api = client(app);
@@ -76,8 +87,9 @@ test("live provider failures are recorded with back-off and recover", async (t) 
   assert.equal(failed.data.health.backoffMs, 60_000);
   online = true;
   const recovered = (await api.post("/live/cycles", "live-ok-1")).json().data;
-  assert.equal(recovered.status, "completed");
-  assert.equal(recovered.health.status, "healthy");
+  // Quotes recovered while bars stay offline: a partial cycle keeps backing off.
+  assert.equal(recovered.status, "partial");
+  assert.equal(recovered.health.status, "degraded");
   assert.equal(recovered.tasks[0].requested, 3);
   assert.match(recovered.tasks[0].detail, /3 unavailable/);
 });

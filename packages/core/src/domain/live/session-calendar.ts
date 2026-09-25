@@ -169,3 +169,16 @@ export function barFinality(input: {
     evidence: evidence + (final ? " Final after grace." : " Still forming until the grace passes."),
   };
 }
+
+// Regular-session open and close instants for a local date, or null on weekends and
+// for unmodeled venues. Holidays are not modeled, so a holiday returns bounds.
+export function sessionBounds(timezone: string, localDate: string) {
+  const venue = venues[timezone];
+  if (!venue) return null;
+  const weekday = new Date(localDate + "T12:00:00Z").getUTCDay();
+  if (weekday === 0 || weekday === 6) return null;
+  return {
+    open: localInstant(timezone, localDate, venue.open),
+    close: localInstant(timezone, localDate, venue.close),
+  };
+}

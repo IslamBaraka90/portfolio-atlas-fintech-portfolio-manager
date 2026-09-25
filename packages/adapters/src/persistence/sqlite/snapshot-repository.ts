@@ -13,4 +13,7 @@ export class SqliteSnapshotRepository implements SnapshotRepository {
   all(kind: string) {
     return this.db.all(kind);
   }
+  prefixed(kind: string, prefix: string) {
+    return this.db.prefixed(kind, prefix);
+  }
 }

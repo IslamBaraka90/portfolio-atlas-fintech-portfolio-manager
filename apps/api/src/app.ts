@@ -3,12 +3,17 @@ import {
   SyntheticQuoteProvider,
   YahooQuoteProvider,
   FintechQuoteAnalytics,
+  SyntheticBarProvider,
+  YahooBarProvider,
+  FintechLiveBarQuality,
 } from "@portfolio-atlas/adapters";
 import {
   LiveRefreshService,
+  LiveHistoryService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
+  type BarProvider,
   type QuoteProvider,
   type Timer,
 } from "@portfolio-atlas/core";
@@ -125,6 +130,7 @@ export function buildApp(
     live?: LiveRuntimePolicy;
     liveAutostart?: boolean;
     liveQuoteProvider?: QuoteProvider;
+    liveBarProvider?: BarProvider;
     timer?: Timer;
   } = {},
 ) {
@@ -527,7 +533,23 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(quotes.task());
-  registerLiveRoutes(app, live, quotes, createHttpContext(clock, sessionId, storage));
+  // Chapter 20: incremental live bars for every tracked symbol.
+  const history = new LiveHistoryService(
+    livePolicy,
+    options.liveBarProvider ??
+      (livePolicy.mode === "live"
+        ? new YahooBarProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
+        : new SyntheticBarProvider(syntheticInstruments, clock)),
+    new FintechLiveBarQuality(),
+    quotes,
+    rawArchive,
+    snapshots,
+    database,
+    clock,
+    (event) => live.publish(event),
+  );
+  live.register(history.task());
+  registerLiveRoutes(app, live, quotes, history, createHttpContext(clock, sessionId, storage));
   app.addHook("onClose", async () => live.stop());
   if (options.liveAutostart) app.addHook("onReady", async () => live.start());
   return app;

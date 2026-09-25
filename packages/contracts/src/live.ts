@@ -225,6 +225,7 @@ export const liveSeriesSchema = z.strictObject({
 
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
+  z.strictObject({ type: z.literal("series"), data: liveSeriesSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);

@@ -102,6 +102,16 @@ export class SqliteDatabase implements Transactions {
       .all(kind)
       .map((row) => JSON.parse(String(row.payload)));
   }
+  // Latest revision of every document whose id starts with a prefix. The range test
+  // uses the (kind, document_id, revision) primary key instead of scanning the kind.
+  prefixed(kind: string, prefix: string): unknown[] {
+    return this.connection
+      .prepare(
+        "SELECT d.payload FROM documents d WHERE kind=? AND document_id>=? AND document_id<? AND revision=(SELECT MAX(revision) FROM documents other WHERE other.kind=d.kind AND other.document_id=d.document_id) ORDER BY d.document_id",
+      )
+      .all(kind, prefix, prefix + "\uffff")
+      .map((row) => JSON.parse(String(row.payload)));
+  }
   revisions(kind: string, id: string): unknown[] {
     return this.connection
       .prepare("SELECT payload FROM documents WHERE kind=? AND document_id=? ORDER BY revision")

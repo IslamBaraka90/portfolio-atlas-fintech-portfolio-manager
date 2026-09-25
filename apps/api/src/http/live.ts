@@ -2,17 +2,19 @@ import type { FastifyInstance } from "fastify";
 import type { ServerResponse } from "node:http";
 import { z } from "zod";
 import {
+  liveIntervalSchema,
   providerSymbolSchema,
   watchlistChangeSchema,
   type LiveEvent,
 } from "@portfolio-atlas/contracts";
-import type { LiveRefreshService, QuoteService } from "@portfolio-atlas/core";
+import type { LiveHistoryService, LiveRefreshService, QuoteService } from "@portfolio-atlas/core";
 import type { HttpContext } from "./context.js";
 
 export function registerLiveRoutes(
   app: FastifyInstance,
   service: LiveRefreshService,
   quotes: QuoteService,
+  history: LiveHistoryService,
   http: HttpContext,
 ) {
   const mode = service.policy.mode === "live" ? ("yahoo" as const) : ("synthetic" as const);
@@ -46,6 +48,21 @@ export function registerLiveRoutes(
         ),
       ),
   );
+
+  app.get("/api/v1/live/series", async (r) => http.response(history.series(), r, mode));
+  const barParams = z.object({ symbol: providerSymbolSchema, interval: liveIntervalSchema });
+  const barQuery = z.object({ limit: z.coerce.number().int().min(1).max(2000).default(500) });
+  app.get("/api/v1/live/series/:symbol/:interval/bars", async (r) => {
+    const { symbol, interval } = barParams.parse(r.params);
+    return http.response(
+      {
+        series: history.head(symbol, interval) ?? null,
+        bars: history.bars(symbol, interval, barQuery.parse(r.query).limit),
+      },
+      r,
+      mode,
+    );
+  });
 
   // Server-sent events: the browser never polls Yahoo; it hears completed cycles.
   // Open streams are ended before the server closes so shutdown is not blocked.
