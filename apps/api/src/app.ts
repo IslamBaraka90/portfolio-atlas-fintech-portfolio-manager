@@ -6,12 +6,14 @@ import {
   SyntheticBarProvider,
   YahooBarProvider,
   FintechLiveBarQuality,
+  FintechLiveRiskAnalytics,
 } from "@portfolio-atlas/adapters";
 import {
   LiveRefreshService,
   LiveHistoryService,
   LiveFxService,
   LiveValuationService,
+  LiveRiskService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
@@ -451,23 +453,20 @@ export function buildApp(
     new ReconciliationService(snapshots, ledger, service, clock, ids, commands),
     createHttpContext(clock, sessionId, storage),
   );
-  registerMonitorRoutes(
-    app,
-    new MonitorService(
-      snapshots,
-      valuations,
-      risk,
-      construction,
-      service,
-      instruments,
-      ledger,
-      new FintechMonitorAnalytics(),
-      clock,
-      ids,
-      commands,
-    ),
-    createHttpContext(clock, sessionId, storage),
+  const monitors = new MonitorService(
+    snapshots,
+    valuations,
+    risk,
+    construction,
+    service,
+    instruments,
+    ledger,
+    new FintechMonitorAnalytics(),
+    clock,
+    ids,
+    commands,
   );
+  registerMonitorRoutes(app, monitors, createHttpContext(clock, sessionId, storage));
   const performance = new PerformanceService(
     snapshots,
     valuations,
@@ -584,6 +583,20 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(history.task());
+  // Chapter 23: risk on final daily bars and the NAV series, plus the monitor.
+  const liveRisk = new LiveRiskService(
+    livePolicy,
+    snapshots,
+    database,
+    service,
+    liveValuations,
+    history,
+    instruments,
+    monitors,
+    new FintechLiveRiskAnalytics(),
+    (event) => live.publish(event),
+  );
+  live.register(liveRisk.task());
   registerLiveRoutes(
     app,
     live,
@@ -591,6 +604,7 @@ export function buildApp(
     history,
     fx,
     liveValuations,
+    liveRisk,
     createHttpContext(clock, sessionId, storage),
   );
   app.addHook("onClose", async () => live.stop());

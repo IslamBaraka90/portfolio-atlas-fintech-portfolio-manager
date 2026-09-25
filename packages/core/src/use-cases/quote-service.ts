@@ -94,7 +94,10 @@ export class QuoteService {
     for (const instrument of this.instruments.list())
       if (instrument.source === this.provider.mode)
         bySymbol.set(instrument.returnedSymbol, instrument.instrumentId);
-    const symbols = [...new Set([...this.watchlist().symbols, ...bySymbol.keys()])];
+    // The benchmark is always tracked so risk and performance can compare against it.
+    const symbols = [
+      ...new Set([...this.watchlist().symbols, ...bySymbol.keys(), this.policy.benchmark]),
+    ];
     return symbols.map((symbol) => ({ symbol, instrumentId: bySymbol.get(symbol) ?? null }));
   }
 

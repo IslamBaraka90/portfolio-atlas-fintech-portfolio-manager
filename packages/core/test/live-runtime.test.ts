@@ -23,7 +23,8 @@ test("defaults are demo mode at end of day with a unique upper-case watchlist", 
   assert.equal(p.mode, "demo");
   assert.equal(p.cadence, "eod");
   assert.deepEqual(p.watchlist, ["SPY", "AAPL", "MSFT"]);
-  assert.equal(p.benchmark, "SPY");
+  assert.equal(p.benchmark, "ATLS", "demo benchmark is the synthetic ETF");
+  assert.equal(parseLiveRuntime({ MARKET_DATA_MODE: "live" }).benchmark, "SPY");
 });
 
 test("invalid configuration stops startup and names the variable", () => {

@@ -88,7 +88,8 @@ export function parseLiveRuntime(env: Environment): LiveRuntimePolicy {
   const benchmark = parse(
     "LIVE_BENCHMARK",
     (v) => providerSymbolSchema.parse(v.toUpperCase()),
-    (env.LIVE_BENCHMARK ?? "SPY").trim(),
+    // Demo mode has no SPY history; its synthetic ETF is the default benchmark.
+    (env.LIVE_BENCHMARK ?? (mode === "demo" ? "ATLS" : "SPY")).trim(),
   );
   const requestsPerMinute = parse(
     "LIVE_MAX_REQUESTS_PER_MINUTE",

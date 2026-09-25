@@ -13,6 +13,7 @@ import type {
   LiveHistoryService,
   LiveValuationService,
   LiveRefreshService,
+  LiveRiskService,
   QuoteService,
 } from "@portfolio-atlas/core";
 import type { HttpContext } from "./context.js";
@@ -24,6 +25,7 @@ export function registerLiveRoutes(
   history: LiveHistoryService,
   fx: LiveFxService,
   valuations: LiveValuationService,
+  risk: LiveRiskService,
   http: HttpContext,
 ) {
   const mode = service.policy.mode === "live" ? ("yahoo" as const) : ("synthetic" as const);
@@ -103,6 +105,10 @@ export function registerLiveRoutes(
           mode,
         ),
       ),
+  );
+
+  app.get("/api/v1/portfolios/:id/live-risk", async (r) =>
+    http.response(risk.latest(portfolioParams.parse(r.params).id), r, mode),
   );
 
   // Server-sent events: the browser never polls Yahoo; it hears completed cycles.
