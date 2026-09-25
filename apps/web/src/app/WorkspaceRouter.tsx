@@ -85,9 +85,22 @@ const InstrumentExplorer = lazy(() =>
 export function WorkspaceRouter() {
   const session = useSession();
   const [sessionError, setSessionError] = useState("");
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    void refreshSession().catch((e) => setSessionError(String(e)));
-  }, []);
+    void refreshSession()
+      .then(() => setSessionError(""))
+      .catch((e) => setSessionError(String(e)));
+  }, [attempt]);
+  // The API may still be starting (for example right after a restart): retry on its
+  // own with a growing delay, capped at 10 s, so the desk recovers without a click.
+  useEffect(() => {
+    if (!sessionError) return;
+    const handle = setTimeout(
+      () => setAttempt((n) => n + 1),
+      Math.min(10_000, 1_000 * 2 ** attempt),
+    );
+    return () => clearTimeout(handle);
+  }, [sessionError, attempt]);
   const [hash, setHash] = useState(window.location.hash);
   useEffect(() => {
     const changed = () => {
