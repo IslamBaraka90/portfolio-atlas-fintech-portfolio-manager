@@ -99,3 +99,73 @@ export function sessionState(timezone: string, at: string, graceMs = 0): Session
     holidays: "not_modeled",
   };
 }
+
+// The UTC instant of a local wall-clock time on a local date in an exchange timezone.
+// Two correction passes converge across DST changes because offsets move by at most
+// one hour and never twice in one day at the regular-session times used here.
+export function localInstant(timezone: string, localDate: string, minutes: number) {
+  const [y, m, d] = localDate.split("-").map(Number) as [number, number, number];
+  let guess = Date.UTC(y, m - 1, d, 0, minutes);
+  for (let pass = 0; pass < 2; pass++) {
+    const local = localParts(timezone, new Date(guess));
+    const dayShift = Math.round(
+      (Date.parse(local.date + "T00:00:00Z") - Date.parse(localDate + "T00:00:00Z")) / 86_400_000,
+    );
+    guess -= (dayShift * 1440 + local.minutes - minutes) * 60_000;
+  }
+  return new Date(guess).toISOString();
+}
+
+export function sessionClose(timezone: string, localDate: string) {
+  const venue = venues[timezone];
+  return venue ? localInstant(timezone, localDate, venue.close) : null;
+}
+
+// A bar is final once its interval has ended and a grace period has passed; a daily
+// bar ends at the session close. Intraday bars never extend past the close, so the
+// last hourly bar of a 09:30–16:00 session ends at 16:00, not 16:30.
+export function barFinality(input: {
+  timestamp: string;
+  durationMs: number | null;
+  timezone: string | null;
+  now: string;
+  graceMs: number;
+}): {
+  finality: "final" | "incomplete";
+  sessionDate: string | null;
+  end: string;
+  finalAt: string;
+  evidence: string;
+} {
+  const start = Date.parse(input.timestamp);
+  const venue = input.timezone ? venues[input.timezone] : undefined;
+  const sessionDate = input.timezone ? localParts(input.timezone, new Date(start)).date : null;
+  const close =
+    venue && sessionDate
+      ? Date.parse(localInstant(input.timezone!, sessionDate, venue.close))
+      : null;
+  let end: number;
+  let evidence: string;
+  if (input.durationMs === null) {
+    end = close ?? start + 86_400_000;
+    evidence = close
+      ? "Daily bar ends at the " + venue!.label.split("–")[1] + " session close."
+      : "Unmodeled venue: the daily bar is assumed to end 24 h after its start.";
+  } else {
+    end = start + input.durationMs;
+    evidence = "Intraday bar ends after its " + input.durationMs / 60_000 + "-minute interval.";
+    if (close !== null && end > close && start < close) {
+      end = close;
+      evidence = "Intraday bar is cut at the session close.";
+    }
+  }
+  const finalAt = end + input.graceMs;
+  const final = Date.parse(input.now) >= finalAt;
+  return {
+    finality: final ? "final" : "incomplete",
+    sessionDate,
+    end: new Date(end).toISOString(),
+    finalAt: new Date(finalAt).toISOString(),
+    evidence: evidence + (final ? " Final after grace." : " Still forming until the grace passes."),
+  };
+}
