@@ -27,3 +27,21 @@ export interface BarProvider {
     window: { from: string; to: string },
   ): Promise<ProviderReply<BarBatch>>;
 }
+
+export interface BarFinding {
+  code: string;
+  reason: string;
+  severity: "error" | "warning";
+}
+// Live bar validation policy implemented with fintech-algorithms in adapters.
+export interface LiveBarQuality {
+  readonly policy: string;
+  validate(input: {
+    symbol: string;
+    instrumentId: string | null;
+    rows: RawBar[];
+    priceHint: number | null;
+    scale: number | null;
+    observedAt: string;
+  }): { accepted: boolean; findings: BarFinding[] }[];
+}
