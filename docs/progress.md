@@ -19,6 +19,16 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 21 | Live FX: needed legs, direct/inverse/cross derivation, exact conversion, FX desk | Complete — e896fff, see chapter-21 task-3 commit |
 
+| 22 | Live marks and NAV: mark policy, live valuation snapshots, deduplicated NAV series, dashboard | Complete — d7db51e, f22f5e4, see chapter-22 task-4 commit |
+
+## Chapter 22 evidence
+
+Tasks 1–4 (tasks 2 and 3 in f22f5e4). `selectLiveMark` (`chapter-22.live-mark.v1`) marks last → midpoint of a normal or locked book → close when closed → unavailable, never from a crossed book, a foreign-currency quote or a stale quote, recording basis and quote id. `LiveValuationService` builds ordinary valuation snapshots with the Chapter 6 `valueBook` arithmetic, live marks and usable Chapter 21 FX observations, so Chapters 14–16 can consume them; `MarkEvidence` gained optional `basis` and `quoteId`. A NAV point is stored only when the fingerprint (checkpoint, marks, rates, NAV) changes. Routes: `GET /portfolios/:id/live-nav`, `POST /portfolios/:id/live-valuations` (analyst). The Live portfolio desk shows the account summary, NAV line and per-holding evidence.
+
+Observed gates (2026-09-25, Node 22.22.0): 182 unit/API checks (45 API, 75 adapters, 11 contracts, 51 core), 28 Chromium journeys, strict typecheck, production build and `npm run check`.
+
+Independent cases: mark 101.25 → `101.25000000`; a crossed book with no last trade is unavailable; a closed market uses the last price or previous close. In the API test NAV equals 9,000 + 10 × the observed last trade, a repeated cycle adds no point, the manual command returns the same valuation id, the next demo minute adds a second point, and a holding without a quote leaves NAV null and incomplete.
+
 ## Chapter 21 evidence
 
 Tasks 1–3 (tasks 1 and 2 in one commit, e896fff). `requiredPairs` and `requiredLegs` request one `XXXUSD=X` leg per non-USD currency needed by quoted currencies and mandate base currencies. `deriveRates` builds direct, inverse and USD-cross rates at 10 significant digits, timed at the older leg and as fresh as the least fresh leg, each wrapping a standard Chapter 4 `FxObservation`. Missing legs make a pair unavailable, never 1:1. `convertWithBoard` rounds half-even to cents and refuses stale or missing rates. `LiveFxService` runs as the `fx` task, stores legs on the quote tape and publishes `fx` events. Routes: `GET /live/fx`, `GET /live/fx/convert`. Demo mode uses authored synthetic legs.

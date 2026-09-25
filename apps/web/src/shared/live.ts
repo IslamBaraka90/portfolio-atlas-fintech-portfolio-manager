@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import {
   fxBoardSchema,
+  navPointSchema,
   liveSeriesSchema,
   liveStatusSchema,
   quoteBoardSchema,
@@ -23,6 +24,8 @@ interface LiveSnapshot {
   fx: FxBoard | null;
   // Latest revision seen per series id, so desks refetch only what changed.
   seriesRevisions: Record<string, number>;
+  // Latest NAV point time per portfolio, so the dashboard refetches on change.
+  navUpdates: Record<string, string>;
   connection: Connection;
 }
 let status: LiveStatus | null = null;
@@ -30,13 +33,22 @@ let cycles: RefreshCycle[] = [];
 let board: QuoteBoard | null = null;
 let fx: FxBoard | null = null;
 let seriesRevisions: Record<string, number> = {};
+let navUpdates: Record<string, string> = {};
 let connection = "connecting" as Connection;
 let source: EventSource | null = null;
 let users = 0;
 const listeners = new Set<() => void>();
-let snapshot: LiveSnapshot = { status, cycles, board, fx, seriesRevisions, connection };
+let snapshot: LiveSnapshot = {
+  status,
+  cycles,
+  board,
+  fx,
+  seriesRevisions,
+  navUpdates,
+  connection,
+};
 function publish() {
-  snapshot = { status, cycles, board, fx, seriesRevisions, connection };
+  snapshot = { status, cycles, board, fx, seriesRevisions, navUpdates, connection };
   listeners.forEach((listener) => listener());
 }
 
@@ -88,6 +100,13 @@ function connect() {
     const parsed = quoteBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
     if (parsed.success && (!board || parsed.data.revision >= board.revision)) {
       board = parsed.data;
+      publish();
+    }
+  });
+  source.addEventListener("nav", (event) => {
+    const parsed = navPointSchema.safeParse(JSON.parse((event as MessageEvent).data));
+    if (parsed.success) {
+      navUpdates = { ...navUpdates, [parsed.data.portfolioId]: parsed.data.asOf };
       publish();
     }
   });

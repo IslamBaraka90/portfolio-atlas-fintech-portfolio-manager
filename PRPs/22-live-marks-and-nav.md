@@ -1,6 +1,6 @@
 # PRP 22 — Live marks and an intraday NAV
 
-Status: planned. Part V. Chapter: 22. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/22-learning-guide.md and docs/progress.md. Part V. Chapter: 22. Editorial duration estimate: 15 minutes.
 
 ## Learner question and result
 
@@ -29,7 +29,7 @@ A live valuation snapshot per cycle for each active portfolio (deduplicated when
 
 ## Contracts
 
-`MarkEvidence` gains `basis: last | mid | close | override` and `quoteId`. `NavPoint { valuationId, cycleId, asOf, nav, currency, status, coverage }`. API: `GET /portfolios/:id/live-nav`, `POST /portfolios/:id/live-valuations`.
+`MarkEvidence` gains optional `basis: dataset | override | last | mid | close` and `quoteId`; `ValuationSnapshot.policyVersion` accepts `chapter-22.live-mark.v1`. Live valuations are ordinary valuation snapshots. `NavPoint { portfolioId, valuationId, cycleId, asOf, checkpoint, baseCurrency, nav, holdings, cash, status, coverage, fingerprint }`. API: `GET /portfolios/:id/live-nav`, `POST /portfolios/:id/live-valuations`.
 
 ## Tasks and commits
 
@@ -40,15 +40,15 @@ A live valuation snapshot per cycle for each active portfolio (deduplicated when
 
 ## Backend and React outcomes
 
-`LiveValuationService` hooked into the refresh cycle; a live portfolio dashboard with account summary (WEB-FIN-01), holdings grid, NAV line chart and per-holding mark evidence drawer.
+`LiveValuationService` registered as the `valuation` task after FX (tasks 2 and 3 landed in one commit because valuation and the deduplicated series share one service); a live portfolio dashboard with account summary (WEB-FIN-01), holdings grid, NAV line chart and per-holding mark evidence drawer.
 
 ## Acceptance cases
 
-- [ ] 10 shares with last 101.25 and 9,000 cash give NAV 10,012.50.
-- [ ] A crossed book falls back to last or close, never to a crossed midpoint.
-- [ ] A stale quote with no allowed fallback makes valuation incomplete and names the holding.
-- [ ] Two cycles with identical inputs create one NAV point.
-- [ ] A USD portfolio holding a GBp listing converts through Chapter 21 FX with both timestamps.
+- [x] 10 shares with last 101.25 and 9,000 cash give NAV 10,012.50 (mark 101.25000000; the API test checks 9,000 + 10 × the observed last).
+- [x] A crossed book falls back to last or close, never to a crossed midpoint.
+- [x] A stale quote with no allowed fallback makes valuation incomplete and names the holding.
+- [x] Two cycles with identical inputs create one NAV point.
+- [x] Foreign holdings convert through Chapter 21 FX observations passed to the unchanged `valueBook`; a holding whose quote currency differs from its book currency is unavailable rather than converted twice.
 
 ## Validation execution
 
