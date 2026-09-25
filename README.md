@@ -48,6 +48,21 @@ CI runs the same checks on Node 22.22.0. Browser tests use ports 3101 and 5174; 
 
 See the [Chapter 2 guide](docs/chapters/02-learning-guide.md) for instrument discovery, live Yahoo setup and the recorded provider smoke check.
 
+## The live desk (Part V)
+
+Chapters 18–25 turn the desk into a live, local portfolio manager on Yahoo Finance and fintech-algorithms. Everything stays on loopback and paper-only ([ADR 0005](docs/decisions/0005-live-market-data-runtime.md)).
+
+| Setting (`.env`)    | Values                     | Effect                                                 |
+| ------------------- | -------------------------- | ------------------------------------------------------ |
+| `MARKET_DATA_MODE`  | `demo` (default) or `live` | Synthetic demo data, or Yahoo polling through the API  |
+| `LIVE_REFRESH`      | `eod`, `15m`, `5m`, `1m`   | Refresh cadence, cache lifetime and freshness together |
+| `LIVE_WATCHLIST`    | Comma-separated symbols    | Watched alongside every saved instrument               |
+| `LIVE_BENCHMARK`    | e.g. `SPY`                 | Benchmark for risk and performance (ATLS in demo)      |
+| `LIVE_CACHE_RECORD` | A path under `.data/`      | Record every provider reply for offline replay         |
+| `DEMO_CACHE_PATH`   | A recorded cache           | Replay a recorded session offline                      |
+
+Each refresh cycle runs quotes → FX → paper fills → valuation → bars → risk → performance, and the browser follows it through server-sent events. The desks cover the runtime, quotes, history, FX, the live portfolio, risk, fills and performance. `npm run live:smoke` with `MARKET_DATA_MODE=live` runs one real cycle. See the [Chapter 18](docs/chapters/18-learning-guide.md) through [Chapter 25](docs/chapters/25-learning-guide.md) guides.
+
 ## Design system
 
 The desk uses **The Fintech Builder Open Core 03.1** design system: registry tokens generated into CSS variables, the official Open Core mark, light and dark themes, 16 px body and 44 px targets. See [apps/web/src/design-system](apps/web/src/design-system/README.md). `npm run check` verifies the generated tokens.
@@ -60,12 +75,13 @@ The governance desk creates protected checkpoints and verifies real restores int
 
 ## Chapter learning guides
 
-| Chapters | Follow the evidence                                                                                                                                                                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1–4      | [Mandate](docs/chapters/01-learning-guide.md), [identity](docs/chapters/02-learning-guide.md), [candles](docs/chapters/03-learning-guide.md), [actions and FX](docs/chapters/04-learning-guide.md)                                                     |
-| 5–8      | [Book](docs/chapters/05-learning-guide.md), [valuation](docs/chapters/06-learning-guide.md), [research](docs/chapters/07-learning-guide.md), [risk inputs](docs/chapters/08-learning-guide.md)                                                         |
-| 9–12     | [Construction](docs/chapters/09-learning-guide.md), [causal validation](docs/chapters/10-learning-guide.md), [rebalance](docs/chapters/11-learning-guide.md), [paper execution](docs/chapters/12-learning-guide.md)                                    |
-| 13–17    | [Settlement](docs/chapters/13-learning-guide.md), [monitoring](docs/chapters/14-learning-guide.md), [performance](docs/chapters/15-learning-guide.md), [reports](docs/chapters/16-learning-guide.md), [governance](docs/chapters/17-learning-guide.md) |
+| Chapters | Follow the evidence                                                                                                                                                                                                                                                                                                                                                      |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1–4      | [Mandate](docs/chapters/01-learning-guide.md), [identity](docs/chapters/02-learning-guide.md), [candles](docs/chapters/03-learning-guide.md), [actions and FX](docs/chapters/04-learning-guide.md)                                                                                                                                                                       |
+| 5–8      | [Book](docs/chapters/05-learning-guide.md), [valuation](docs/chapters/06-learning-guide.md), [research](docs/chapters/07-learning-guide.md), [risk inputs](docs/chapters/08-learning-guide.md)                                                                                                                                                                           |
+| 9–12     | [Construction](docs/chapters/09-learning-guide.md), [causal validation](docs/chapters/10-learning-guide.md), [rebalance](docs/chapters/11-learning-guide.md), [paper execution](docs/chapters/12-learning-guide.md)                                                                                                                                                      |
+| 13–17    | [Settlement](docs/chapters/13-learning-guide.md), [monitoring](docs/chapters/14-learning-guide.md), [performance](docs/chapters/15-learning-guide.md), [reports](docs/chapters/16-learning-guide.md), [governance](docs/chapters/17-learning-guide.md)                                                                                                                   |
+| 18–25    | [Runtime](docs/chapters/18-learning-guide.md), [quotes](docs/chapters/19-learning-guide.md), [bars](docs/chapters/20-learning-guide.md), [FX](docs/chapters/21-learning-guide.md), [NAV](docs/chapters/22-learning-guide.md), [risk](docs/chapters/23-learning-guide.md), [fills](docs/chapters/24-learning-guide.md), [performance](docs/chapters/25-learning-guide.md) |
 
 ## Workspace
 

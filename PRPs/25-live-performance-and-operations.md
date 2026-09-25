@@ -1,6 +1,6 @@
 # PRP 25 — Live performance, reporting and the demo cache
 
-Status: planned. Part V. Chapter: 25. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/25-learning-guide.md and docs/progress.md. Part V. Chapter: 25. Editorial duration estimate: 15 minutes.
 
 ## Learner question and result
 
@@ -25,22 +25,28 @@ Daily time-weighted return linked from end-of-day NAV points with external flows
 
 ## Contracts
 
-`LivePerformance { portfolioId, asOf, periods[{ label, twr, benchmark, active }], ratios, tiers }`. `DemoCacheManifest { version, recordedFrom, recordedTo, cycles, symbols, sourceHashes }`.
+`LivePerformance { portfolioId, valuationId, asOf, policy, performanceId, sessions, twr, investmentProfit, benchmark, benchmarkReturn, activeReturn, reportId, reportSession, reasons }`. `DemoCacheManifest { version, recordedFrom, recordedTo, entries, symbols, sha256 }`. Provider-outage behavior is the Chapter 18 back-off, exercised by its failure tests.
+
+## Scope decisions (recorded during implementation)
+
+- Live performance reuses the Chapter 15 `PerformanceService` over one live valuation per session; the end-of-day record is an ordinary Chapter 16 report.
+- A real live walkthrough showed the book refusing every Yahoo listing, so a named identity policy (`chapter-25.live-identity.v1`) was added: in live mode the book admits observed equities and ETFs with an established currency and scale; rebalancing still requires evidenced tick, lot and sector. Live mode also enables Yahoo instrument search.
+- Sharpe and information ratio were not added: the linked series is short and daily, and a ratio on a handful of sessions would overstate precision.
 
 ## Tasks and commits
 
-1. `chapter-25 task-1: measure live performance from the nav series to compare with the benchmark`.
-2. `chapter-25 task-2: freeze an end-of-day report automatically to keep a daily record`.
-3. `chapter-25 task-3: record and replay a demo cache to let learners use recorded live data offline`.
-4. `chapter-25 task-4: complete the live desk walkthrough and record part five evidence`.
+1. `chapter-25 task-1: measure live performance and freeze an end-of-day report to keep a daily record` (tasks 1 and 2 of the plan in one commit).
+2. `chapter-25 task-3: record and replay a demo cache to let learners use recorded live data offline`.
+3. `chapter-25 task-4: admit observed live listings to the book under a named identity policy`.
+4. `chapter-25 task-5: complete the live desk walkthrough and record part five evidence`.
 
 ## Acceptance cases
 
-- [ ] NAV 10,000 → 10,100 → 10,050 with no flows links to +0.50%.
-- [ ] A 500 deposit between points is excluded from return.
-- [ ] Replaying a recorded cache produces byte-identical NAV points to the recorded run.
-- [ ] A cache with a changed byte is rejected by hash before replay.
-- [ ] The end-of-day report is created once per session even if the cycle is retried.
+- [x] With no flows, linked TWR equals the NAV ratio (API test: NAV₂ ÷ NAV₁ − 1 across two sessions); 10,000 → 10,100 → 10,050 therefore links to +0.50%.
+- [x] Deposits are excluded from return by the Chapter 15 service that live performance reuses (flow boundaries between linked valuations).
+- [x] Replaying a recorded cache reproduces the recorded NAV values, holdings, cash, status and mark times exactly.
+- [x] A cache with a changed byte is rejected by hash before replay.
+- [x] The end-of-day report is created once per session even if the cycle is retried.
 
 ## Validation execution
 

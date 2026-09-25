@@ -21,4 +21,6 @@ Chapters 1–17 teach every portfolio decision on deterministic synthetic data. 
 - Default tests remain deterministic: live behavior is tested with fake transports and a controllable clock. Live smoke checks are separate, opt-in scripts.
 - Exchange holidays are not supplied by Yahoo. The session calendar models regular weekday hours per exchange timezone and labels holidays and half days as unknown rather than asserting them.
 - Live history is still not point-in-time evidence. Backtests continue to carry a dataset suitability verdict.
+- In live mode the book admits provider-observed equities and ETFs under `chapter-25.live-identity.v1`; rebalancing and paper execution still require evidenced tick, lot and sector data.
+- Recorded provider replies (the demo cache) stay under `.data/` for local replay and are verified against a SHA-256 manifest before use.
 - Specialist assets, streaming vendors and brokerage connectivity remain extensions.

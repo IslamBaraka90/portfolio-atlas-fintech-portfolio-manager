@@ -70,6 +70,9 @@ const LiveRiskDesk = lazy(() =>
 const LiveFillsDesk = lazy(() =>
   import("../features/live/LiveFillsDesk").then((m) => ({ default: m.LiveFillsDesk })),
 );
+const LivePerformanceDesk = lazy(() =>
+  import("../features/live/LivePerformanceDesk").then((m) => ({ default: m.LivePerformanceDesk })),
+);
 const App = lazy(() => import("./App").then((m) => ({ default: m.App })));
 const InstrumentExplorer = lazy(() =>
   import("../features/instruments/InstrumentExplorer").then((m) => ({
@@ -114,6 +117,8 @@ export function WorkspaceRouter() {
   const page =
     hash === "#governance" || (session.mode === "configured_sessions" && !session.actor) ? (
       <GovernanceDesk />
+    ) : hash.split("?")[0] === "#live-performance" ? (
+      <LivePerformanceDesk />
     ) : hash.split("?")[0] === "#live-fills" ? (
       <LiveFillsDesk />
     ) : hash.split("?")[0] === "#live-risk" ? (

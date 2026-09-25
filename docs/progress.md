@@ -6,6 +6,8 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 ## Part V — the live desk (enhancements branch)
 
+Chapters 18–25 are implemented on `enhancements`: live runtime, quotes, bars, FX, marks and NAV, risk and alerts, paper fills and performance with a demo cache, on the TFB Open Core 03.1 design system. Every chapter checkpoint is published to the branch with green CI.
+
 | Step | Deliverable                                                             | State / commit                          |
 | ---- | ----------------------------------------------------------------------- | --------------------------------------- |
 | D    | TFB Open Core 03.1 design system and usability pass across all 17 desks | Complete — 86de807                      |
@@ -24,6 +26,22 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 | 23 | Live risk: final-bar measures, monitor on each live valuation, risk desk | Complete — 77d37ec, c43f5af, see chapter-23 task-4 commit |
 
 | 24 | Paper fills at live quotes: fill model, protection-preserving fills, execution costs, live blotter | Complete — c1a078c, 46ba12c, see chapter-24 task-4 commit |
+
+| 25 | Live performance, end-of-day report, demo cache, live identity policy, performance desk | Complete — b0b2634, 2c0250c, eb2f8bd, see chapter-25 task-5 commit |
+
+## Chapter 25 evidence
+
+Tasks 1–5. `LivePerformanceService` links the last NAV point of each session through the Chapter 15 `PerformanceService` (TWR, investment profit, flow boundaries), compares with the benchmark's final daily closes and freezes one Chapter 16 `End of day` report per completed session. The demo cache (`chapter-25.demo-cache.v1`) records every quote and bar reply with a SHA-256 manifest and replays per symbol on a clock starting at the recording; a changed byte is refused. `chapter-25.live-identity.v1` lets the live book hold provider-observed equities and ETFs with an established currency and scale, and live mode now enables Yahoo instrument search. Routes: `GET /portfolios/:id/live-performance`. The Live performance desk shows TWR, benchmark, active return, the linked sessions, the latest report and the record/replay workflow.
+
+Independent cases: two sessions with no flows give TWR = NAV₂ ÷ NAV₁ − 1; active return = TWR − benchmark price return; a second close cycle reuses the same report; replay reproduces NAV, holdings, cash, status and mark times exactly.
+
+Real live walkthrough (2026-09-25, before the New York open): a portfolio that deposited 10,000 USD and bought 10 AAPL at 200 was valued at the 335.92 close, NAV 11,359.20 = 8,000 + 3,359.20, complete; risk used a full 60-return window; the reported 0.025 portfolio beta was verified by hand (AAPL 60-session beta 0.085, correlation 0.033, weight about 0.30); the monitor refused a close older than one hour. This walkthrough exposed the two gaps fixed in task 4: live mode did not enable Yahoo instrument search, and the book refused every observed listing.
+
+Final Part V gates (2026-09-25, Node 22.22.0): 198 unit/API checks (51 API, 79 adapters, 11 contracts, 57 core), 31 Chromium journeys, strict typecheck, production build, `npm run check`, and a usability audit of all 25 routes at 1440, 1024 and 390 px in light and dark themes with no overflow, sub-14 px text, sub-44 px controls or unlabeled fields.
+
+Clock dependence: the original Chapter 6 valuation journey freezes a 2026-09-15 fixture price with a 10-day age limit and began failing at 2026-09-25 13:30Z on the real clock. It now uses the 30-day maximum, which holds until about mid-October 2026; pinning the browser-test server clock is the durable fix and is tracked separately.
+
+Found during verification: replay originally matched whole request batches and missed rows when the replayed watchlist order differed; quotes now replay symbol by symbol.
 
 ## Chapter 24 evidence
 

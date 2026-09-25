@@ -2,7 +2,7 @@
 
 A **Product Requirements Prompt** is the implementation contract for a chapter: problem, scope, inputs and outputs, backend and React work, meaningful validation, task commits, video walkthrough, and next boundary.
 
-Current stage: all 17 teaching chapters are implemented. The pinned 0.13.2 release supplies D14 construction. See the [progress ledger](../docs/progress.md), learning guides and stacked chapter pull requests for observed evidence.
+Current stage: all 17 teaching chapters and the Part V live desk (Chapters 18–25) are implemented on the `enhancements` branch. The pinned 0.13.2 release supplies D14 construction. See the [progress ledger](../docs/progress.md), learning guides and stacked chapter pull requests for observed evidence.
 
 | Chapter | Build outcome                                               | Plan                                          |
 | ------- | ----------------------------------------------------------- | --------------------------------------------- |
