@@ -15,6 +15,7 @@ import {
   LiveValuationService,
   LiveRiskService,
   LivePaperService,
+  LivePerformanceService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
@@ -483,11 +484,8 @@ export function buildApp(
     new AttributionService(snapshots, performance, clock, ids, commands),
     createHttpContext(clock, sessionId, storage),
   );
-  registerReportRoutes(
-    app,
-    new ReportService(snapshots, service, ledger, clock, ids, commands),
-    createHttpContext(clock, sessionId, storage),
-  );
+  const reports = new ReportService(snapshots, service, ledger, clock, ids, commands);
+  registerReportRoutes(app, reports, createHttpContext(clock, sessionId, storage));
   registerRecoveryRoutes(
     app,
     database,
@@ -602,6 +600,21 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(liveRisk.task());
+  // Chapter 25: Chapter 15 performance over live valuations and a Chapter 16
+  // end-of-day report after each completed session.
+  const livePerformance = new LivePerformanceService(
+    livePolicy,
+    snapshots,
+    database,
+    service,
+    liveValuations,
+    history,
+    liveRisk,
+    performance,
+    reports,
+    (event) => live.publish(event),
+  );
+  live.register(livePerformance.task());
   registerLiveRoutes(
     app,
     live,
@@ -611,6 +624,7 @@ export function buildApp(
     liveValuations,
     liveRisk,
     livePaper,
+    livePerformance,
     createHttpContext(clock, sessionId, storage),
   );
   app.addHook("onClose", async () => live.stop());

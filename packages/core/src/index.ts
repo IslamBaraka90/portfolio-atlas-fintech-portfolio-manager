@@ -77,3 +77,4 @@ export * from "./use-cases/live-risk-service.js";
 export * from "./use-cases/live-paper-service.js";
 export * from "./domain/live/live-risk.js";
 export * from "./domain/live/quote-fill.js";
+export * from "./use-cases/live-performance-service.js";

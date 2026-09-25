@@ -334,12 +334,33 @@ export const liveRiskSchema = z.strictObject({
   tiers: z.record(z.string(), z.string()),
 });
 
+// Chapter 25: live performance reuses the Chapter 15 service over live valuations
+// (one per session date) and compares with the benchmark's final daily closes.
+export const livePerformanceSchema = z.strictObject({
+  id: z.string(),
+  portfolioId: z.string(),
+  valuationId: z.string(),
+  asOf: instantSchema,
+  policy: z.literal("chapter-25.live-performance.v1"),
+  performanceId: z.string().nullable(),
+  sessions: z.array(z.string()),
+  twr: z.number().finite().nullable(),
+  investmentProfit: z.string().nullable(),
+  benchmark: providerSymbolSchema,
+  benchmarkReturn: z.number().finite().nullable(),
+  activeReturn: z.number().finite().nullable(),
+  reportId: z.string().nullable(),
+  reportSession: z.string().nullable(),
+  reasons: z.array(z.string()),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("series"), data: liveSeriesSchema }),
   z.strictObject({ type: z.literal("fx"), data: fxBoardSchema }),
   z.strictObject({ type: z.literal("nav"), data: navPointSchema }),
   z.strictObject({ type: z.literal("risk"), data: liveRiskSchema }),
+  z.strictObject({ type: z.literal("performance"), data: livePerformanceSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);
@@ -367,3 +388,4 @@ export type FxBoard = z.infer<typeof fxBoardSchema>;
 export type FxConversion = z.infer<typeof fxConversionSchema>;
 export type NavPoint = z.infer<typeof navPointSchema>;
 export type LiveRisk = z.infer<typeof liveRiskSchema>;
+export type LivePerformance = z.infer<typeof livePerformanceSchema>;

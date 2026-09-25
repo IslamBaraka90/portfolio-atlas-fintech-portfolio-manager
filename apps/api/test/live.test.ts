@@ -21,7 +21,15 @@ test("demo mode reports its policy and records idempotent manual cycles", async 
   assert.equal(status.policy.cadence, "eod");
   assert.equal(status.scheduler, "stopped");
   assert.equal(status.session.basis, "weekend");
-  assert.deepEqual(status.tasks, ["quotes", "fx", "paper", "valuation", "bars", "risk"]);
+  assert.deepEqual(status.tasks, [
+    "quotes",
+    "fx",
+    "paper",
+    "valuation",
+    "bars",
+    "risk",
+    "performance",
+  ]);
 
   const first = await api.post("/live/cycles", "live-manual-1");
   assert.equal(first.statusCode, 201, first.body);
