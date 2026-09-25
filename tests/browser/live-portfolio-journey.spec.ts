@@ -1,7 +1,10 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 import { demoMandate } from "@portfolio-atlas/testing";
 
-test("live portfolio dashboard values a held position with mark evidence", async ({ page }) => {
+test("live portfolio dashboard values a held position with mark evidence", async ({
+  page,
+  serverNow,
+}) => {
   const api = page.request;
   const post = async (path: string, key: string, data: object) => {
     const r = await api.post("/api/v1" + path, { headers: { "idempotency-key": key }, data });
@@ -36,7 +39,7 @@ test("live portfolio dashboard values a held position with mark evidence", async
     quantity: "10",
     unitPrice: "100",
     fee: "0",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "live-portfolio-buy",
   });
   await post("/live/cycles", "live-portfolio-cycle", {});

@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { seedTrading } from "../helpers/seed-trading.js";
 test("operations desk distinguishes partial custody, preserves a one-share break and records resolution evidence", async ({
   page,
+  serverNow,
 }) => {
   const get = async (path: string) =>
     (await (await page.request.get("/api/v1" + path)).json()).data;
@@ -14,7 +15,7 @@ test("operations desk distinguishes partial custody, preserves a one-share break
     expect(r.status(), await r.text()).toBe(201);
     return (await r.json()).data;
   };
-  const seed = await seedTrading(get, post, "browser-operations", () => new Date().toISOString());
+  const seed = await seedTrading(get, post, "browser-operations", serverNow);
   await page.goto("/#operations");
   await page.getByLabel("UTC business weekdays (0 Sunday to 6 Saturday)").fill("0,1,2,3,4,5,6");
   await page.getByRole("button", { name: "Save calendar", exact: true }).click();
@@ -61,7 +62,7 @@ test("operations desk distinguishes partial custody, preserves a one-share break
   const current = await get("/paper-batches/" + batch.id);
   const statement = {
     portfolioId: seed.portfolio.id,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     sourceRef: "browser-independent-custody",
     source: "synthetic_custodian_statement",
     trades: [

@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { seedTrading } from "../helpers/seed-trading.js";
 test("paper blotter preserves one fill after a lost response and exposes cancel acknowledgment and rejection", async ({
   page,
+  serverNow,
 }) => {
   const get = async (path: string) =>
     (await (await page.request.get("/api/v1" + path)).json()).data;
@@ -14,7 +15,7 @@ test("paper blotter preserves one fill after a lost response and exposes cancel 
     expect(r.status(), await r.text()).toBe(201);
     return (await r.json()).data;
   };
-  const seed = await seedTrading(get, post, "browser-paper", () => new Date().toISOString());
+  const seed = await seedTrading(get, post, "browser-paper", serverNow);
   const p = await post("/rebalances", "browser-paper-plan", seed.input);
   await post("/rebalances/" + p.id + "/approval", "browser-paper-approval", {
     expectedRevision: 1,

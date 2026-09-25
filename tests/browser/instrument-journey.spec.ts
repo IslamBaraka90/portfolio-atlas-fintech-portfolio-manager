@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { demoMandate } from "@portfolio-atlas/testing";
 import { mkdir } from "node:fs/promises";
 test("instrument explorer distinguishes listings, units, eligibility and ticker continuity", async ({

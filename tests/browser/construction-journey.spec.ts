@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("construction desk compares D14 methods, exposes constraint breaches and creates no orders", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const reply = await page.request.post("/api/v1" + path, {
@@ -28,7 +29,7 @@ test("construction desk compares D14 methods, exposes constraint breaches and cr
   const valuation = await post("/valuations", "browser-target-value", {
     portfolioId: portfolio.id,
     checkpoint: 1,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     prices: [],
   });
   const runs: { id: string; revision: number }[] = [],
@@ -58,14 +59,14 @@ test("construction desk compares D14 methods, exposes constraint breaches and cr
     });
     const run = await post("/adjustment-runs", "browser-target-adjust-" + symbol, {
       reviewId: review.id,
-      actionKnowledgeAt: new Date().toISOString(),
+      actionKnowledgeAt: serverNow(),
       targetCurrency: "USD",
     });
     runs.push({ id: run.id, revision: run.revision });
   }
   const risk = await post("/risk-models", "browser-target-risk", {
     adjustmentRuns: runs,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     estimator: "ledoit_wolf",
     expectedReturnAssumption: "scenario",
     annualExpectedReturns: ids.map((instrumentId) => ({ instrumentId, annualReturn: 0.05 })),

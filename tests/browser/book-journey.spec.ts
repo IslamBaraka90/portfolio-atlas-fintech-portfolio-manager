@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("ledger desk explains cash, replay and correction through the real API", async ({ page }) => {
   const lesson = (await (await page.request.get("/api/v1/lesson")).json()).data;

@@ -1,7 +1,10 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 import { seedTrading } from "../helpers/seed-trading.js";
 
-test("live fills desk offers live quotes to accepted orders and shows costs", async ({ page }) => {
+test("live fills desk offers live quotes to accepted orders and shows costs", async ({
+  page,
+  serverNow,
+}) => {
   const get = async (path: string) =>
     (await (await page.request.get("/api/v1" + path)).json()).data;
   const post = async (path: string, key: string, data: object) => {
@@ -12,7 +15,7 @@ test("live fills desk offers live quotes to accepted orders and shows costs", as
     expect(r.ok(), await r.text()).toBe(true);
     return (await r.json()).data;
   };
-  const seed = await seedTrading(get, post, "browser-live-fill", () => new Date().toISOString());
+  const seed = await seedTrading(get, post, "browser-live-fill", serverNow);
   await post("/live/cycles", "browser-live-fill-quotes", {});
   const board = await get("/live/quotes");
   const ask = (symbol: string) =>

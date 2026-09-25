@@ -1,5 +1,11 @@
 import { defineConfig } from "@playwright/test";
 
+// The API clock starts here instead of at the wall clock: a Tuesday during New York trading
+// hours, shortly after the September 2026 synthetic fixtures, so price-age, cutoff and
+// session checks give the same answers on every run. Journeys read time from the server
+// (tests/helpers/clock.ts), never from the runner.
+const clockStart = "2026-09-22T15:00:00Z";
+
 export default defineConfig({
   testDir: "./tests/browser",
   fullyParallel: false,
@@ -22,6 +28,7 @@ export default defineConfig({
         WEB_PORT: "5174",
         WEB_ORIGIN: "http://127.0.0.1:5174",
         DATA_MODE: "synthetic",
+        ATLAS_CLOCK_START: clockStart,
         DATABASE_PATH: ":memory:",
         AUTH_CONFIG_PATH: "",
         AUTH_SECURE_COOKIE: "false",

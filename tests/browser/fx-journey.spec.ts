@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 
 test("live FX desk derives the needed pair and converts with board evidence", async ({ page }) => {
   await page.goto("/#fx");

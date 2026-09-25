@@ -34,17 +34,36 @@ try {
 // a clock that starts at the recording's first observation and runs in real time.
 const recordPath = process.env.LIVE_CACHE_RECORD;
 const replayPath = process.env.DEMO_CACHE_PATH;
+// Test-only opt-in: ATLAS_CLOCK_START runs the server clock in real time from a fixed
+// instant, so journeys over dated synthetic fixtures stay fresh on any calendar day.
+const clockStart = process.env.ATLAS_CLOCK_START;
 if (recordPath && replayPath) {
   console.error("Set LIVE_CACHE_RECORD or DEMO_CACHE_PATH, not both.");
   process.exit(1);
 }
+if (clockStart && replayPath) {
+  console.error("Set ATLAS_CLOCK_START or DEMO_CACHE_PATH, not both; replay owns its clock.");
+  process.exit(1);
+}
+const runningFrom = (start: number) => {
+  const began = Date.now();
+  return { now: () => new Date(start + (Date.now() - began)).toISOString() };
+};
 let clock: { now(): string } | undefined;
+if (clockStart) {
+  const start = Date.parse(clockStart);
+  if (!/^\d{4}-\d{2}-\d{2}T.*(Z|[+-]\d{2}:\d{2})$/.test(clockStart) || Number.isNaN(start)) {
+    console.error(
+      "ATLAS_CLOCK_START must be an ISO-8601 instant with an offset, such as 2026-09-22T15:00:00Z.",
+    );
+    process.exit(1);
+  }
+  clock = runningFrom(start);
+}
 if (replayPath) {
   try {
     const { manifest } = loadDemoCache(replayPath);
-    const start = Date.parse(manifest.recordedFrom ?? new Date().toISOString());
-    const began = Date.now();
-    clock = { now: () => new Date(start + (Date.now() - began)).toISOString() };
+    clock = runningFrom(Date.parse(manifest.recordedFrom ?? new Date().toISOString()));
   } catch (error) {
     console.error(error instanceof DemoCacheError ? error.message : String(error));
     process.exit(1);

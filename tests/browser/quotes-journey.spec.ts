@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 
 test("live quote board records demo quotes, an unavailable symbol and an append-only tape", async ({
   page,

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 
 test("live runtime desk shows demo policy, session evidence and a recorded manual cycle", async ({
   page,

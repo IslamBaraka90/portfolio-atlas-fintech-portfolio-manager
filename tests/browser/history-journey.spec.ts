@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 
 test("live history desk records demo series with finality evidence and a candle view", async ({
   page,

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("candle desk preserves rejected rows, explains gaps and exposes immutable evidence", async ({
   page,

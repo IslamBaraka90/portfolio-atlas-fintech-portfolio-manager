@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { demoMandate } from "@portfolio-atlas/testing";
 test("performance desk removes a cash deposit from return and reconciles the authored sector waterfall", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const r = await page.request.post("/api/v1" + path, {
@@ -22,13 +23,13 @@ test("performance desk removes a cash deposit from return and reconciles the aut
     kind: "deposit",
     currency: "USD",
     amount: "10095",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-perf-opening",
   });
   const a = await post("/valuations", "first", {
     portfolioId: p.id,
     checkpoint: book.book.checkpoint,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     prices: [],
   });
   book = await post("/ledger/events", "flow", {
@@ -36,13 +37,13 @@ test("performance desk removes a cash deposit from return and reconciles the aut
     kind: "deposit",
     currency: "USD",
     amount: "500",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-perf-flow",
   });
   const b = await post("/valuations", "second", {
     portfolioId: p.id,
     checkpoint: book.book.checkpoint,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     prices: [],
   });
   await page.goto("/#performance");

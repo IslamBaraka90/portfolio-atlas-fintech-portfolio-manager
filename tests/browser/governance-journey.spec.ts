@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { createHash, randomBytes } from "node:crypto";
 import { mkdtempSync, rmSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
@@ -7,12 +7,14 @@ import { buildApp } from "../../apps/api/src/app.js";
 import { demoMandate } from "@portfolio-atlas/testing";
 test("governance desk enforces two actors, records approval and restores a real durable checkpoint", async ({
   page,
+  serverNow,
   request,
 }) => {
   const directory = mkdtempSync(join(tmpdir(), "portfolio-atlas-browser-governance-"));
   const authorToken = randomBytes(32).toString("base64url"),
     reviewerToken = randomBytes(32).toString("base64url");
   const app = buildApp({
+    clock: { now: serverNow },
     databasePath: join(directory, "book.sqlite"),
     allowedOrigin: "http://127.0.0.1:5174",
     accessConfig: {
@@ -65,13 +67,13 @@ test("governance desk enforces two actors, records approval and restores a real 
       kind: "deposit",
       amount: "10000",
       currency: "USD",
-      occurredAt: new Date().toISOString(),
+      occurredAt: serverNow(),
       sourceRef: "governed-opening",
     });
     const value = await post("/valuations", {
       portfolioId: portfolio.id,
       checkpoint: book.book.checkpoint,
-      asOf: new Date().toISOString(),
+      asOf: serverNow(),
       prices: [],
       overrides: [],
     });
@@ -79,7 +81,7 @@ test("governance desk enforces two actors, records approval and restores a real 
       portfolioId: portfolio.id,
       title: "Governed review report",
       asOf: value.request.asOf,
-      dataCutoff: new Date().toISOString(),
+      dataCutoff: serverNow(),
       valuation: { id: value.id, revision: 1 },
     });
     // Route the real browser through a dedicated real HTTP server; other chapter fixtures stay isolated.

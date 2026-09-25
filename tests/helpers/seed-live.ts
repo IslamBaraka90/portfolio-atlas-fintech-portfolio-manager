@@ -3,7 +3,12 @@ import { demoMandate } from "@portfolio-atlas/testing";
 
 // Seeds a funded demo portfolio holding 10 AURA through the real API, then runs one
 // live cycle so quotes, FX, bars, valuation and risk exist for the live desks.
-export async function seedLivePortfolio(api: APIRequestContext, prefix: string, name: string) {
+export async function seedLivePortfolio(
+  api: APIRequestContext,
+  now: () => string,
+  prefix: string,
+  name: string,
+) {
   const post = async (path: string, key: string, data: object) => {
     const r = await api.post("/api/v1" + path, {
       headers: { "idempotency-key": prefix + "-" + key },
@@ -37,7 +42,7 @@ export async function seedLivePortfolio(api: APIRequestContext, prefix: string, 
     quantity: "10",
     unitPrice: "100",
     fee: "0",
-    occurredAt: new Date().toISOString(),
+    occurredAt: now(),
     sourceRef: prefix + "-buy",
   });
   await post("/live/cycles", "cycle", {});

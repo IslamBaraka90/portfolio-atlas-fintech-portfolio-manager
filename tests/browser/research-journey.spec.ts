@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("research desk shows timestamps, statement revisions and historical evidence failure", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const reply = await page.request.post("/api/v1" + path, {
@@ -37,7 +38,7 @@ test("research desk shows timestamps, statement revisions and historical evidenc
       name: new RegExp("AURA · clean · revision " + dataset.revision + "$"),
     })
     .check();
-  await page.getByLabel("Research cutoff (UTC)").fill(new Date().toISOString());
+  await page.getByLabel("Research cutoff (UTC)").fill(serverNow());
   await page.getByRole("button", { name: "Calculate research observations" }).click();
   const result = page.getByTestId("research-result");
   await expect(result).toContainText("12.50%");

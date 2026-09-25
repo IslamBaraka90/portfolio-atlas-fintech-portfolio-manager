@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("causal validation desk exposes costs, next-open clocks, delisting and unavailable evidence", async ({
   page,

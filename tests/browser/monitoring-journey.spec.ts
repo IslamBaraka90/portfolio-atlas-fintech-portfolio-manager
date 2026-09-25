@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { seedTrading } from "../helpers/seed-trading.js";
 test("risk desk shows independent shock arithmetic, deduplicated alerts and stale-resolution refusal", async ({
   page,
+  serverNow,
 }) => {
   const get = async (path: string) =>
     (await (await page.request.get("/api/v1" + path)).json()).data;
@@ -14,7 +15,7 @@ test("risk desk shows independent shock arithmetic, deduplicated alerts and stal
     expect(r.status(), await r.text()).toBe(201);
     return (await r.json()).data;
   };
-  const seed = await seedTrading(get, post, "browser-monitor", () => new Date().toISOString());
+  const seed = await seedTrading(get, post, "browser-monitor", serverNow);
   const book = await post("/ledger/events", "browser-monitor-buy", {
     portfolioId: seed.portfolio.id,
     kind: "buy",
@@ -24,15 +25,15 @@ test("risk desk shows independent shock arithmetic, deduplicated alerts and stal
     quantity: "10",
     unitPrice: "100",
     fee: "0",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-monitor-buy",
   });
   const v = await post("/valuations", "browser-monitor-value", {
     portfolioId: seed.portfolio.id,
     checkpoint: book.book.checkpoint,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     prices: [],
-    overrides: [{ ...seed.input.newPrices[0], quotedAt: new Date().toISOString() }],
+    overrides: [{ ...seed.input.newPrices[0], quotedAt: serverNow() }],
   });
   await page.goto("/#monitoring");
   await page
@@ -73,7 +74,7 @@ test("risk desk shows independent shock arithmetic, deduplicated alerts and stal
     kind: "deposit",
     currency: "USD",
     amount: "1",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-monitor-new-cash",
   });
   await page.getByRole("button", { name: "Run risk monitor", exact: true }).click();

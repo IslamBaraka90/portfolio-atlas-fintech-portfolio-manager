@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { demoMandate } from "@portfolio-atlas/testing";
 test("reporting desk approves explicit gaps and exports the same frozen revision with a printable view", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const r = await page.request.post("/api/v1" + path, {
@@ -19,13 +20,13 @@ test("reporting desk approves explicit gaps and exports the same frozen revision
     kind: "deposit",
     currency: "USD",
     amount: "10000",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-report-opening",
   });
   const v = await post("/valuations", "value", {
     portfolioId: p.id,
     checkpoint: book.book.checkpoint,
-    asOf: new Date().toISOString(),
+    asOf: serverNow(),
     prices: [],
   });
   await page.goto("/#reports");
@@ -63,7 +64,7 @@ test("reporting desk approves explicit gaps and exports the same frozen revision
     kind: "deposit",
     currency: "USD",
     amount: "500",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-report-later",
   });
   await expect(page.getByTestId("report-nav")).toContainText("10000.00 USD");

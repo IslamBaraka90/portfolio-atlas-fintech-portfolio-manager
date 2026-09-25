@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("valuation desk freezes NAV, exposes stale evidence and rejects benchmark basis mismatch", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const reply = await page.request.post("/api/v1" + path, {
@@ -56,7 +57,7 @@ test("valuation desk freezes NAV, exposes stale evidence and rejects benchmark b
   });
   const adjustment = await post("/adjustment-runs", "browser-value-adjustment", {
     reviewId: review.id,
-    actionKnowledgeAt: new Date().toISOString(),
+    actionKnowledgeAt: serverNow(),
     targetCurrency: "EUR",
   });
   await page.goto("/#valuation");
@@ -67,9 +68,6 @@ test("valuation desk freezes NAV, exposes stale evidence and rejects benchmark b
   await page
     .getByLabel("Price row for " + instrument.instrumentId)
     .selectOption(dataset.rows.find((r: { close: number }) => r.close === 110).rowId);
-  // Fixture prices are dated September 2026 while the browser server runs on the real
-  // clock; the widest allowed age (30 days) keeps the fixture row fresh for longer.
-  await page.getByLabel("Maximum price age (calendar days)").fill("30");
   await page.getByRole("button", { name: "Freeze valuation", exact: true }).click();
   await expect(page.getByTestId("nav-value")).toHaveText("10095.00");
   await expect(page.getByText("USD net contributions:", { exact: false })).toContainText(
@@ -79,7 +77,7 @@ test("valuation desk freezes NAV, exposes stale evidence and rejects benchmark b
   await page.getByRole("button", { name: "Freeze valuation", exact: true }).click();
   await expect(page.getByTestId("nav-value")).toHaveText("Incomplete");
   await expect(page.getByRole("table").filter({ hasText: "Price is stale" })).toBeVisible();
-  await page.getByLabel("Maximum price age (calendar days)").fill("30");
+  await page.getByLabel("Maximum price age (calendar days)").fill("10");
   await post("/ledger/events", "browser-value-extra-capital", {
     ...base,
     kind: "deposit",

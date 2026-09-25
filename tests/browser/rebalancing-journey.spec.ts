@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 import { seedTrading } from "../helpers/seed-trading.js";
 test("rebalance review shows post-cost quantities, no-trade trigger, approval and stale-book rejection", async ({
   page,
+  serverNow,
 }) => {
   const get = async (path: string) =>
     (await (await page.request.get("/api/v1" + path)).json()).data;
@@ -14,7 +15,7 @@ test("rebalance review shows post-cost quantities, no-trade trigger, approval an
     expect(r.status(), await r.text()).toBe(201);
     return (await r.json()).data;
   };
-  const seed = await seedTrading(get, post, "browser-rebalance", () => new Date().toISOString());
+  const seed = await seedTrading(get, post, "browser-rebalance", serverNow);
   await page.goto("/#rebalancing");
   await page
     .getByRole("combobox", { name: "Rebalance target", exact: true })
@@ -57,7 +58,7 @@ test("rebalance review shows post-cost quantities, no-trade trigger, approval an
     kind: "deposit",
     currency: "USD",
     amount: "1",
-    occurredAt: new Date().toISOString(),
+    occurredAt: serverNow(),
     sourceRef: "browser-rebalance-change",
   });
   await page.getByRole("button", { name: "Approve paper-trade proposal", exact: true }).click();

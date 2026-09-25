@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/clock.js";
 import { mkdir } from "node:fs/promises";
 test("risk explorer shows perfect dependence and compares shrinkage on the exact frozen sample", async ({
   page,
+  serverNow,
 }) => {
   const post = async (path: string, key: string, data: object) => {
     const reply = await page.request.post("/api/v1" + path, {
@@ -36,7 +37,7 @@ test("risk explorer shows perfect dependence and compares shrinkage on the exact
     });
     const run = await post("/adjustment-runs", "browser-risk-adjust-" + symbol, {
       reviewId: review.id,
-      actionKnowledgeAt: new Date().toISOString(),
+      actionKnowledgeAt: serverNow(),
       targetCurrency: "USD",
     });
     selected.push({ symbol, revision: run.revision });

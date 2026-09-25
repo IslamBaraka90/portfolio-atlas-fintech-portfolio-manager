@@ -1,8 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/clock.js";
 import { seedLivePortfolio } from "../helpers/seed-live.js";
 
-test("live risk desk shows measures, the monitor outcome and their evidence", async ({ page }) => {
-  await seedLivePortfolio(page.request, "live-risk-journey", "Live risk lesson");
+test("live risk desk shows measures, the monitor outcome and their evidence", async ({
+  page,
+  serverNow,
+}) => {
+  await seedLivePortfolio(page.request, serverNow, "live-risk-journey", "Live risk lesson");
   await page.goto("/#live-risk");
   await expect(page.getByRole("heading", { name: /Has the live portfolio drifted/ })).toBeVisible();
   await page
