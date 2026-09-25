@@ -7,6 +7,12 @@ import {
   YahooBarProvider,
   FintechLiveBarQuality,
   FintechLiveRiskAnalytics,
+  DemoCacheRecorder,
+  RecordingQuoteProvider,
+  RecordingBarProvider,
+  ReplayQuoteProvider,
+  ReplayBarProvider,
+  loadDemoCache,
 } from "@portfolio-atlas/adapters";
 import {
   LiveRefreshService,
@@ -137,6 +143,8 @@ export function buildApp(
     liveAutostart?: boolean;
     liveQuoteProvider?: QuoteProvider;
     liveBarProvider?: BarProvider;
+    // Chapter 25: record provider replies to a demo cache, or replay one offline.
+    demoCache?: { mode: "record" | "replay"; path: string };
     timer?: Timer;
   } = {},
 ) {
@@ -516,11 +524,25 @@ export function buildApp(
     options.timer ?? systemTimer,
   );
   // Chapter 19: the quote task replaces the Chapter 18 provider probe.
-  const quoteProvider =
+  let quoteProvider: QuoteProvider =
     options.liveQuoteProvider ??
     (livePolicy.mode === "live"
       ? new YahooQuoteProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
       : new SyntheticQuoteProvider(syntheticInstruments, clock));
+  let barProvider: BarProvider =
+    options.liveBarProvider ??
+    (livePolicy.mode === "live"
+      ? new YahooBarProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
+      : new SyntheticBarProvider(syntheticInstruments, clock));
+  if (options.demoCache?.mode === "record") {
+    const recorder = new DemoCacheRecorder(options.demoCache.path);
+    quoteProvider = new RecordingQuoteProvider(quoteProvider, recorder);
+    barProvider = new RecordingBarProvider(barProvider, recorder);
+  } else if (options.demoCache?.mode === "replay") {
+    const cache = loadDemoCache(options.demoCache.path);
+    quoteProvider = new ReplayQuoteProvider(cache.entries, clock, cache.manifest);
+    barProvider = new ReplayBarProvider(cache.entries, clock);
+  }
   const quotes = new QuoteService(
     livePolicy,
     quoteProvider,
@@ -573,10 +595,7 @@ export function buildApp(
   // Chapter 20: incremental live bars for every tracked symbol.
   const history = new LiveHistoryService(
     livePolicy,
-    options.liveBarProvider ??
-      (livePolicy.mode === "live"
-        ? new YahooBarProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
-        : new SyntheticBarProvider(syntheticInstruments, clock)),
+    barProvider,
     new FintechLiveBarQuality(),
     quotes,
     rawArchive,

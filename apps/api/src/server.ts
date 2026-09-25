@@ -2,6 +2,7 @@ import { accessConfigSchema } from "@portfolio-atlas/contracts";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { LiveConfigError, parseLiveRuntime } from "@portfolio-atlas/core";
+import { DemoCacheError, loadDemoCache } from "@portfolio-atlas/adapters";
 import { buildApp } from "./app.js";
 
 const environmentFile = fileURLToPath(new URL("../../../.env", import.meta.url));
@@ -29,8 +30,35 @@ try {
   throw error;
 }
 
+// Chapter 25 demo cache: record live replies, or replay a recorded session offline on
+// a clock that starts at the recording's first observation and runs in real time.
+const recordPath = process.env.LIVE_CACHE_RECORD;
+const replayPath = process.env.DEMO_CACHE_PATH;
+if (recordPath && replayPath) {
+  console.error("Set LIVE_CACHE_RECORD or DEMO_CACHE_PATH, not both.");
+  process.exit(1);
+}
+let clock: { now(): string } | undefined;
+if (replayPath) {
+  try {
+    const { manifest } = loadDemoCache(replayPath);
+    const start = Date.parse(manifest.recordedFrom ?? new Date().toISOString());
+    const began = Date.now();
+    clock = { now: () => new Date(start + (Date.now() - began)).toISOString() };
+  } catch (error) {
+    console.error(error instanceof DemoCacheError ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
 const app = buildApp({
   live,
+  ...(clock ? { clock } : {}),
+  ...(recordPath
+    ? { demoCache: { mode: "record" as const, path: recordPath } }
+    : replayPath
+      ? { demoCache: { mode: "replay" as const, path: replayPath } }
+      : {}),
   liveAutostart: true,
   logger: true,
   databasePath:
