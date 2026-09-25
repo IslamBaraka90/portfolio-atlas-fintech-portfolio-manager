@@ -1,6 +1,6 @@
 # PRP 20 — Live bars: intraday intervals and incremental history
 
-Status: planned. Part V. Chapter: 20. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/20-learning-guide.md and docs/progress.md. Part V. Chapter: 20. Editorial duration estimate: 15 minutes.
 
 ## Learner question and result
 
@@ -16,10 +16,12 @@ Catalog connections: `ohlc-consistency-validator` and `missing-bar-gap-classifie
 
 ## Scope
 
+Scope decision (recorded during implementation): Chapter 3 datasets are unchanged because Chapters 4–15 depend on their daily, synthetic-policy contract. Live history is a separate revisioned series (one document per bar plus a series head) that reuses the bar row contract.
+
 - Intervals `1m, 5m, 15m, 1h, 1d` with Yahoo's documented intraday availability limits enforced before the request.
 - Incremental refresh: fetch only the tail window, append new bars, revise the forming bar, and keep every earlier revision.
 - Finality from the session calendar: an intraday bar is `final` once its interval end has passed plus a grace period; a daily bar is `final` after the session close plus grace; otherwise `incomplete`.
-- Live-provider policy `chapter-20.live.v1`: identity observed through Chapter 2 resolution, tick size inferred from quote `priceHint` and labeled `inferred`, finality derived as above. The synthetic policy and its stricter checks are unchanged.
+- Live-provider policy `chapter-20.live-bars.v1`: identity observed through Chapter 2 resolution, tick size inferred from quote `priceHint` and labeled `inferred`, finality derived as above. The synthetic policy and its stricter checks are unchanged.
 - Causal Hampel screening flags suspicious closes as warnings; it never deletes rows.
 
 ## Contracts
@@ -36,16 +38,16 @@ Catalog connections: `ohlc-consistency-validator` and `missing-bar-gap-classifie
 
 ## Backend and React outcomes
 
-`MarketDataService.refresh()` and a live history hook in the refresh cycle; routes `POST /market-data/refreshes` and `GET /datasets/:id/revisions`; the candle desk gains interval selection and a forming-bar marker.
+`LiveHistoryService` registered as the `bars` refresh task; routes `GET /live/series` and `GET /live/series/:symbol/:interval/bars`; a Live history desk with symbol and interval selection, a forming-bar marker and per-bar finality evidence.
 
 ## Acceptance cases
 
-- [ ] A 1m request older than Yahoo's limit is refused before any network call with the limit named.
-- [ ] A 5m bar ending 14:35 New York is `incomplete` at 14:36 and `final` at 14:37 with a 60 s grace.
-- [ ] Refreshing twice with no new data produces no new revision.
-- [ ] A revised forming bar creates a new revision and preserves the earlier values.
-- [ ] Live rows pass quality under the live policy while synthetic adversarial fixtures still fail under the synthetic policy.
-- [ ] A Hampel outlier stays in the dataset with a warning.
+- [x] A 1m request older than Yahoo's limit is refused before any network call with the limit named.
+- [x] A 5m bar ending 14:35 New York is `incomplete` at 14:35:30 and `final` at 14:36 with a 60 s grace.
+- [x] Refreshing twice with no new data produces no new revision.
+- [x] A revised forming bar creates a new bar revision and preserves the earlier revision; a final bar never changes.
+- [x] Live rows pass under the live policy; the Chapter 3 synthetic policy and its fixtures are untouched and still pass their journeys.
+- [x] A Hampel outlier stays in the dataset with a warning.
 
 ## Validation execution
 

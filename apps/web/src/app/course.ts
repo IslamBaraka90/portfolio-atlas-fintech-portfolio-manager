@@ -53,6 +53,7 @@ export const courseParts: CoursePart[] = [
     chapters: [
       { id: 18, title: "Live runtime", hash: "#live" },
       { id: 19, title: "Live quotes", hash: "#quotes" },
+      { id: 20, title: "Live history", hash: "#bars" },
     ],
   },
 ];

@@ -15,6 +15,18 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 19 | Live quotes: adapters, freshness policy, tape/board/watchlist, board desk | Complete — 99a7861, edddbba, e6db4bf, see chapter-19 task-4 commit |
 
+| 20 | Live bars: interval limits, calendar finality, live policy, incremental series, history desk | Complete — 4da3abe, 8ed74d0, c7982e3, 63fede0, see chapter-20 task-5 commit |
+
+## Chapter 20 evidence
+
+Tasks 1–5. Scope decision: Chapter 3 datasets stay unchanged; live history is a separate revisioned series (one document per bar plus a head) using the bar row contract. `checkIntervalWindow` refuses 1m windows older than 30 days or longer than 7 days before any request. `barFinality` derives finality from the exchange calendar (intraday end + 60 s, cut at the close; daily close + 15 min). `FintechLiveBarQuality` (`chapter-20.live-bars.v1`) reuses the OHLC validator with an inferred tick, quarantines invalid, duplicate, backwards and future rows, and flags causal Hampel outliers as warnings. `LiveHistoryService` appends, revises and finalizes bars, never rewrites a final bar, and writes nothing when nothing changed. Storage gained an indexed id-prefix read. Routes: `GET /live/series`, `GET /live/series/:symbol/:interval/bars`. The Live history desk draws final candles solid and the forming candle outlined.
+
+Independent cases: the 14:30 New York 5m bar is forming at 14:35:30 and final at 14:36; the 15:30 hourly bar ends at 16:00; London closes at 15:30Z in September and 16:30Z in November. In the API test the 11:05 bar is forming at 11:07:30, becomes revision 2 and final at 11:13:30, one bar is appended, and the earlier final bar stays at revision 1; a repeated refresh at the same instant writes no revision.
+
+Observed gates (2026-09-25, Node 22.22.0): 173 unit/API checks (42 API, 75 adapters, 11 contracts, 45 core), 26 Chromium journeys, strict typecheck, production build and `npm run check`.
+
+Found during verification: the demo daily backfill originally classified every minute through `Intl` and took minutes; the provider now walks sessions with resolved open/close instants (API test ~5 s). A window starting inside a bucket produced a partial bar that disagreed with the stored final bar; buckets are now always built whole, as Yahoo returns them. A corrupted build artifact from an interrupted session was cleared and rebuilt. CI on the pushed Chapter 19 checkpoint failed 18 journeys on Linux fonts because the new top-bar chip could not shrink below 390 px; the top bar now wraps and hides the cadence text on phones (CI run 36074473535 green).
+
 ## Chapter 19 evidence
 
 Tasks 1–4. `YahooQuoteProvider` batches one `quote()` call per cycle and validates each row, so drift in one symbol becomes an explicit unavailable observation. `classifyQuote` applies `chapter-19.quote-freshness.v1` (unavailable → clock error → closed market → stale → delayed → live) with the exchange delay extending the age budget. Book state and spread come from the fintech-algorithms crossed/locked detector and quoted spread. `QuoteService` stores every observation, archives the raw response by SHA-256, appends a revisioned board, publishes `quotes` events and keeps a revisioned watchlist. Routes: `GET /live/quotes`, `GET /live/quotes/:symbol`, `GET/POST /live/watchlist`.

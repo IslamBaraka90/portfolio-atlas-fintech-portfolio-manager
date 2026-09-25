@@ -55,6 +55,9 @@ const LiveRuntimeDesk = lazy(() =>
 const QuoteBoardDesk = lazy(() =>
   import("../features/live/QuoteBoardDesk").then((m) => ({ default: m.QuoteBoardDesk })),
 );
+const LiveHistoryDesk = lazy(() =>
+  import("../features/live/LiveHistoryDesk").then((m) => ({ default: m.LiveHistoryDesk })),
+);
 const App = lazy(() => import("./App").then((m) => ({ default: m.App })));
 const InstrumentExplorer = lazy(() =>
   import("../features/instruments/InstrumentExplorer").then((m) => ({
@@ -99,6 +102,8 @@ export function WorkspaceRouter() {
   const page =
     hash === "#governance" || (session.mode === "configured_sessions" && !session.actor) ? (
       <GovernanceDesk />
+    ) : hash.split("?")[0] === "#bars" ? (
+      <LiveHistoryDesk />
     ) : hash.split("?")[0] === "#quotes" ? (
       <QuoteBoardDesk />
     ) : hash.split("?")[0] === "#live" ? (

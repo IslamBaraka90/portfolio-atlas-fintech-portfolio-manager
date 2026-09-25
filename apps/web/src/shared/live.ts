@@ -1,8 +1,10 @@
 import { useEffect, useSyncExternalStore } from "react";
 import {
+  liveSeriesSchema,
   liveStatusSchema,
   quoteBoardSchema,
   refreshCycleSchema,
+  type LiveSeries,
   type LiveStatus,
   type QuoteBoard,
   type RefreshCycle,
@@ -16,18 +18,21 @@ interface LiveSnapshot {
   status: LiveStatus | null;
   cycles: RefreshCycle[];
   board: QuoteBoard | null;
+  // Latest revision seen per series id, so desks refetch only what changed.
+  seriesRevisions: Record<string, number>;
   connection: Connection;
 }
 let status: LiveStatus | null = null;
 let cycles: RefreshCycle[] = [];
 let board: QuoteBoard | null = null;
+let seriesRevisions: Record<string, number> = {};
 let connection = "connecting" as Connection;
 let source: EventSource | null = null;
 let users = 0;
 const listeners = new Set<() => void>();
-let snapshot: LiveSnapshot = { status, cycles, board, connection };
+let snapshot: LiveSnapshot = { status, cycles, board, seriesRevisions, connection };
 function publish() {
-  snapshot = { status, cycles, board, connection };
+  snapshot = { status, cycles, board, seriesRevisions, connection };
   listeners.forEach((listener) => listener());
 }
 
@@ -73,6 +78,13 @@ function connect() {
     const parsed = quoteBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
     if (parsed.success && (!board || parsed.data.revision >= board.revision)) {
       board = parsed.data;
+      publish();
+    }
+  });
+  source.addEventListener("series", (event) => {
+    const parsed = liveSeriesSchema.safeParse(JSON.parse((event as MessageEvent).data));
+    if (parsed.success) {
+      seriesRevisions = { ...seriesRevisions, [parsed.data.id]: parsed.data.revision };
       publish();
     }
   });

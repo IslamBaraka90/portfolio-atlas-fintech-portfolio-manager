@@ -234,6 +234,7 @@ export class LiveHistoryService {
         ...values,
         finality: finality.finality,
         finalAt: finality.finalAt,
+        finalityEvidence: finality.evidence,
         accepted: verdict.accepted,
         findings,
         firstObservedAt: previous?.firstObservedAt ?? reply.observedAt,

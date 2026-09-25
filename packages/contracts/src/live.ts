@@ -188,6 +188,7 @@ export const liveBarSchema = z.strictObject({
   volume: price,
   finality: z.enum(["final", "incomplete"]),
   finalAt: instantSchema,
+  finalityEvidence: z.string(),
   accepted: z.boolean(),
   findings: z.array(findingSchema),
   firstObservedAt: instantSchema,
