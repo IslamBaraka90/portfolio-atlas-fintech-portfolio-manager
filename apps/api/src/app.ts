@@ -11,6 +11,7 @@ import {
   LiveRefreshService,
   LiveHistoryService,
   LiveFxService,
+  LiveValuationService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
@@ -551,6 +552,22 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(fx.task());
+  // Chapter 22: value every portfolio from live marks and the FX board.
+  const liveValuations = new LiveValuationService(
+    livePolicy,
+    snapshots,
+    database,
+    ledger,
+    service,
+    instruments,
+    quotes,
+    fx,
+    clock,
+    ids,
+    commands,
+    (event) => live.publish(event),
+  );
+  live.register(liveValuations.task());
   // Chapter 20: incremental live bars for every tracked symbol.
   const history = new LiveHistoryService(
     livePolicy,
@@ -567,7 +584,15 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(history.task());
-  registerLiveRoutes(app, live, quotes, history, fx, createHttpContext(clock, sessionId, storage));
+  registerLiveRoutes(
+    app,
+    live,
+    quotes,
+    history,
+    fx,
+    liveValuations,
+    createHttpContext(clock, sessionId, storage),
+  );
   app.addHook("onClose", async () => live.stop());
   if (options.liveAutostart) app.addHook("onReady", async () => live.start());
   return app;

@@ -47,6 +47,7 @@ const analystRoutes = new Set([
   "/performance",
   "/attribution",
   "/reports",
+  "/portfolios/:id/live-valuations",
 ]);
 const operatorRoutes = new Set([
   "/portfolios",

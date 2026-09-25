@@ -11,6 +11,7 @@ import {
 import type {
   LiveFxService,
   LiveHistoryService,
+  LiveValuationService,
   LiveRefreshService,
   QuoteService,
 } from "@portfolio-atlas/core";
@@ -22,6 +23,7 @@ export function registerLiveRoutes(
   quotes: QuoteService,
   history: LiveHistoryService,
   fx: LiveFxService,
+  valuations: LiveValuationService,
   http: HttpContext,
 ) {
   const mode = service.policy.mode === "live" ? ("yahoo" as const) : ("synthetic" as const);
@@ -81,6 +83,27 @@ export function registerLiveRoutes(
     const q = convertQuery.parse(r.query);
     return http.response(fx.convert(q.amount, q.from, q.to), r, mode);
   });
+
+  const portfolioParams = z.object({ id: z.string().min(1) });
+  app.get("/api/v1/portfolios/:id/live-nav", async (r) => {
+    const { id } = portfolioParams.parse(r.params);
+    return http.response(
+      { points: valuations.navSeries(id), latest: valuations.latest(id) },
+      r,
+      mode,
+    );
+  });
+  app.post("/api/v1/portfolios/:id/live-valuations", async (r, reply) =>
+    reply
+      .code(201)
+      .send(
+        http.response(
+          valuations.valueNow(portfolioParams.parse(r.params).id, http.command(r)),
+          r,
+          mode,
+        ),
+      ),
+  );
 
   // Server-sent events: the browser never polls Yahoo; it hears completed cycles.
   // Open streams are ended before the server closes so shutdown is not blocked.

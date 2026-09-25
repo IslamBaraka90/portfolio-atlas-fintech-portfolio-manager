@@ -269,10 +269,29 @@ export const fxConversionSchema = z.strictObject({
   reasons: z.array(z.string()),
 });
 
+// Chapter 22: one NAV point per distinct live valuation. The valuation itself is an
+// ordinary valuation snapshot, so monitoring, performance and reports can use it.
+export const navPointSchema = z.strictObject({
+  portfolioId: z.string(),
+  valuationId: z.string(),
+  cycleId: z.string().nullable(),
+  asOf: instantSchema,
+  checkpoint: z.number().int().nonnegative(),
+  baseCurrency: currencySchema,
+  nav: z.string().nullable(),
+  holdings: z.string().nullable(),
+  cash: z.string().nullable(),
+  status: z.enum(["complete", "incomplete"]),
+  valuedHoldings: z.number().int().nonnegative(),
+  totalHoldings: z.number().int().nonnegative(),
+  fingerprint: z.string(),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("series"), data: liveSeriesSchema }),
   z.strictObject({ type: z.literal("fx"), data: fxBoardSchema }),
+  z.strictObject({ type: z.literal("nav"), data: navPointSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);
@@ -298,3 +317,4 @@ export type LiveSeries = z.infer<typeof liveSeriesSchema>;
 export type LiveFxRate = z.infer<typeof liveFxRateSchema>;
 export type FxBoard = z.infer<typeof fxBoardSchema>;
 export type FxConversion = z.infer<typeof fxConversionSchema>;
+export type NavPoint = z.infer<typeof navPointSchema>;
