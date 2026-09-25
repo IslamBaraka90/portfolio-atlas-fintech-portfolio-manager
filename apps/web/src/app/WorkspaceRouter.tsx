@@ -58,6 +58,9 @@ const QuoteBoardDesk = lazy(() =>
 const LiveHistoryDesk = lazy(() =>
   import("../features/live/LiveHistoryDesk").then((m) => ({ default: m.LiveHistoryDesk })),
 );
+const LiveFxDesk = lazy(() =>
+  import("../features/live/LiveFxDesk").then((m) => ({ default: m.LiveFxDesk })),
+);
 const App = lazy(() => import("./App").then((m) => ({ default: m.App })));
 const InstrumentExplorer = lazy(() =>
   import("../features/instruments/InstrumentExplorer").then((m) => ({
@@ -102,6 +105,8 @@ export function WorkspaceRouter() {
   const page =
     hash === "#governance" || (session.mode === "configured_sessions" && !session.actor) ? (
       <GovernanceDesk />
+    ) : hash.split("?")[0] === "#fx" ? (
+      <LiveFxDesk />
     ) : hash.split("?")[0] === "#bars" ? (
       <LiveHistoryDesk />
     ) : hash.split("?")[0] === "#quotes" ? (

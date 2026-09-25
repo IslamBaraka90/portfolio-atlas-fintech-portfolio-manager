@@ -1,9 +1,11 @@
 import { useEffect, useSyncExternalStore } from "react";
 import {
+  fxBoardSchema,
   liveSeriesSchema,
   liveStatusSchema,
   quoteBoardSchema,
   refreshCycleSchema,
+  type FxBoard,
   type LiveSeries,
   type LiveStatus,
   type QuoteBoard,
@@ -18,6 +20,7 @@ interface LiveSnapshot {
   status: LiveStatus | null;
   cycles: RefreshCycle[];
   board: QuoteBoard | null;
+  fx: FxBoard | null;
   // Latest revision seen per series id, so desks refetch only what changed.
   seriesRevisions: Record<string, number>;
   connection: Connection;
@@ -25,14 +28,15 @@ interface LiveSnapshot {
 let status: LiveStatus | null = null;
 let cycles: RefreshCycle[] = [];
 let board: QuoteBoard | null = null;
+let fx: FxBoard | null = null;
 let seriesRevisions: Record<string, number> = {};
 let connection = "connecting" as Connection;
 let source: EventSource | null = null;
 let users = 0;
 const listeners = new Set<() => void>();
-let snapshot: LiveSnapshot = { status, cycles, board, seriesRevisions, connection };
+let snapshot: LiveSnapshot = { status, cycles, board, fx, seriesRevisions, connection };
 function publish() {
-  snapshot = { status, cycles, board, seriesRevisions, connection };
+  snapshot = { status, cycles, board, fx, seriesRevisions, connection };
   listeners.forEach((listener) => listener());
 }
 
@@ -53,6 +57,12 @@ function connect() {
     .then((r) => {
       // A stream event may already have delivered a newer board.
       if (!board || r.data.revision > board.revision) board = r.data;
+      publish();
+    })
+    .catch(() => undefined);
+  void read("/live/fx", fxBoardSchema)
+    .then((r) => {
+      if (!fx || r.data.revision > fx.revision) fx = r.data;
       publish();
     })
     .catch(() => undefined);
@@ -78,6 +88,13 @@ function connect() {
     const parsed = quoteBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
     if (parsed.success && (!board || parsed.data.revision >= board.revision)) {
       board = parsed.data;
+      publish();
+    }
+  });
+  source.addEventListener("fx", (event) => {
+    const parsed = fxBoardSchema.safeParse(JSON.parse((event as MessageEvent).data));
+    if (parsed.success && (!fx || parsed.data.revision >= fx.revision)) {
+      fx = parsed.data;
       publish();
     }
   });

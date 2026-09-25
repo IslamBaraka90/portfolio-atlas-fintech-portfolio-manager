@@ -17,6 +17,18 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 20 | Live bars: interval limits, calendar finality, live policy, incremental series, history desk | Complete — 4da3abe, 8ed74d0, c7982e3, 63fede0, see chapter-20 task-5 commit |
 
+| 21 | Live FX: needed legs, direct/inverse/cross derivation, exact conversion, FX desk | Complete — e896fff, see chapter-21 task-3 commit |
+
+## Chapter 21 evidence
+
+Tasks 1–3 (tasks 1 and 2 in one commit, e896fff). `requiredPairs` and `requiredLegs` request one `XXXUSD=X` leg per non-USD currency needed by quoted currencies and mandate base currencies. `deriveRates` builds direct, inverse and USD-cross rates at 10 significant digits, timed at the older leg and as fresh as the least fresh leg, each wrapping a standard Chapter 4 `FxObservation`. Missing legs make a pair unavailable, never 1:1. `convertWithBoard` rounds half-even to cents and refuses stale or missing rates. `LiveFxService` runs as the `fx` task, stores legs on the quote tape and publishes `fx` events. Routes: `GET /live/fx`, `GET /live/fx/convert`. Demo mode uses authored synthetic legs.
+
+Independent cases: 100 EUR at 1.08 → 108.00 USD; 108 USD → 100.00 EUR; GBP→EUR = 1.27 / 1.08 = 1.175925926, and 250 GBP → 293.98 EUR; 10.005 USD → 10.00 (half-even). A SAR pair without a leg is unavailable.
+
+Observed gates (2026-09-25, Node 22.22.0): 177 unit/API checks (43 API, 75 adapters, 11 contracts, 48 core), 27 Chromium journeys, strict typecheck, production build and `npm run check`.
+
+Found during verification: `deriveRates` used `find` to detect a missing leg, which returns the missing `undefined` itself, so the check never fired; it now uses `some`. A cycle whose every running task failed was reported `partial` because a skipped task counted as success; skipped tasks no longer count. Opt-in live smoke with `LIVE_WATCHLIST=SPY,VOD.L` before the open: VOD.L delayed, SPY closed, GBP→USD derived from live `GBPUSD=X`, 553 bars appended across two series, provider healthy.
+
 ## Chapter 20 evidence
 
 Tasks 1–5. Scope decision: Chapter 3 datasets stay unchanged; live history is a separate revisioned series (one document per bar plus a head) using the bar row contract. `checkIntervalWindow` refuses 1m windows older than 30 days or longer than 7 days before any request. `barFinality` derives finality from the exchange calendar (intraday end + 60 s, cut at the close; daily close + 15 min). `FintechLiveBarQuality` (`chapter-20.live-bars.v1`) reuses the OHLC validator with an inferred tick, quarantines invalid, duplicate, backwards and future rows, and flags causal Hampel outliers as warnings. `LiveHistoryService` appends, revises and finalizes bars, never rewrites a final bar, and writes nothing when nothing changed. Storage gained an indexed id-prefix read. Routes: `GET /live/series`, `GET /live/series/:symbol/:interval/bars`. The Live history desk draws final candles solid and the forming candle outlined.
