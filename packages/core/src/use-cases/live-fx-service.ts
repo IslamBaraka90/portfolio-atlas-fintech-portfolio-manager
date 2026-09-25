@@ -54,7 +54,7 @@ export class LiveFxService {
   ) {}
 
   board(): FxBoard {
-    return (this.store.get("live-fx-board", "main") as FxBoard | undefined) ?? emptyBoard;
+    return (this.store.get("live-fx-board", this.policy.mode) as FxBoard | undefined) ?? emptyBoard;
   }
   bases(): Currency[] {
     const bases = [...new Set(this.mandates.listMandates().map((m) => m.baseCurrency))];
@@ -155,7 +155,7 @@ export class LiveFxService {
     this.transactions.run(() => {
       for (const q of observations)
         this.store.append("live-quote", q.id, 1, quoteObservationSchema.parse(q));
-      this.store.append("live-fx-board", "main", board.revision, board);
+      this.store.append("live-fx-board", this.policy.mode, board.revision, board);
     });
     this.publish({ type: "fx", data: board });
     return {

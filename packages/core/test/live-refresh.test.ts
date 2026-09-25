@@ -12,9 +12,8 @@ import {
   type Timer,
 } from "../src/index.js";
 
-function harness(env: Record<string, string>, start: string) {
+function harness(env: Record<string, string>, start: string, rows = new Map<string, unknown>()) {
   let now = start;
-  const rows = new Map<string, unknown>();
   const store: SnapshotRepository = {
     append: (kind, id, _revision, value) => {
       const key = kind + "/" + id;
@@ -41,7 +40,7 @@ function harness(env: Record<string, string>, start: string) {
     store,
     { run: (work) => work() },
     { now: () => now },
-    { next: () => "cycle-" + ++n },
+    { next: () => (env.MARKET_DATA_MODE ?? "demo") + "-cycle-" + ++n },
     commands,
     timer,
   );
@@ -177,4 +176,21 @@ test("the scheduler starts immediately and then ticks on the period", async () =
   assert.equal(h.scheduled[1]!.ms, 300_000);
   h.service.stop();
   assert.equal(h.service.status().scheduler, "stopped");
+});
+
+test("a session captured in demo mode is captured again after switching to live", async () => {
+  const rows = new Map<string, unknown>();
+  const demo = harness({ LIVE_REFRESH: "eod" }, "2026-09-25T14:00:00Z", rows);
+  demo.service.register(task([ok]));
+  assert.equal((await demo.service.tick())?.coversSession, "2026-09-24");
+  // Same storage, now live: the demo cycle does not count for the live desk.
+  const live = harness(
+    { MARKET_DATA_MODE: "live", LIVE_REFRESH: "eod" },
+    "2026-09-25T14:05:00Z",
+    rows,
+  );
+  live.service.register(task([ok]));
+  const cycle = await live.service.tick();
+  assert.equal(cycle?.mode, "live");
+  assert.equal(cycle?.coversSession, "2026-09-24");
 });

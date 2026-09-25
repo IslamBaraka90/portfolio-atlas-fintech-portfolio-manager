@@ -40,6 +40,12 @@ export class QuoteService {
     private readonly publish: (event: LiveEvent) => void,
   ) {}
 
+  // Demo and live desks keep separate watchlists and boards, so switching
+  // MARKET_DATA_MODE never shows one mode's prices under the other's label.
+  private get key() {
+    return this.policy.mode;
+  }
+
   // The starting watchlist is the configured one in live mode and the provider's
   // teaching symbols in demo mode (Yahoo symbols have no synthetic quotes).
   private defaultWatchlist(): Watchlist {
@@ -54,19 +60,20 @@ export class QuoteService {
   }
   watchlist(): Watchlist {
     return (
-      (this.store.get("live-watchlist", "main") as Watchlist | undefined) ?? this.defaultWatchlist()
+      (this.store.get("live-watchlist", this.key) as Watchlist | undefined) ??
+      this.defaultWatchlist()
     );
   }
   changeWatchlist(change: WatchlistChange, context: CommandContext) {
     return this.commands.executeSync("live.watchlist", change, context, () => {
-      const stored = this.store.get("live-watchlist", "main") as Watchlist | undefined;
+      const stored = this.store.get("live-watchlist", this.key) as Watchlist | undefined;
       const current = stored ?? this.defaultWatchlist();
       if (current.revision !== change.expectedRevision)
         throw new ApplicationError(
           "REVISION_CONFLICT",
           "The watchlist changed. Reload it before editing.",
         );
-      if (!stored) this.store.append("live-watchlist", "main", 1, current);
+      if (!stored) this.store.append("live-watchlist", this.key, 1, current);
       const has = current.symbols.includes(change.symbol);
       if (change.action === "add" && has)
         throw new ApplicationError("INVALID_EVENT", change.symbol + " is already watched.");
@@ -83,7 +90,7 @@ export class QuoteService {
         symbols,
         updatedAt: this.clock.now(),
       });
-      this.store.append("live-watchlist", "main", next.revision, next);
+      this.store.append("live-watchlist", this.key, next.revision, next);
       return next;
     });
   }
@@ -102,7 +109,7 @@ export class QuoteService {
   }
 
   board(): QuoteBoard {
-    return (this.store.get("live-quote-board", "main") as QuoteBoard | undefined) ?? emptyBoard;
+    return (this.store.get("live-quote-board", this.key) as QuoteBoard | undefined) ?? emptyBoard;
   }
   tape(symbol: string, limit = 200): QuoteObservation[] {
     return (this.store.all("live-quote") as QuoteObservation[])
@@ -164,7 +171,7 @@ export class QuoteService {
     this.transactions.run(() => {
       for (const q of observations)
         this.store.append("live-quote", q.id, 1, quoteObservationSchema.parse(q));
-      this.store.append("live-quote-board", "main", board.revision, board);
+      this.store.append("live-quote-board", this.key, board.revision, board);
     });
     this.publish({ type: "quotes", data: board });
     const count = (f: QuoteObservation["freshness"]) =>

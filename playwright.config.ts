@@ -28,6 +28,12 @@ export default defineConfig({
         WEB_PORT: "5174",
         WEB_ORIGIN: "http://127.0.0.1:5174",
         DATA_MODE: "synthetic",
+        // Journeys are deterministic: never inherit a learner's live .env settings.
+        MARKET_DATA_MODE: "demo",
+        LIVE_REFRESH: "eod",
+        YAHOO_ENABLED: "false",
+        LIVE_CACHE_RECORD: "",
+        DEMO_CACHE_PATH: "",
         ATLAS_CLOCK_START: clockStart,
         DATABASE_PATH: ":memory:",
         AUTH_CONFIG_PATH: "",

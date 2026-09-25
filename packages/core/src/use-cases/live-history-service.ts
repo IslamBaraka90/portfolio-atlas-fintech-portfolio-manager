@@ -56,7 +56,10 @@ export class LiveHistoryService {
     return intraday === "1d" ? ["1d"] : [intraday, "1d"];
   }
   series(): LiveSeries[] {
-    return (this.store.all("live-series") as LiveSeries[]).sort((a, b) => a.id.localeCompare(b.id));
+    // Only series from the active provider; the other mode's history stays stored.
+    return (this.store.all("live-series") as LiveSeries[])
+      .filter((s) => s.source === this.provider.mode)
+      .sort((a, b) => a.id.localeCompare(b.id));
   }
   head(symbol: string, interval: LiveInterval) {
     return this.store.get("live-series", LiveHistoryService.seriesId(symbol, interval)) as

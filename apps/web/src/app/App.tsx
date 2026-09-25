@@ -1,5 +1,6 @@
 import { LearningShell } from "./LearningShell";
 import { BrandMark } from "../design-system/BrandMark";
+import { useLive } from "../shared/live";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
@@ -239,7 +240,7 @@ export function App() {
         </div>
       </section>
       <div className="session-strip">
-        <span className="badge synthetic">Synthetic data</span>
+        <DataModeBadge />
         <span>
           <strong>
             {storage === "sqlite" ? "Durable SQLite storage." : "Session-only storage."}
@@ -433,5 +434,17 @@ export function App() {
         <span>Teaching policies · Simulated holdings · No live trading</span>
       </footer>
     </LearningShell>
+  );
+}
+
+// The lab's allocations are hypothetical in every mode; the badge names the market
+// data the rest of the desk is using so live mode is never labeled synthetic.
+function DataModeBadge() {
+  const { status } = useLive();
+  const live = status?.policy.mode === "live";
+  return (
+    <span className={"badge " + (live ? "good" : "synthetic")}>
+      {live ? "Live Yahoo data" : "Synthetic data"}
+    </span>
   );
 }

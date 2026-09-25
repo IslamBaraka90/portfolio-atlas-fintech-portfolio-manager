@@ -151,7 +151,13 @@ export class LiveRefreshService {
     const latest = session.latestCompletedSession;
     const captured =
       latest === null ||
-      this.cycles().some((cycle) => cycle.coversSession === latest && cycle.status !== "failed");
+      this.cycles().some(
+        // A demo cycle never captures a session for the live desk, or the reverse.
+        (cycle) =>
+          cycle.coversSession === latest &&
+          cycle.status !== "failed" &&
+          cycle.mode === this.policy.mode,
+      );
     if (!captured) {
       this.decide("run", "Capture completed session " + latest + ", which has no cycle yet.");
       return this.persisted(await this.execute("schedule", session, latest));
