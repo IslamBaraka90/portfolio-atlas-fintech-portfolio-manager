@@ -23,6 +23,18 @@ Chapters 0-17 are implemented. Chapters 1-16 are published as stacked PRs with g
 
 | 23 | Live risk: final-bar measures, monitor on each live valuation, risk desk | Complete — 77d37ec, c43f5af, see chapter-23 task-4 commit |
 
+| 24 | Paper fills at live quotes: fill model, protection-preserving fills, execution costs, live blotter | Complete — c1a078c, 46ba12c, see chapter-24 task-4 commit |
+
+## Chapter 24 evidence
+
+Tasks 1–4 (tasks 2 and 3 in 46ba12c). `quoteFill` (`chapter-24.quote-fill.v1`) fills live or delayed quotes at the ask for buys and the bid for sells, capped by displayed size; other books use the last trade plus a labeled 5 bps half-spread rounded against the trader; closed markets and stale quotes wait. Fills pass through the unchanged Chapter 12 opening path (lots, ticks, 5% band, protection, partial fills, fees, reservations, ledger) with `source: live_quote_paper_fill` and quote evidence. `LivePaperService` runs as the `paper` task before valuation with one event id and command key per order and quote. `executionCost` reports shortfall, spread cost, fees and bps as labeled application arithmetic. Route: `GET /paper-batches/:id/costs`. The Live fills desk shows the blotter, fill evidence and costs.
+
+Observed gates (2026-09-25, Node 22.22.0): 194 unit/API checks (49 API, 79 adapters, 11 contracts, 55 core), 30 Chromium journeys, strict typecheck, production build and `npm run check`.
+
+Independent cases: ask 100.10 buy fills at 100.10 with capacity 800 (or 3 when 3 are displayed); a crossed book models 100.11 for a buy and 99.99 for a sell; buy 10 at 100.10 against a 100.00 decision with a 100.05 midpoint and 1.00 fees → shortfall 1.00, spread 0.50, total 2.00 = 20 bps. In the API tests an ask-priced proposal fills at the ask once (a replay adds no fill), a Saturday cycle leaves orders waiting, and walking the demo price forward produces a protection rejection with no fill.
+
+Found during verification: a live cycle creates a newer valuation, so a proposal built on an older authored valuation is refused as stale; live proposals use the latest live valuation. A proposal priced at the last trade was rejected by Chapter 12 protection because the ask sat above it; the chapter teaches pricing at the executable side rather than loosening protection.
+
 ## Chapter 23 evidence
 
 Tasks 1–4 (tasks 2 and 3 in c43f5af). `alignDailyCloses` keeps final accepted daily closes, aligns them across holdings and the benchmark and counts dropped dates. `liveRisk` (`chapter-23.live-risk.v1`) computes EWMA volatility (λ 0.94, annualized), beta and tracking error against `LIVE_BENCHMARK`, and drawdown from the live NAV series, all through verified fintech-algorithms topics; weights are current-weight replays and labeled hypothetical. `LiveRiskService` assesses each new live valuation once and runs the Chapter 14 monitor on it, keeping one finding per breach. The demo benchmark defaults to ATLS and the benchmark is always tracked. Route: `GET /portfolios/:id/live-risk`. The Live risk desk shows the measures, monitor outcome and holding table.

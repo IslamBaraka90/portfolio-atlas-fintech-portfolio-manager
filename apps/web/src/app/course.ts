@@ -57,6 +57,7 @@ export const courseParts: CoursePart[] = [
       { id: 21, title: "Live FX", hash: "#fx" },
       { id: 22, title: "Live portfolio", hash: "#live-portfolio" },
       { id: 23, title: "Live risk", hash: "#live-risk" },
+      { id: 24, title: "Live fills", hash: "#live-fills" },
     ],
   },
 ];

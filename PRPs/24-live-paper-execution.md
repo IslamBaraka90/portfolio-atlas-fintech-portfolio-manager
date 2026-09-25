@@ -1,6 +1,6 @@
 # PRP 24 — Paper execution at live quotes
 
-Status: planned. Part V. Chapter: 24. Editorial duration estimate: 15 minutes.
+Status: implemented and verified; see docs/chapters/24-learning-guide.md and docs/progress.md. Part V. Chapter: 24. Editorial duration estimate: 15 minutes.
 
 ## Learner question and result
 
@@ -24,7 +24,9 @@ Market and limit paper orders for long-only equities and ETFs during regular hou
 
 ## Contracts
 
-`LiveFill { orderId, quoteId, side, price, basis: ask|bid|modeled, quantity, displayedSize, halfSpreadBps, at }`; fill `source: live_quote_paper_fill`. `ExecutionCost { orderId, decisionPrice, averageFill, shortfall, spreadCost, fees, currency }`.
+Scope decision (recorded during implementation): Chapter 12 reserves cash at the decision price and rejects protected market openings above it, so live proposals are priced at the executable side (ask for buys). A quote that moves against the decision is rejected by protection; the tolerance is not loosened.
+
+The opening event gains optional `live` evidence (`LiveFillEvidence { quoteId, symbol, providerTime, freshness, basis: ask|bid|modeled, bid, ask, midpoint, last, halfSpreadBps, displayedSize }`); fills record `source: live_quote_paper_fill` and the evidence. `ExecutionCost { orderId, side, decisionPrice, averageFill, shortfall, spreadCost, fees, totalCost, totalCostBps, liveFills, method }` via `GET /paper-batches/:id/costs`. `LivePaperService` runs as the `paper` task before valuation. Tasks 2 and 3 landed in one commit.
 
 ## Tasks and commits
 
@@ -35,11 +37,11 @@ Market and limit paper orders for long-only equities and ETFs during regular hou
 
 ## Acceptance cases
 
-- [ ] Buy 10 with ask 100.10 and decision price 100.00 has a 1.00 shortfall before fees.
-- [ ] A crossed quote uses the modeled basis and says so.
-- [ ] A closed market produces no fill and a waiting state with the reason.
-- [ ] Displayed ask size 3 fills 3 of 10 and leaves a residual of 7.
-- [ ] A lost response replay creates one fill (Chapter 12 idempotency preserved).
+- [x] Buy 10 with ask 100.10 and decision price 100.00 has a 1.00 shortfall before fees.
+- [x] A crossed quote uses the modeled basis, rounded against the trader, and says so.
+- [x] A closed market produces no fill and a waiting state with the reason.
+- [x] Displayed ask size 3 fills 3 of 10 and leaves a residual of 7.
+- [x] Replaying a cycle over the same quote creates one fill (event id and command key per order and quote).
 
 ## Validation execution
 
