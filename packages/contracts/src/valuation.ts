@@ -63,6 +63,10 @@ export const markEvidenceSchema = z.strictObject({
   reviewId: z.string().nullable(),
   override: priceOverrideSchema.nullable(),
   reasons: z.array(z.string()),
+  // Chapter 22 live marks name the price they used and the quote it came from.
+  // Optional so every earlier snapshot still parses unchanged.
+  basis: z.enum(["dataset", "override", "last", "mid", "close"]).optional(),
+  quoteId: z.string().nullable().optional(),
 });
 export type MarkEvidence = z.infer<typeof markEvidenceSchema>;
 export const valuedPositionSchema = z.strictObject({
@@ -80,7 +84,8 @@ export const valuationSnapshotSchema = z.strictObject({
   id: z.string(),
   revision: z.literal(1),
   createdAt: z.iso.datetime(),
-  policyVersion: z.literal("chapter-6.v1"),
+  // chapter-6.v1: dataset rows and overrides; chapter-22.live-mark.v1: live quotes.
+  policyVersion: z.enum(["chapter-6.v1", "chapter-22.live-mark.v1"]),
   request: valuationRequestSchema,
   baseCurrency: currencySchema,
   book: bookSnapshotSchema,
