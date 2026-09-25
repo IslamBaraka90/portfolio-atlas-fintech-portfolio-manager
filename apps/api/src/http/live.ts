@@ -2,12 +2,18 @@ import type { FastifyInstance } from "fastify";
 import type { ServerResponse } from "node:http";
 import { z } from "zod";
 import {
+  currencySchema,
   liveIntervalSchema,
   providerSymbolSchema,
   watchlistChangeSchema,
   type LiveEvent,
 } from "@portfolio-atlas/contracts";
-import type { LiveHistoryService, LiveRefreshService, QuoteService } from "@portfolio-atlas/core";
+import type {
+  LiveFxService,
+  LiveHistoryService,
+  LiveRefreshService,
+  QuoteService,
+} from "@portfolio-atlas/core";
 import type { HttpContext } from "./context.js";
 
 export function registerLiveRoutes(
@@ -15,6 +21,7 @@ export function registerLiveRoutes(
   service: LiveRefreshService,
   quotes: QuoteService,
   history: LiveHistoryService,
+  fx: LiveFxService,
   http: HttpContext,
 ) {
   const mode = service.policy.mode === "live" ? ("yahoo" as const) : ("synthetic" as const);
@@ -62,6 +69,17 @@ export function registerLiveRoutes(
       r,
       mode,
     );
+  });
+
+  app.get("/api/v1/live/fx", async (r) => http.response(fx.board(), r, mode));
+  const convertQuery = z.object({
+    amount: z.string().regex(/^\d{1,12}(\.\d{1,8})?$/),
+    from: currencySchema,
+    to: currencySchema,
+  });
+  app.get("/api/v1/live/fx/convert", async (r) => {
+    const q = convertQuery.parse(r.query);
+    return http.response(fx.convert(q.amount, q.from, q.to), r, mode);
   });
 
   // Server-sent events: the browser never polls Yahoo; it hears completed cycles.

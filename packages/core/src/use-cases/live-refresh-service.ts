@@ -237,7 +237,12 @@ export class LiveRefreshService {
       const completedAt = this.clock.now();
       const failed = results.filter((r) => r.status === "failed");
       const status =
-        failed.length === 0 ? "completed" : failed.length === results.length ? "failed" : "partial";
+        failed.length === 0
+          ? "completed"
+          : // Skipped tasks did no work, so they cannot make a failing cycle partial.
+            failed.length === results.filter((r) => r.status !== "skipped").length
+            ? "failed"
+            : "partial";
       this.health = this.nextHealth(status, failed[0]?.failure ?? null, completedAt);
       return {
         id,

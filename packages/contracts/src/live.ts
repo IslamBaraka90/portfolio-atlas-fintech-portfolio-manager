@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { identifierSchema } from "./mandates.js";
+import { currencySchema, identifierSchema } from "./mandates.js";
+import { fxObservationSchema } from "./corporate-actions.js";
 import {
   dataModeSchema,
   instantSchema,
@@ -224,9 +225,54 @@ export const liveSeriesSchema = z.strictObject({
   warnings: z.array(z.string()),
 });
 
+// Chapter 21: live FX. One Yahoo leg per non-USD currency (XXXUSD=X, USD per unit
+// of XXX); other pairs are derived. `observation` is the standard Chapter 4 FX
+// evidence that valuation already accepts; derivation, legs and freshness sit beside it.
+export const fxDerivationSchema = z.enum(["identity", "direct", "inverse", "cross_usd"]);
+export const fxLegSchema = z.strictObject({
+  symbol: providerSymbolSchema,
+  quoteId: z.string(),
+  usdPerUnit: z.string(),
+  providerTime: instantSchema.nullable(),
+  freshness: quoteFreshnessSchema,
+});
+export const liveFxRateSchema = z.strictObject({
+  base: currencySchema,
+  quote: currencySchema,
+  // Quote currency per one unit of base, 10 significant digits.
+  quotePerBase: z.string(),
+  derivation: fxDerivationSchema,
+  legs: z.array(fxLegSchema),
+  freshness: quoteFreshnessSchema,
+  providerTime: instantSchema,
+  observation: fxObservationSchema,
+  reasons: z.array(z.string()),
+});
+export const fxBoardSchema = z.strictObject({
+  revision: z.number().int().nonnegative(),
+  cycleId: z.string().nullable(),
+  updatedAt: instantSchema.nullable(),
+  source: dataModeSchema.nullable(),
+  rates: z.array(liveFxRateSchema),
+  unavailable: z.array(
+    z.strictObject({ base: currencySchema, quote: currencySchema, reason: z.string() }),
+  ),
+});
+export const fxConversionSchema = z.strictObject({
+  amount: z.string(),
+  from: currencySchema,
+  to: currencySchema,
+  converted: z.string(),
+  rate: liveFxRateSchema.nullable(),
+  boardRevision: z.number().int().nonnegative(),
+  rounding: z.literal("half-even to 0.01"),
+  reasons: z.array(z.string()),
+});
+
 export const liveEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("quotes"), data: quoteBoardSchema }),
   z.strictObject({ type: z.literal("series"), data: liveSeriesSchema }),
+  z.strictObject({ type: z.literal("fx"), data: fxBoardSchema }),
   z.strictObject({ type: z.literal("cycle"), data: refreshCycleSchema }),
   z.strictObject({ type: z.literal("status"), data: liveStatusSchema }),
 ]);
@@ -249,3 +295,6 @@ export type WatchlistChange = z.infer<typeof watchlistChangeSchema>;
 export type LiveInterval = z.infer<typeof liveIntervalSchema>;
 export type LiveBar = z.infer<typeof liveBarSchema>;
 export type LiveSeries = z.infer<typeof liveSeriesSchema>;
+export type LiveFxRate = z.infer<typeof liveFxRateSchema>;
+export type FxBoard = z.infer<typeof fxBoardSchema>;
+export type FxConversion = z.infer<typeof fxConversionSchema>;

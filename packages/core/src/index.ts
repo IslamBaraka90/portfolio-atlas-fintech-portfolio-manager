@@ -69,3 +69,5 @@ export * from "./use-cases/live-refresh-service.js";
 export * from "./domain/live/classify-quote.js";
 export * from "./use-cases/quote-service.js";
 export * from "./use-cases/live-history-service.js";
+export * from "./use-cases/live-fx-service.js";
+export * from "./domain/live/derive-fx.js";

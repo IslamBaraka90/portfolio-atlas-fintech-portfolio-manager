@@ -10,6 +10,7 @@ import {
 import {
   LiveRefreshService,
   LiveHistoryService,
+  LiveFxService,
   QuoteService,
   parseLiveRuntime,
   systemTimer,
@@ -516,12 +517,14 @@ export function buildApp(
     options.timer ?? systemTimer,
   );
   // Chapter 19: the quote task replaces the Chapter 18 provider probe.
+  const quoteProvider =
+    options.liveQuoteProvider ??
+    (livePolicy.mode === "live"
+      ? new YahooQuoteProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
+      : new SyntheticQuoteProvider(syntheticInstruments, clock));
   const quotes = new QuoteService(
     livePolicy,
-    options.liveQuoteProvider ??
-      (livePolicy.mode === "live"
-        ? new YahooQuoteProvider(yahooTransport!, clock, liveBudget, livePolicy.cacheTtlMs)
-        : new SyntheticQuoteProvider(syntheticInstruments, clock)),
+    quoteProvider,
     new FintechQuoteAnalytics(),
     instruments,
     rawArchive,
@@ -533,6 +536,21 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(quotes.task());
+  // Chapter 21: USD legs for every quoted and base currency, derived pairs.
+  const fx = new LiveFxService(
+    livePolicy,
+    quoteProvider,
+    new FintechQuoteAnalytics(),
+    quotes,
+    service,
+    rawArchive,
+    snapshots,
+    database,
+    clock,
+    ids,
+    (event) => live.publish(event),
+  );
+  live.register(fx.task());
   // Chapter 20: incremental live bars for every tracked symbol.
   const history = new LiveHistoryService(
     livePolicy,
@@ -549,7 +567,7 @@ export function buildApp(
     (event) => live.publish(event),
   );
   live.register(history.task());
-  registerLiveRoutes(app, live, quotes, history, createHttpContext(clock, sessionId, storage));
+  registerLiveRoutes(app, live, quotes, history, fx, createHttpContext(clock, sessionId, storage));
   app.addHook("onClose", async () => live.stop());
   if (options.liveAutostart) app.addHook("onReady", async () => live.start());
   return app;

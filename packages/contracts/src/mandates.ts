@@ -131,6 +131,7 @@ export const auditEventSchema = z.strictObject({
   requestId: z.string(),
 });
 
+export type Currency = z.infer<typeof currencySchema>;
 export type MandateInput = z.infer<typeof mandateInputSchema>;
 export type Mandate = z.infer<typeof mandateSchema>;
 export type CandidateAllocation = z.infer<typeof candidateAllocationSchema>;
